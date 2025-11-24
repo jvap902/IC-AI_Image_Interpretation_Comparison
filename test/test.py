@@ -7,7 +7,7 @@ import torch.optim as optim
 import torch.nn as nn
 import time
 from tqdm.auto import tqdm
-import matplotlib.pyplot as plt
+from src import plot
 
 # ... (Definitions of data_transforms, train_model, etc.) ...
 
@@ -89,28 +89,6 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, num_epoch
     
     return model, history
 
-def plot_history(history):
-    """Plots the training and validation history."""
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
-
-    # Plot training & validation accuracy values
-    ax1.plot(history['train_acc'])
-    ax1.plot(history['val_acc'])
-    ax1.set_title('Model accuracy')
-    ax1.set_ylabel('Accuracy')
-    ax1.set_xlabel('Epoch')
-    ax1.legend(['train', 'val'], loc='upper left')
-
-    # Plot training & validation loss values
-    ax2.plot(history['train_loss'])
-    ax2.plot(history['val_loss'])
-    ax2.set_title('Model loss')
-    ax2.set_ylabel('Loss')
-    ax2.set_xlabel('Epoch')
-    ax2.legend(['train', 'val'], loc='upper left')
-
-    plt.show()
-
 
 
 if __name__ == "__main__":
@@ -157,4 +135,4 @@ if __name__ == "__main__":
     model, history = train_model(model, train_loader, val_loader, criterion, optimizer, num_epochs=num_epochs, freeze_backbone=False)
 
     # Plot the results from our training run
-    plot_history(history)
+    plot.plot_history(history)
