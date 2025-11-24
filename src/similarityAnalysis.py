@@ -13,10 +13,7 @@ def similarityVectorIndex(first, second, numEmbeddings):
     while(temp < first):
         fst += numEmbeddings - fst
 
-    return fst + (second - first)
-    
-
-    
+    return fst + (second - first)    
 
 def cosineSimilarity(ptPath): #retorna vetor de similaridades de cosseno
     feature_tensor = torch.load(ptPath)

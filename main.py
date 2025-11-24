@@ -20,6 +20,7 @@ import torch.nn as nn
 import time
 from tqdm.auto import tqdm
 from src import *
+from scipy.stats import spearmanr
 
 # --- Configuration ---
 output_dir = "dataStorage"
@@ -93,4 +94,7 @@ if __name__ == "__main__":
     fst_similarity_array = similarityAnalysis.cosineSimilarity(output_dir+"/first_global_embedding.pt")
     snd_similarity_array = similarityAnalysis.cosineSimilarity(output_dir+"/second_global_embedding.pt")
 
-    print(fst_similarity_array)
+    correlation, p_value = spearmanr(fst_similarity_array, snd_similarity_array)
+
+    print(f"Spearman's Rank Correlation Coefficient (ρ): {correlation:.4f}")
+    print(f"P-value: {p_value:.4e}")
