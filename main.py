@@ -34,7 +34,9 @@ data_transforms = {
 if __name__ == "__main__":
     
     # --- Data Setup ---
-    subset_train_dataset, train_dataset, val_dataset = loadDataset.loadCifar10Subset('./data', 100, data_transforms)
+    imagesPerClass = 100
+
+    subset_train_dataset, train_dataset, val_dataset = loadDataset.loadCifar10Subset('./data', imagesPerClass, data_transforms)
     
     batch_size = 64
     train_loader = DataLoader(subset_train_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
@@ -57,7 +59,7 @@ if __name__ == "__main__":
     second_model_name = 'convnext_tiny'
     second_feature_extractor = timm.create_model(second_model_name, pretrained=True, num_classes=0).to(device)
     
-    # --- Feature Extraction (The Correct Step) ---
+    # --- Feature Extraction ---
 
     first_feature_extractor.eval()
     second_feature_extractor.eval()
@@ -88,8 +90,7 @@ if __name__ == "__main__":
 
     # --- Montando matriz ---
 
-    fst_feature_tensor = torch.load(output_dir+"/first_global_embedding.pt")
+    fst_similarity_array = similarityAnalysis.cosineSimilarity(output_dir+"/first_global_embedding.pt")
+    snd_similarity_array = similarityAnalysis.cosineSimilarity(output_dir+"/second_global_embedding.pt")
 
-    fst_feature_numpy = fst_feature_tensor.numpy()
-
-    print(fst_feature_numpy)
+    print(fst_similarity_array)
