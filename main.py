@@ -32,13 +32,13 @@ data_transforms = {
 }
 
 if __name__ == "__main__":
+    
     # --- Data Setup ---
-    train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=data_transforms['train'])
-    val_dataset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=data_transforms['val'])
+    subset_train_dataset, train_dataset, val_dataset = loadDataset.loadCifar10Subset('./data', 100, data_transforms)
     
     batch_size = 64
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
+    train_loader = DataLoader(subset_train_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
+    val_dataset = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
     
     class_names = train_dataset.classes
     
@@ -58,13 +58,17 @@ if __name__ == "__main__":
     second_feature_extractor = timm.create_model(second_model_name, pretrained=True, num_classes=0).to(device)
     
     # --- Feature Extraction (The Correct Step) ---
-    
-    print("\n--- Extracting Features for ResNet-18 ---")
-    # This function iterates over all batches in train_loader and returns ONE large tensor
-    first_features, _ = featureExtraction.extract_features_to_tensors(train_loader, first_feature_extractor)
-    
-    print("\n--- Extracting Features for ConvNeXt-Tiny ---")
-    second_features, _ = featureExtraction.extract_features_to_tensors(train_loader, second_feature_extractor)
+
+    first_feature_extractor.eval()
+    second_feature_extractor.eval()
+
+    with torch.no_grad():
+        print("\n--- Extracting Features for ResNet-18 ---")
+        # This function iterates over all batches in train_loader and returns ONE large tensor
+        first_features, _ = featureExtraction.extract_features_to_tensors(train_loader, first_feature_extractor)
+        
+        print("\n--- Extracting Features for ConvNeXt-Tiny ---")
+        second_features, _ = featureExtraction.extract_features_to_tensors(train_loader, second_feature_extractor)
 
     # --- Saving the Full Embeddings ---
     
@@ -81,3 +85,11 @@ if __name__ == "__main__":
     # Call the plotting function on the saved .pt file
     plot.plot_pt_file(first_output_path)
     plot.plot_pt_file(second_output_path)
+
+    # --- Montando matriz ---
+
+    fst_feature_tensor = torch.load(output_dir+"/first_global_embedding.pt")
+
+    fst_feature_numpy = fst_feature_tensor.numpy()
+
+    print(fst_feature_numpy)
