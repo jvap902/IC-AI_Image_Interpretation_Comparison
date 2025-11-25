@@ -52,12 +52,12 @@ if __name__ == "__main__":
     # --- Model Setup (Feature Extractors) ---
     
     # 1. ResNet-18 Feature Extractor
-    first_model_name = 'resnet18'
+    first_model_name = 'resnet50.a1_in1k'
     # Use num_classes=0 to get the feature vector *before* the classification head
     first_feature_extractor = timm.create_model(first_model_name, pretrained=True, num_classes=0).to(device)
 
     # 2. ConvNeXt-Tiny Feature Extractor
-    second_model_name = 'convnext_tiny'
+    second_model_name = 'efficientnet_b0.ra_in1k'
     second_feature_extractor = timm.create_model(second_model_name, pretrained=True, num_classes=0).to(device)
     
     # --- Feature Extraction ---
@@ -66,11 +66,11 @@ if __name__ == "__main__":
     second_feature_extractor.eval()
 
     with torch.no_grad():
-        print("\n--- Extracting Features for ResNet-18 ---")
+        print(f"\n--- Extracting Features for {first_model_name} ---")
         # This function iterates over all batches in train_loader and returns ONE large tensor
         first_features, _ = featureExtraction.extract_features_to_tensors(train_loader, first_feature_extractor)
         
-        print("\n--- Extracting Features for ConvNeXt-Tiny ---")
+        print(f"\n--- Extracting Features for {second_model_name} ---")
         second_features, _ = featureExtraction.extract_features_to_tensors(train_loader, second_feature_extractor)
 
     # --- Saving the Full Embeddings ---
@@ -93,6 +93,8 @@ if __name__ == "__main__":
 
     fst_similarity_array = similarityAnalysis.cosineSimilarity(output_dir+"/first_global_embedding.pt")
     snd_similarity_array = similarityAnalysis.cosineSimilarity(output_dir+"/second_global_embedding.pt")
+
+    plot.similarityCsv(fst_similarity_array, output_dir+'/fst_similarity_array.csv', 1000, first_model_name)
 
     correlation, p_value = spearmanr(fst_similarity_array, snd_similarity_array)
 

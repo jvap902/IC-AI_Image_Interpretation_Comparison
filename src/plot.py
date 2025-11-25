@@ -3,6 +3,7 @@ import numpy as np
 import os
 from pathlib import Path
 import matplotlib.pyplot as plt
+import csv
 
 
 def plot_history(history):
@@ -68,6 +69,30 @@ def plot_pt_file(file_path):
 
     except Exception as e:
         print(f"An unexpected error occurred in plot_pt_file: {e}")
+
+def similarityCsv(similarity_array, file_path, num_embeddings, model_name):
+
+    print(f"\nconstruíndo {file_path}\n")
+
+    current_first_id = 0
+    current_second_id = 1
+    
+    with open(file_path, 'w', newline='') as csvfile:
+        csvwriter = csv.writer(csvfile)
+
+        csvwriter.writerow(['model', 'first_embedding_id', 'second_embedding_id', 'cosine_correlation']) #colunas
+
+        for cosine in similarity_array:
+            if(current_second_id > num_embeddings-1):
+                current_first_id += 1
+                current_second_id = current_first_id + 1
+
+            csvwriter.writerow([model_name, str(current_first_id), str(current_second_id), str(cosine)])
+
+            current_second_id += 1
+            
+
+
 
 if __name__ == '__main__':
     pass
