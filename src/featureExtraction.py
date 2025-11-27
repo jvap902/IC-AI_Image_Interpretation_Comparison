@@ -1,6 +1,7 @@
 import timm 
 import torch
 from tqdm.auto import tqdm
+import torch.optim as optim
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -82,4 +83,23 @@ def extract_features_to_tensors(dataloader, model):
 
 if __name__ == "__main__":
     multiScaleFeatures()
+
+def validateModel(test_loader, model):
+
+    model.eval()
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for X_batch, y_batch in test_loader:
+            X_batch, y_batch = X_batch.to(device), y_batch.to(device)
+            outputs = model(X_batch)
+            
+            _, predicted = torch.max(outputs.data, 1)
+            total += y_batch.size(0)
+            correct += (predicted == y_batch).sum().item()
+
+    accuracy = correct / total
+    print(f"  Final Validation Accuracy (PyTorch Linear Probe): {accuracy:.4f}")
+
+    return accuracy
 

@@ -53,12 +53,19 @@ if __name__ == "__main__":
     
     # 1. ResNet-18 Feature Extractor
     first_model_name = 'resnet50.a1_in1k'
+    fst_validation_model = timm.create_model(first_model_name, pretrained=True, num_classes=10).to(device)
     # Use num_classes=0 to get the feature vector *before* the classification head
     first_feature_extractor = timm.create_model(first_model_name, pretrained=True, num_classes=0).to(device)
 
     # 2. ConvNeXt-Tiny Feature Extractor
     second_model_name = 'efficientnet_b0.ra_in1k'
+    snd_validation_model = timm.create_model(second_model_name, pretrained=True, num_classes=10).to(device)
     second_feature_extractor = timm.create_model(second_model_name, pretrained=True, num_classes=0).to(device)
+
+    # --- teste se modelos estão funcionando de acordo ---
+
+    featureExtraction.validateModel(val_dataset, fst_validation_model)
+    featureExtraction.validateModel(val_dataset, fst_validation_model)
     
     # --- Feature Extraction ---
 

@@ -7,7 +7,7 @@ import torch.optim as optim
 import torch.nn as nn
 import time
 from tqdm.auto import tqdm
-from src import plot
+from ..src import plot
 
 # ... (Definitions of data_transforms, train_model, etc.) ...
 
