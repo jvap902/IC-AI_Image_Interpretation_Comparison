@@ -20,7 +20,7 @@ def cosineSimilarity(ptPath): #retorna vetor de similaridades de cosseno
     
     numEmbeddings = feature_tensor.size(0)
 
-    array_size = numEmbeddings**2 - numEmbeddings
+    array_size = numEmbeddings * (numEmbeddings-1) // 2
 
     similarity_array = [0 for _ in range(array_size)]
 

@@ -1,15 +1,5 @@
-# main.py
-
-# Assuming you fixed the relative import issue
-# For simplicity, I'll use a direct import of the module
 import os
 import sys
-# If 'src' is one level up, add the parent directory to the path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-# Now import the module containing the functions
-import src.featureExtraction as featureExtraction 
-
 import torch
 import torchvision
 import torchvision.transforms as transforms
@@ -20,7 +10,10 @@ import torch.nn as nn
 import time
 from tqdm.auto import tqdm
 from src import *
-from scipy.stats import spearmanr
+from scipy.stats import spearmanr, pearsonr
+
+# If 'src' is one level up, add the parent directory to the path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # --- Configuration ---
 output_dir = "dataStorage"
@@ -114,4 +107,9 @@ if __name__ == "__main__":
     correlation, p_value = spearmanr(fst_similarity_array, snd_similarity_array)
 
     print(f"Spearman's Rank Correlation Coefficient (ρ): {correlation:.4f}")
+    print(f"P-value: {p_value:.4e}")
+
+    correlation, p_value = pearsonr(fst_similarity_array, snd_similarity_array)
+
+    print(f"Pearson's Rank Correlation Coefficient (ρ): {correlation:.4f}")
     print(f"P-value: {p_value:.4e}")
