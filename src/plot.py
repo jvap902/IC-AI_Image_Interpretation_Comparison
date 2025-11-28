@@ -90,6 +90,13 @@ def similarityCsv(similarity_array, file_path, num_embeddings, model_name):
             csvwriter.writerow([model_name, str(current_first_id), str(current_second_id), str(cosine)])
 
             current_second_id += 1
+
+def collectRunData(file_path, data):
+    with open(file_path, 'a', newline='') as csvfile:
+        csvwriter = csv.writer(csvfile)
+
+        csvwriter.writerow(data)
+
             
 
 

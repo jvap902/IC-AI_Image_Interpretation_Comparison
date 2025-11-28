@@ -1,3 +1,4 @@
+import argparse
 import os
 import sys
 import torch
@@ -26,6 +27,13 @@ data_transforms = {
     'val': transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])]),
 }
 
+parser = argparse.ArgumentParser()
+parser.add_argument("-s", "--size", type=int, required=False, help="Specify number of images per class in the dataset")
+parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify number of images per class in the dataset")
+parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify number of images per class in the dataset")
+
+args = parser.parse_args()
+
 if __name__ == "__main__":
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -33,18 +41,20 @@ if __name__ == "__main__":
 
     # --- Model Creation ---
 
-    first_model_name = 'resnet50.a1_in1k'
+    first_model_name = args.model1 if args.model1 else 'resnet50.a1_in1k'
     # Use num_classes=0 to get the feature vector *before* the classification head
     fst_model = timm.create_model(first_model_name, pretrained=True, num_classes=0).to(device)
 
-    second_model_name = 'efficientnet_b0.ra_in1k'
+    second_model_name = args.model2 if args.model2 else 'efficientnet_b0.ra_in1k'
     snd_model = timm.create_model(second_model_name, pretrained=True, num_classes=0).to(device)
 
     fst_model.eval()
     snd_model.eval()
     
     # --- Data Setup ---
-    imagesPerClass = 100
+    imagesPerClass = args.size if args.size else 100
+
+    print(f"Number of images per class: {imagesPerClass}")
 
     fst_data_config = timm.data.resolve_model_data_config(fst_model)
     snd_data_config = timm.data.resolve_model_data_config(snd_model)
@@ -104,12 +114,16 @@ if __name__ == "__main__":
 
     plot.similarityCsv(fst_similarity_array, output_dir+'/fst_similarity_array.csv', 1000, first_model_name)
 
-    correlation, p_value = spearmanr(fst_similarity_array, snd_similarity_array)
+    spearman, p_value = spearmanr(fst_similarity_array, snd_similarity_array)
 
-    print(f"Spearman's Rank Correlation Coefficient (ρ): {correlation:.4f}")
+    print(f"Spearman's Rank Correlation Coefficient (ρ): {spearman:.4f}")
     print(f"P-value: {p_value:.4e}")
 
-    correlation, p_value = pearsonr(fst_similarity_array, snd_similarity_array)
+    pearson, p_value = pearsonr(fst_similarity_array, snd_similarity_array)
 
-    print(f"Pearson's Rank Correlation Coefficient (ρ): {correlation:.4f}")
+    print(f"Pearson's Rank Correlation Coefficient (ρ): {pearson:.4f}")
     print(f"P-value: {p_value:.4e}")
+
+    runData = [str(imagesPerClass), first_model_name, second_model_name, str(fst_acc), str(snd_acc), str(spearman), str(pearson)]
+
+    plot.collectRunData(output_dir+"/runData.csv", runData)
