@@ -6,8 +6,8 @@ from torch.utils.data import Subset
 def loadCifar10Subset(root, imagesPerClass, data_transforms):
     # Assuming you have already defined and downloaded your dataset:
     # train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=data_transforms['train'])
-    dataset = torchvision.datasets.CIFAR10(root=root, train=True, download=True, transform=data_transforms['train']) # Use train set for example
-    val_dataset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=data_transforms['val'])
+    dataset = torchvision.datasets.CIFAR10(root=root, train=True, download=True, transform=data_transforms) # Use train set for example
+    val_dataset = torchvision.datasets.CIFAR10(root=root, train=False, download=True, transform=data_transforms)
 
     # 1. Initialize storage for selected indices
     selected_indices = []
