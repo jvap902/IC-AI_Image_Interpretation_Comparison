@@ -97,7 +97,45 @@ def collectRunData(file_path, data):
 
         csvwriter.writerow(data)
 
+
+def read_csv_to_array(filepath):
+    data = []
+    with open(filepath, 'r', newline='') as csvfile:
+        csv_reader = csv.reader(csvfile)
+        for row in csv_reader:
+            data.append(row)
+    return data
+
+def correlationGraphic(filepath, xlabel, ylabel):
+    
+    try: 
+        data = read_csv_to_array(filepath)
+        
+        # acha quais colunas se quer usar
+        for name in data[0]:
+            if (name == xlabel):
+                xpos = data[0].index(name)
+            if (name == ylabel):
+                ypos = data[0].index(name)
+        
+        xelements = []
+        yelements = []
+        
+        # coloca em vetores numéricos os valores para plot
+        for row in data[1:]: #tirando linha dos títulos
+            xelements.append(np.float64(row[xpos]))
+            yelements.append(np.float64(row[ypos]))
             
+        plt.plot(xelements, yelements)
+        
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        
+        plt.show()
+    
+    
+    except Exception as e:
+        print(f"An unexpected error occurred in plot_pt_file: {e}")
 
 
 

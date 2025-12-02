@@ -2,6 +2,7 @@ import subprocess
 import sys
 import os
 import time
+from src import *
 
 def run_main_with_subprocess(args):
     """
