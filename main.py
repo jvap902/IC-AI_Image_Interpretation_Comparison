@@ -19,6 +19,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 # --- Configuration ---
 output_dir = "dataStorage"
 os.makedirs(output_dir, exist_ok=True) # Ensure dataStorage folder exists
+
+cache_dir = "datasetCache"
+os.makedirs(cache_dir, exist_ok=True)
 # ---------------------
 
 
@@ -31,6 +34,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--size", type=int, required=False, help="Specify number of images per class in the dataset")
 parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify number of images per class in the dataset")
 parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify number of images per class in the dataset")
+parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10 or cifar100)")
 
 args = parser.parse_args()
 
@@ -52,6 +56,9 @@ if __name__ == "__main__":
     snd_model.eval()
     
     # --- Data Setup ---
+    
+    dataset_name = args.dataset if args.dataset else "cifar10"
+    
     imagesPerClass = args.size if args.size else 100
 
     print(f"Number of images per class: {imagesPerClass}")
@@ -63,7 +70,13 @@ if __name__ == "__main__":
 
     dataset = {}
 
-    dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.loadCifar10Subset('./data', imagesPerClass, fst_transforms)
+    dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.getOrCreateDataset(
+        data_dir='./data', 
+        imagesPerClass=imagesPerClass, 
+        transform=fst_transforms,
+        cache_dir=cache_dir, # Use dataStorage for cache files
+        dataset_name=dataset_name
+    )
     
     batch_size = 64
     full_train_loader = DataLoader(dataset['full_train'], batch_size=batch_size, shuffle=False, num_workers=4)
@@ -71,12 +84,12 @@ if __name__ == "__main__":
     val_dataset = DataLoader(dataset['val'], batch_size=batch_size, shuffle=False, num_workers=4)
     
     class_names = dataset['full_train'].classes
-    
+    num_classes = len(class_names)
 
     # --- teste se modelos estão funcionando de acordo ---
 
-    fst_acc = featureExtraction.train_and_validate_head(first_model_name, train_loader, val_dataset, epochs=10) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
-    snd_acc = featureExtraction.train_and_validate_head(second_model_name, train_loader, val_dataset, epochs=10) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+    fst_acc = featureExtraction.train_and_validate_head(first_model_name, train_loader, val_dataset, epochs=10, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+    snd_acc = featureExtraction.train_and_validate_head(second_model_name, train_loader, val_dataset, epochs=10, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
 
     print(f"\n{first_model_name} Validation Accuracy: {fst_acc:.4f}")
     print(f"\n{second_model_name} Validation Accuracy: {snd_acc:.4f}")

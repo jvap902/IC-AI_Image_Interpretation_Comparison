@@ -80,7 +80,8 @@ def train_and_validate_head_on_features(
     train_features_loader: DataLoader, 
     val_features_loader: DataLoader, 
     feature_dim: int, 
-    epochs=10
+    epochs=10,
+    num_classes=10
 ) -> float:
     """
     Trains a simple linear head directly on pre-extracted features (fast).
@@ -98,7 +99,7 @@ def train_and_validate_head_on_features(
     print(f"\n--- Training Linear Head for {model_name} (on features, Epochs={epochs}) ---")
     
     # 1. Initialize the new Linear Head
-    head_model = LinearHead(input_dim=feature_dim, num_classes=10).to(device)
+    head_model = LinearHead(input_dim=feature_dim, num_classes=num_classes).to(device)
     
     # 2. Setup training components
     criterion = nn.CrossEntropyLoss()
@@ -123,7 +124,7 @@ def train_and_validate_head_on_features(
     return accuracy
 
 
-def train_and_validate_head(model_name: str, train_loader: DataLoader, val_loader: DataLoader, epochs=15) -> float:
+def train_and_validate_head(model_name: str, train_loader: DataLoader, val_loader: DataLoader, epochs=15, num_classes=10) -> float:
     """
     DEPRECATED: This function is now just a wrapper that performs feature extraction 
     and then calls the faster, feature-based training.
@@ -161,7 +162,8 @@ def train_and_validate_head(model_name: str, train_loader: DataLoader, val_loade
         train_features_loader, 
         val_features_loader, 
         feature_dim, 
-        epochs=epochs
+        epochs=epochs,
+        num_classes=num_classes
     )
 
     return accuracy

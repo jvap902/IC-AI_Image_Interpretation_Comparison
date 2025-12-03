@@ -6,3 +6,4 @@ images_per_class,first_model,second_model,first_model_accuracy,second_model_accu
 200,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.8861,0.8863,0.6425856089869355,0.6826270316437398
 500,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.8985,0.8959,0.6437778375934493,0.6838756400980139
 750,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.9009,0.8984,0.6421460407764514,0.6832258128510369
+100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.8689,0.8779,0.6447541633162523,0.6855341193877407

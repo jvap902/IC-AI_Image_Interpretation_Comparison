@@ -1,6 +1,7 @@
 import torch
 import torchvision
 from torch.utils.data import Subset
+import os
 
 
 def loadCifar10Subset(root, imagesPerClass, data_transforms):
@@ -36,3 +37,44 @@ def loadCifar10Subset(root, imagesPerClass, data_transforms):
 
     return subset_train_dataset, dataset, val_dataset
     # Expected output: Total images selected: 1000
+    
+def getOrCreateDataset(data_dir, imagesPerClass, transform, cache_dir, dataset_name):
+    """
+    Checks for a cached version of the dataset subset. If found, loads it.
+    Otherwise, creates the subset, saves it, and returns it.
+    """
+    
+    # 1. Define the cache file path
+    if dataset_name == "cifar10":
+        cache_file = os.path.join(cache_dir, f"cifar10_subset_ipc{imagesPerClass}.pt")
+    elif dataset_name == "cifar100":
+        cache_file = os.path.join(cache_dir, f"cifar100_subset_ipc{imagesPerClass}.pt")
+
+    if os.path.exists(cache_file):
+        print(f"\nLoading cached dataset subset from: {cache_file}")
+        try:
+            # We save the three parts of the dataset in a dictionary
+            cached_data = torch.load(cache_file)
+            return cached_data['subset'], cached_data['full_train'], cached_data['val']
+        except Exception as e:
+            print(f"Error loading cache file: {e}. Rebuilding dataset.")
+            os.remove(cache_file) # Delete corrupted cache file
+
+    # 2. If cache doesn't exist or failed to load, create the dataset
+    print(f"\nCreating new dataset subset (IPC={imagesPerClass}) and caching it...")
+    # Assuming loadDataset is correctly imported from src
+    if dataset_name == "cifar10":
+        subset, full_train, val = loadCifar10Subset(data_dir, imagesPerClass, transform)
+    elif dataset_name == "cifar100":
+        raise NotImplementedError
+    
+    # 3. Cache the newly created dataset
+    data_to_save = {
+        'subset': subset,
+        'full_train': full_train,
+        'val': val
+    }
+    torch.save(data_to_save, cache_file)
+    print(f"Dataset subset saved successfully to: {cache_file}")
+    
+    return subset, full_train, val
