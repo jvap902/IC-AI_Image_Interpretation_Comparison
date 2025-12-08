@@ -38,6 +38,40 @@ def loadCifar10Subset(root, imagesPerClass, data_transforms):
     return subset_train_dataset, dataset, val_dataset
     # Expected output: Total images selected: 1000
     
+def loadCifar100Subset(root, imagesPerClass, data_transforms):
+    # Assuming you have already defined and downloaded your dataset:
+    # train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=data_transforms['train'])
+    dataset = torchvision.datasets.CIFAR100(root=root, train=True, download=True, transform=data_transforms) # Use train set for example
+    val_dataset = torchvision.datasets.CIFAR100(root=root, train=False, download=True, transform=data_transforms)
+
+    # 1. Initialize storage for selected indices
+    selected_indices = []
+    count_per_class = {i: 0 for i in range(100)}
+
+    # 2. Iterate through the dataset's indices
+    for i in range(len(dataset)):
+        # CIFAR10 stores targets as a list/array attribute or returns them with the data.
+        # We access the class label (target) for the current index 'i'.
+        label = dataset.targets[i] 
+
+        # 3. Check if we need more samples for this class
+        if count_per_class[label] < imagesPerClass:
+            selected_indices.append(i)
+            count_per_class[label] += 1
+        
+        # Optional: Stop early once all classes have x samples
+        if len(selected_indices) == imagesPerClass * 100: # x * 10 classes
+            break
+
+    # 4. Create the new subset dataset
+    # This new dataset contains exactly 100 non-random images from each class.
+    subset_train_dataset = Subset(dataset, selected_indices)
+
+    print(f"Total images selected: {len(subset_train_dataset)}")
+
+    return subset_train_dataset, dataset, val_dataset
+    # Expected output: Total images selected: 1000
+    
 def getOrCreateDataset(data_dir, imagesPerClass, transform, cache_dir, dataset_name):
     """
     Checks for a cached version of the dataset subset. If found, loads it.
@@ -66,7 +100,7 @@ def getOrCreateDataset(data_dir, imagesPerClass, transform, cache_dir, dataset_n
     if dataset_name == "cifar10":
         subset, full_train, val = loadCifar10Subset(data_dir, imagesPerClass, transform)
     elif dataset_name == "cifar100":
-        raise NotImplementedError
+        subset, full_train, val = loadCifar100Subset(data_dir, imagesPerClass, transform)
     
     # 3. Cache the newly created dataset
     data_to_save = {

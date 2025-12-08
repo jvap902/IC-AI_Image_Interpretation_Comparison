@@ -125,7 +125,7 @@ if __name__ == "__main__":
     fst_similarity_array = similarityAnalysis.cosineSimilarity(output_dir+"/first_global_embedding.pt")
     snd_similarity_array = similarityAnalysis.cosineSimilarity(output_dir+"/second_global_embedding.pt")
 
-    plot.similarityCsv(fst_similarity_array, output_dir+'/fst_similarity_array.csv', 1000, first_model_name)
+    #plot.similarityCsv(fst_similarity_array, output_dir+'/fst_similarity_array.csv', 1000, first_model_name)
 
     spearman, p_value = spearmanr(fst_similarity_array, snd_similarity_array)
 
@@ -137,6 +137,6 @@ if __name__ == "__main__":
     print(f"Pearson's Rank Correlation Coefficient (ρ): {pearson:.4f}")
     print(f"P-value: {p_value:.4e}")
 
-    runData = [str(imagesPerClass), first_model_name, second_model_name, str(fst_acc), str(snd_acc), str(spearman), str(pearson)]
+    runData = [str(imagesPerClass), first_model_name, second_model_name, str(fst_acc), str(snd_acc), str(spearman), str(pearson), dataset_name]
 
     plot.collectRunData(output_dir+"/runData.csv", runData)
