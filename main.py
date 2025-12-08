@@ -34,7 +34,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--size", type=int, required=False, help="Specify number of images per class in the dataset")
 parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify number of images per class in the dataset")
 parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify number of images per class in the dataset")
-parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10 or cifar100)")
+parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10, cifar100 or imagenet-a)")
+parser.add_argument("--epochs", type=int, required=False, help="Specify the number of epochs to train the head for validation")
 
 args = parser.parse_args()
 
@@ -60,6 +61,8 @@ if __name__ == "__main__":
     dataset_name = args.dataset if args.dataset else "cifar10"
     
     imagesPerClass = args.size if args.size else 100
+    
+    epochs = args.epochs if args.epochs else 10
 
     print(f"Number of images per class: {imagesPerClass}")
 
@@ -70,13 +73,16 @@ if __name__ == "__main__":
 
     dataset = {}
 
-    dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.getOrCreateDataset(
-        data_dir='./data', 
-        imagesPerClass=imagesPerClass, 
-        transform=fst_transforms,
-        cache_dir=cache_dir, # Use dataStorage for cache files
-        dataset_name=dataset_name
-    )
+    if dataset_name != "imagenet-a":
+        dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.getOrCreateDataset(
+            data_dir='./data', 
+            imagesPerClass=imagesPerClass, 
+            transform=fst_transforms,
+            cache_dir=cache_dir, # Use dataStorage for cache files
+            dataset_name=dataset_name
+        )
+    else:
+        dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.loadImagenetA('./data', fst_transforms)
     
     batch_size = 64
     full_train_loader = DataLoader(dataset['full_train'], batch_size=batch_size, shuffle=False, num_workers=4)
@@ -88,8 +94,8 @@ if __name__ == "__main__":
 
     # --- teste se modelos estão funcionando de acordo ---
 
-    fst_acc = featureExtraction.train_and_validate_head(first_model_name, train_loader, val_dataset, epochs=10, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
-    snd_acc = featureExtraction.train_and_validate_head(second_model_name, train_loader, val_dataset, epochs=10, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+    fst_acc = featureExtraction.train_and_validate_head(first_model_name, train_loader, val_dataset, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+    snd_acc = featureExtraction.train_and_validate_head(second_model_name, train_loader, val_dataset, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
 
     print(f"\n{first_model_name} Validation Accuracy: {fst_acc:.4f}")
     print(f"\n{second_model_name} Validation Accuracy: {snd_acc:.4f}")
