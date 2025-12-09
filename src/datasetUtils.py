@@ -110,3 +110,36 @@ class HuggingFaceImageNetDataset(Dataset):
             image = self.transform(image)
             
         return image, label
+    
+def loadToken(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            content = file.read()
+            return content
+    except FileNotFoundError:
+        print(f"Error: The file '{file_path}' was not found.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    
+def selectIndexes(dataset, imagesPerClass, num_classes):
+    # 1. Initialize storage for selected indices
+    selected_indexes = []
+    count_per_class = {i: 0 for i in range(num_classes)}
+
+    # 2. Iterate through the dataset's indices
+    for i in range(len(dataset)):
+        # CIFAR10 stores targets as a list/array attribute or returns them with the data.
+        # We access the class label (target) for the current index 'i'.
+        label = dataset.targets[i] 
+
+        # 3. Check if we need more samples for this class
+        if count_per_class[label] < imagesPerClass:
+            selected_indexes.append(i)
+            count_per_class[label] += 1
+        
+        # Optional: Stop early once all classes have x samples
+        if len(selected_indexes) == imagesPerClass * num_classes: # x * 10 classes
+            break
+        
+        
+    return selected_indexes

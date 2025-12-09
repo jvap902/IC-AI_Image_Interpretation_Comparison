@@ -14,27 +14,11 @@ def loadCifar10Subset(root, imagesPerClass, data_transforms):
     val_dataset = torchvision.datasets.CIFAR10(root=root, train=False, download=True, transform=data_transforms)
 
     # 1. Initialize storage for selected indices
-    selected_indices = []
-    count_per_class = {i: 0 for i in range(10)}
-
-    # 2. Iterate through the dataset's indices
-    for i in range(len(dataset)):
-        # CIFAR10 stores targets as a list/array attribute or returns them with the data.
-        # We access the class label (target) for the current index 'i'.
-        label = dataset.targets[i] 
-
-        # 3. Check if we need more samples for this class
-        if count_per_class[label] < imagesPerClass:
-            selected_indices.append(i)
-            count_per_class[label] += 1
-        
-        # Optional: Stop early once all classes have x samples
-        if len(selected_indices) == imagesPerClass * 10: # x * 10 classes
-            break
-
+    selected_indexes = datasetUtils.selectIndexes(dataset, imagesPerClass, 10)
+    
     # 4. Create the new subset dataset
     # This new dataset contains exactly 100 non-random images from each class.
-    subset_train_dataset = Subset(dataset, selected_indices)
+    subset_train_dataset = Subset(dataset, selected_indexes)
 
     print(f"Total images selected: {len(subset_train_dataset)}")
 
@@ -48,24 +32,7 @@ def loadCifar100Subset(root, imagesPerClass, data_transforms):
     val_dataset = torchvision.datasets.CIFAR100(root=root, train=False, download=True, transform=data_transforms)
 
     # 1. Initialize storage for selected indices
-    selected_indices = []
-    count_per_class = {i: 0 for i in range(100)}
-
-    # 2. Iterate through the dataset's indices
-    for i in range(len(dataset)):
-        # CIFAR10 stores targets as a list/array attribute or returns them with the data.
-        # We access the class label (target) for the current index 'i'.
-        label = dataset.targets[i] 
-
-        # 3. Check if we need more samples for this class
-        if count_per_class[label] < imagesPerClass:
-            selected_indices.append(i)
-            count_per_class[label] += 1
-        
-        # Optional: Stop early once all classes have x samples
-        if len(selected_indices) == imagesPerClass * 100: # x * 10 classes
-            break
-
+    selected_indices = datasetUtils.selectIndexes(dataset, imagesPerClass, 100)
     # 4. Create the new subset dataset
     # This new dataset contains exactly 100 non-random images from each class.
     subset_train_dataset = Subset(dataset, selected_indices)
@@ -112,6 +79,11 @@ def loadHuggingFaceImageNetSubset(root, imagesPerClass, data_transforms, dataset
     print("\n--- Loading ImageNet Subset via Hugging Face ---")
     
     try:
+        
+        hf_token = datasetUtils.loadToken('token.txt')
+        
+        login(token=hf_token, add_to_git_credential=False)
+        
         # We use 'huggingface/imagenet-100' as a public, manageable proxy for ImageNet-1K
         hf_dataset = load_dataset('ILSVRC/imagenet-1k', split='train', streaming=False)
         
