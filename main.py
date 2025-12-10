@@ -1,15 +1,6 @@
-# main.py
-
-# Assuming you fixed the relative import issue
-# For simplicity, I'll use a direct import of the module
+import argparse
 import os
 import sys
-# If 'src' is one level up, add the parent directory to the path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-# Now import the module containing the functions
-import src.featureExtraction as featureExtraction 
-
 import torch
 import torchvision
 import torchvision.transforms as transforms
@@ -20,65 +11,104 @@ import torch.nn as nn
 import time
 from tqdm.auto import tqdm
 from src import *
-from scipy.stats import spearmanr
+from scipy.stats import spearmanr, pearsonr
+
+# If 'src' is one level up, add the parent directory to the path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # --- Configuration ---
 output_dir = "dataStorage"
 os.makedirs(output_dir, exist_ok=True) # Ensure dataStorage folder exists
+
+cache_dir = "datasetCache"
+os.makedirs(cache_dir, exist_ok=True)
 # ---------------------
+
 
 data_transforms = {
     'train': transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])]),
     'val': transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])]),
 }
 
-if __name__ == "__main__":
-    
-    # --- Data Setup ---
-    imagesPerClass = 100
+parser = argparse.ArgumentParser()
+parser.add_argument("-s", "--size", type=int, required=False, help="Specify number of images per class in the dataset")
+parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify number of images per class in the dataset")
+parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify number of images per class in the dataset")
+parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10, cifar100 or imagenet-a)")
+parser.add_argument("-e", "--epochs", type=int, required=False, help="Specify the number of epochs to train the head for validation")
 
-    subset_train_dataset, train_dataset, val_dataset = loadDataset.loadCifar10Subset('./data', imagesPerClass, data_transforms)
-    
-    batch_size = 64
-    train_loader = DataLoader(subset_train_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
-    val_dataset = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
-    
-    class_names = train_dataset.classes
-    
-    # --- Device Setup ---
+args = parser.parse_args()
+
+if __name__ == "__main__":
+
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"\nDevice set to: {device}")
 
-    # --- Model Setup (Feature Extractors) ---
-    
-    # 1. ResNet-18 Feature Extractor
-    first_model_name = 'resnet50.a1_in1k'
-    fst_validation_model = timm.create_model(first_model_name, pretrained=True, num_classes=10).to(device)
-    # Use num_classes=0 to get the feature vector *before* the classification head
-    first_feature_extractor = timm.create_model(first_model_name, pretrained=True, num_classes=0).to(device)
+    # --- Model Creation ---
 
-    # 2. ConvNeXt-Tiny Feature Extractor
-    second_model_name = 'efficientnet_b0.ra_in1k'
-    snd_validation_model = timm.create_model(second_model_name, pretrained=True, num_classes=10).to(device)
-    second_feature_extractor = timm.create_model(second_model_name, pretrained=True, num_classes=0).to(device)
+    first_model_name = args.model1 if args.model1 else 'resnet50.a1_in1k'
+    # Use num_classes=0 to get the feature vector *before* the classification head
+    fst_model = timm.create_model(first_model_name, pretrained=True, num_classes=0).to(device)
+
+    second_model_name = args.model2 if args.model2 else 'efficientnet_b0.ra_in1k'
+    snd_model = timm.create_model(second_model_name, pretrained=True, num_classes=0).to(device)
+
+    fst_model.eval()
+    snd_model.eval()
+    
+    # --- Data Setup ---
+    
+    dataset_name = args.dataset if args.dataset else "cifar10"
+    
+    imagesPerClass = args.size if args.size else 100
+    
+    epochs = args.epochs if args.epochs else 10
+
+    print(f"Number of images per class: {imagesPerClass}")
+
+    fst_data_config = timm.data.resolve_model_data_config(fst_model)
+    snd_data_config = timm.data.resolve_model_data_config(snd_model)
+
+    fst_transforms = timm.data.create_transform(**fst_data_config, is_training=False) #assumindo que data_config do primeiro e segundo são iguais
+
+    dataset = {}
+
+    if dataset_name != "imagenet-a":
+        dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.getOrCreateDataset(
+            data_dir='./data', 
+            imagesPerClass=imagesPerClass, 
+            transform=fst_transforms,
+            cache_dir=cache_dir, # Use dataStorage for cache files
+            dataset_name=dataset_name
+        )
+    else:
+        dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.loadImagenetA('./data', fst_transforms)
+    
+    batch_size = 64
+    full_train_loader = DataLoader(dataset['full_train'], batch_size=batch_size, shuffle=False, num_workers=4)
+    train_loader = DataLoader(dataset['subset'], batch_size=batch_size, shuffle=False, num_workers=4)
+    val_dataset = DataLoader(dataset['val'], batch_size=batch_size, shuffle=False, num_workers=4)
+    
+    class_names = dataset['full_train'].classes
+    num_classes = len(class_names)
 
     # --- teste se modelos estão funcionando de acordo ---
 
-    featureExtraction.validateModel(val_dataset, fst_validation_model)
-    featureExtraction.validateModel(val_dataset, fst_validation_model)
+    fst_acc = featureExtraction.train_and_validate_head(first_model_name, train_loader, val_dataset, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+    snd_acc = featureExtraction.train_and_validate_head(second_model_name, train_loader, val_dataset, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+
+    print(f"\n{first_model_name} Validation Accuracy: {fst_acc:.4f}")
+    print(f"\n{second_model_name} Validation Accuracy: {snd_acc:.4f}")
     
     # --- Feature Extraction ---
-
-    first_feature_extractor.eval()
-    second_feature_extractor.eval()
 
     with torch.no_grad():
         print(f"\n--- Extracting Features for {first_model_name} ---")
         # This function iterates over all batches in train_loader and returns ONE large tensor
-        first_features, _ = featureExtraction.extract_features_to_tensors(train_loader, first_feature_extractor)
+        first_features, _ = featureExtraction.extract_features_to_tensors(train_loader, fst_model)
         
         print(f"\n--- Extracting Features for {second_model_name} ---")
-        second_features, _ = featureExtraction.extract_features_to_tensors(train_loader, second_feature_extractor)
+        second_features, _ = featureExtraction.extract_features_to_tensors(train_loader, snd_model)
 
     # --- Saving the Full Embeddings ---
     
@@ -101,9 +131,18 @@ if __name__ == "__main__":
     fst_similarity_array = similarityAnalysis.cosineSimilarity(output_dir+"/first_global_embedding.pt")
     snd_similarity_array = similarityAnalysis.cosineSimilarity(output_dir+"/second_global_embedding.pt")
 
-    plot.similarityCsv(fst_similarity_array, output_dir+'/fst_similarity_array.csv', 1000, first_model_name)
+    #plot.similarityCsv(fst_similarity_array, output_dir+'/fst_similarity_array.csv', 1000, first_model_name)
 
-    correlation, p_value = spearmanr(fst_similarity_array, snd_similarity_array)
+    spearman, p_value = spearmanr(fst_similarity_array, snd_similarity_array)
 
-    print(f"Spearman's Rank Correlation Coefficient (ρ): {correlation:.4f}")
+    print(f"Spearman's Rank Correlation Coefficient (ρ): {spearman:.4f}")
     print(f"P-value: {p_value:.4e}")
+
+    pearson, p_value = pearsonr(fst_similarity_array, snd_similarity_array)
+
+    print(f"Pearson's Rank Correlation Coefficient (ρ): {pearson:.4f}")
+    print(f"P-value: {p_value:.4e}")
+
+    runData = [str(imagesPerClass), first_model_name, second_model_name, str(fst_acc), str(snd_acc), str(spearman), str(pearson), dataset_name]
+
+    plot.collectRunData(output_dir+"/runData.csv", runData)

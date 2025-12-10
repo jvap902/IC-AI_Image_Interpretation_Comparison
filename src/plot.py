@@ -90,7 +90,69 @@ def similarityCsv(similarity_array, file_path, num_embeddings, model_name):
             csvwriter.writerow([model_name, str(current_first_id), str(current_second_id), str(cosine)])
 
             current_second_id += 1
+
+def collectRunData(file_path, data):
+    with open(file_path, 'a', newline='') as csvfile:
+        csvwriter = csv.writer(csvfile)
+
+        csvwriter.writerow(data)
+
+
+def read_csv_to_array(filepath):
+    data = []
+    with open(filepath, 'r', newline='') as csvfile:
+        csv_reader = csv.reader(csvfile)
+        for row in csv_reader:
+            data.append(row)
+    return data
+
+def correlationGraphic(filepath, xlabel, ylabel, subplot_fields=[]):
+    
+    try: 
+        data = read_csv_to_array(filepath)
+        
+        i=0
+        
+        num_subplots = len(subplot_fields)
+        
+        while True: # vai ser usado como um do-while
+            i += 1
             
+            if (num_subplots):
+                yfield = subplot_fields[i-1]
+            else:
+                yfield = ylabel
+        
+            # acha quais colunas se quer usar
+            for name in data[0]:
+                if (name == xlabel):
+                    xpos = data[0].index(name)
+                if (name == yfield):
+                    ypos = data[0].index(name)
+            
+            xelements = []
+            yelements = []
+            
+            # coloca em vetores numéricos os valores para plot
+            for row in data[1:]: #tirando linha dos títulos
+                xelements.append(np.float64(row[xpos]))
+                yelements.append(np.float64(row[ypos]))
+                
+            plt.plot(xelements, yelements, label = yfield)
+            
+              
+            if i >= num_subplots:
+                break
+        
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        
+        plt.legend()
+        plt.show()
+    
+    
+    except Exception as e:
+        print(f"An unexpected error occurred in correlationGraphic: {e}")
 
 
 
