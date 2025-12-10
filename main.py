@@ -34,7 +34,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--size", type=int, required=False, help="Specify number of images per class in the dataset")
 parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify number of images per class in the dataset")
 parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify number of images per class in the dataset")
-parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10, cifar100 or imagenet-a)")
+parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10, cifar100, imagenet-a or a link for huggingface dataset)")
 parser.add_argument("-e", "--epochs", type=int, required=False, help="Specify the number of epochs to train the head for validation")
 
 args = parser.parse_args()

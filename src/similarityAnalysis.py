@@ -1,8 +1,11 @@
 import torch.nn.functional as F
 import torch
 import numpy as np
+import math
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
+
+total_memory = torch.cuda.get_device_properties(0).total_memory if torch.cuda.is_available() else 0
 
 def similarityVectorIndex(first, second, numEmbeddings):
     if second > first:
@@ -24,37 +27,26 @@ def cosineSimilarity(ptPath): #retorna vetor de similaridades de cosseno
     feature_tensor = torch.load(ptPath).to(device)
     numEmbeddings = feature_tensor.size(0)
 
-    
     normalized_features = F.normalize(feature_tensor, p=2, dim=1)
-    
+
+    batch_size = total_memory // (numEmbeddings * feature_tensor.size(1) * 4 * 4) # Rough estimate
+    num_batches = math.ceil(numEmbeddings / batch_size)
+
     # 2. Calculate the full pairwise similarity matrix
-    # The dot product of two normalized vectors is their cosine similarity.
-    # [N x D] @ [D x N] = [N x N] similarity matrix
-    # torch.transpose(normalized_features, 0, 1) is equivalent to normalized_features.T
-    similarity_matrix = torch.matmul(normalized_features, normalized_features.T)
+    for i in range(num_batches):
+        start_i = i * batch_size
+        end_i = min((i + 1) * batch_size, numEmbeddings)
+        batch_features = normalized_features[start_i:end_i]
+        batch_similarity = torch.matmul(batch_features, normalized_features.T)
+        if i == 0:
+            similarity_matrix = batch_similarity
+        else:
+            similarity_matrix = torch.cat((similarity_matrix, batch_similarity), dim=0)
 
     # 3. Extract the unique pairwise similarities
-    # We take the upper triangular part (k=1 excludes the main diagonal, which is all 1.0)
-    # The output is a 1D tensor containing the unique pairs.
     similarity_array_tensor = similarity_matrix[torch.triu(torch.ones(numEmbeddings, numEmbeddings, dtype=torch.bool), diagonal=1)]
 
     # 4. Convert the final result to a NumPy array for final analysis
-    # This single transfer from GPU (if used) to CPU is extremely efficient.
     similarity_array = similarity_array_tensor.cpu().numpy()
     
-    # array_size = numEmbeddings * (numEmbeddings-1) // 2
-
-    # similarity_array = [0 for _ in range(array_size)]
-
-    # print(f"Calculating values\n")
-    # pos = 0
-    # for i in range(numEmbeddings):
-    #     for j in range(i+1, numEmbeddings):
-    #         sim = F.cosine_similarity(feature_tensor[i].unsqueeze(0), feature_tensor[j].unsqueeze(0), dim=1)
-
-    #         similarity_array[pos] = sim.item()
-            
-    #         pos += 1
-            
-
     return np.array(similarity_array)

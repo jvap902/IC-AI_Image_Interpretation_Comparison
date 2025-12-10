@@ -75,7 +75,7 @@ def loadImagenetA(root, data_transforms, val_split_ratio=0.1):
     # Return structure matching CIFAR: (subset, full_train_for_compat, val)
     return train_subset, full_dataset, val_subset
 
-def loadHuggingFaceImageNetSubset(root, imagesPerClass, data_transforms, dataset_name, num_classes=10, val_split_ratio=0.1):
+def loadHuggingFaceImageNetSubset(root, imagesPerClass, data_transforms, dataset_link="timm/mini-imagenet", num_classes=10, val_split_ratio=0.1):
     print("\n--- Loading ImageNet Subset via Hugging Face ---")
     
     try:
@@ -85,7 +85,7 @@ def loadHuggingFaceImageNetSubset(root, imagesPerClass, data_transforms, dataset
         login(token=hf_token, add_to_git_credential=False)
         
         # We use 'huggingface/imagenet-100' as a public, manageable proxy for ImageNet-1K
-        hf_dataset = load_dataset('ILSVRC/imagenet-1k', split='train', streaming=False)
+        hf_dataset = load_dataset(dataset_link, split='train', streaming=False)
         
         # Filter down to the desired number of classes for a quick test run
         hf_dataset = hf_dataset.filter(lambda x: x['label'] < num_classes)
