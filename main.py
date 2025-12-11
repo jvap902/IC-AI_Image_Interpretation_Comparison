@@ -94,6 +94,8 @@ if __name__ == "__main__":
     num_classes = len(class_names)
 
     # --- teste se modelos estão funcionando de acordo ---
+    fst_acc = 0.0
+    snd_acc = 0.0
     if (args.not_validate):
         fst_acc = featureExtraction.train_and_validate_head(first_model_name, train_loader, val_dataset, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
         snd_acc = featureExtraction.train_and_validate_head(second_model_name, train_loader, val_dataset, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy

@@ -126,8 +126,6 @@ def calculateCorrelations(path_a, path_b, correlation_type='spearman'):
         print(f"Spearman Correlation calculated: R={correlation:.4f}, P={p_value:.4e}")
         
         # 5. Cleanup the massive arrays immediately after calculation
-        del array_a
-        del array_b
         aggressive_cleanup([array_a_np, array_b_np]) # Cleanup NumPy arrays and PyTorch cache
         
         return correlation, p_value
