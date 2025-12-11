@@ -36,6 +36,7 @@ parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify n
 parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify number of images per class in the dataset")
 parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10, cifar100, imagenet-a or a link for huggingface dataset)")
 parser.add_argument("-e", "--epochs", type=int, required=False, help="Specify the number of epochs to train the head for validation")
+parser.add_argument("-nv", "--not_validate", action='store_false', help="Whether to validate the models after training the heads")
 
 args = parser.parse_args()
 
@@ -77,7 +78,7 @@ if __name__ == "__main__":
         dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.getOrCreateDataset(
             data_dir='./data', 
             imagesPerClass=imagesPerClass, 
-            transform=fst_transforms,
+            transform=data_transforms["train"],
             cache_dir=cache_dir, # Use dataStorage for cache files
             dataset_name=dataset_name
         )
@@ -93,12 +94,12 @@ if __name__ == "__main__":
     num_classes = len(class_names)
 
     # --- teste se modelos estão funcionando de acordo ---
+    if (args.not_validate):
+        fst_acc = featureExtraction.train_and_validate_head(first_model_name, train_loader, val_dataset, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+        snd_acc = featureExtraction.train_and_validate_head(second_model_name, train_loader, val_dataset, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
 
-    fst_acc = featureExtraction.train_and_validate_head(first_model_name, train_loader, val_dataset, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
-    snd_acc = featureExtraction.train_and_validate_head(second_model_name, train_loader, val_dataset, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
-
-    print(f"\n{first_model_name} Validation Accuracy: {fst_acc:.4f}")
-    print(f"\n{second_model_name} Validation Accuracy: {snd_acc:.4f}")
+        print(f"\n{first_model_name} Validation Accuracy: {fst_acc:.4f}")
+        print(f"\n{second_model_name} Validation Accuracy: {snd_acc:.4f}")
     
     # --- Feature Extraction ---
 
@@ -121,24 +122,26 @@ if __name__ == "__main__":
     print(f"\nSaved first embedding tensor (Shape: {first_features.shape}) to: {first_output_path}")
     print(f"Saved second embedding tensor (Shape: {second_features.shape}) to: {second_output_path}")
 
-    print("\n--- Generating Text Representations ---")
-    # Call the plotting function on the saved .pt file
-    plot.plot_pt_file(first_output_path)
-    plot.plot_pt_file(second_output_path)
+    # print("\n--- Generating Text Representations ---")
+    # # Call the plotting function on the saved .pt file
+    # plot.plot_pt_file(first_output_path)
+    # plot.plot_pt_file(second_output_path)
 
     # --- Montando matriz ---
 
-    fst_similarity_array = similarityAnalysis.cosineSimilarity(output_dir+"/first_global_embedding.pt")
-    snd_similarity_array = similarityAnalysis.cosineSimilarity(output_dir+"/second_global_embedding.pt")
+    fst_similarity_path = os.path.join(output_dir, "first_similarity_array.pt")
+    snd_similarity_path = os.path.join(output_dir, "second_similarity_array.pt")
 
-    #plot.similarityCsv(fst_similarity_array, output_dir+'/fst_similarity_array.csv', 1000, first_model_name)
+    similarityAnalysis.cosineSimilarity(output_dir+"/first_global_embedding.pt", save_path=fst_similarity_path)
+    similarityAnalysis.cosineSimilarity(output_dir+"/second_global_embedding.pt", save_path=snd_similarity_path)
 
-    spearman, p_value = spearmanr(fst_similarity_array, snd_similarity_array)
+    spearman, p_value = similarityAnalysis.calculateCorrelations(fst_similarity_path, snd_similarity_path, correlation_type='spearman')
 
     print(f"Spearman's Rank Correlation Coefficient (ρ): {spearman:.4f}")
     print(f"P-value: {p_value:.4e}")
 
-    pearson, p_value = pearsonr(fst_similarity_array, snd_similarity_array)
+    print("\nCalculating Pearson's correlation\n")
+    pearson, p_value = similarityAnalysis.calculateCorrelations(fst_similarity_path, snd_similarity_path, correlation_type='pearson')
 
     print(f"Pearson's Rank Correlation Coefficient (ρ): {pearson:.4f}")
     print(f"P-value: {p_value:.4e}")

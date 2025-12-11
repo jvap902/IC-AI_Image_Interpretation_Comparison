@@ -88,7 +88,7 @@ def loadHuggingFaceImageNetSubset(root, imagesPerClass, data_transforms, dataset
         hf_dataset = load_dataset(dataset_link, split='train', streaming=False)
         
         # Filter down to the desired number of classes for a quick test run
-        hf_dataset = hf_dataset.filter(lambda x: x['label'] < num_classes)
+        #hf_dataset = hf_dataset.filter(lambda x: x['label'] < num_classes)
         
     except Exception as e:
          raise RuntimeError(f"Failed to load Hugging Face ImageNet subset: {e}")
@@ -127,7 +127,8 @@ def getOrCreateDataset(data_dir, imagesPerClass, transform, cache_dir, dataset_n
     elif dataset_name == "cifar100":
         cache_file = os.path.join(cache_dir, f"cifar100_subset_ipc{imagesPerClass}.pt")
     else:
-        cache_file = os.path.join(cache_dir, f"{dataset_name}_ipc{imagesPerClass}.pt")
+        dt_name = dataset_name.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
+        cache_file = os.path.join(cache_dir, f"{dt_name}_ipc{imagesPerClass}.pt")
 
     if os.path.exists(cache_file):
         print(f"\nLoading cached dataset subset from: {cache_file}")

@@ -79,35 +79,42 @@ def download_imagenet_a(root_dir):
     
 # --- Helper Class to Convert HuggingFace Dataset to PyTorch Dataset ---
 class HuggingFaceImageNetDataset(Dataset):
-    """
-    Wraps a Hugging Face Dataset object (which holds PIL images) 
-    to be compatible with PyTorch's DataLoader.
-    """
-    def __init__(self, hf_dataset, transform=None):
+    
+    # Assuming the Hugging Face dataset is passed in hf_dataset
+    def __init__(self, hf_dataset, transform):
         self.hf_dataset = hf_dataset
         self.transform = transform
-        
-        # We need classes for compatibility, infer them from the HF dataset if possible
-        # or use a placeholder list of 1000 classes for ImageNet-1k compatibility.
-        if 'label' in self.hf_dataset.features:
-            self.classes = self.hf_dataset.features['label'].names
+        # Assume classes are set up here
+        if hasattr(hf_dataset, 'features') and 'label' in hf_dataset.features:
+            # Attempt to infer classes from HF dataset
+            self.classes = hf_dataset.features['label'].names
         else:
-            self.classes = [f"Class {i}" for i in range(1000)] # Placeholder
-        
-        print(f"Dataset has {len(self.classes)} classes.")
-
+            self.classes = [f"Class {i}" for i in range(100)] # Placeholder
+            
     def __len__(self):
         return len(self.hf_dataset)
-
-    def __getitem__(self, idx):
-        # The Hugging Face dataset returns a dictionary with 'image' (as PIL) and 'label'
-        item = self.hf_dataset[idx]
-        image = item['image']
+    
+    def __getitem__(self, index):
+        # 1. Retrieve the item from the Hugging Face dataset
+        item = self.hf_dataset[index]
+        image = item['image'] # Assuming the key is 'image'
         label = item['label']
-
+        
+        # 2. >>> CRITICAL FIX: Explicitly enforce 3 channels (RGB) at the source
+        # This converts grayscale 'L' or RGBA to 3-channel 'RGB' directly on the PIL image.
+        # This bypasses any potential worker serialization issues in transforms.Compose.
+        try:
+            image = image.convert('RGB')
+        except Exception as e:
+            # Log an error if the conversion fails for a specific image, but continue
+            print(f"Warning: Failed to convert image at index {index} to RGB. Error: {e}")
+            # If conversion fails, we let the transform run, hoping it recovers (unlikely)
+            
+        # 3. Apply the rest of the transformation pipeline
+        # This includes Resize, CenterCrop, ToTensor, and Normalize.
         if self.transform:
-            # Apply the PyTorch transforms to the PIL Image
-            image = self.transform(image)
+            # This is your original failing line, now called on a guaranteed RGB image
+            image = self.transform(image) 
             
         return image, label
     
