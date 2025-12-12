@@ -9,5 +9,12 @@ images_per_class,first_model,second_model,first_model_accuracy,second_model_accu
 100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.6922,0.693,0.6176317920000223,0.6498360991591566,cifar100
 200,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.7124,0.679,0.6178651814697133,0.6503155,cifar100
 300,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.7233,0.6855,0.6164376693392581,0.64883405,cifar100
-100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.28933333333333333,0.27066666666666667,0.5858169912956517,0.6199212,imagenet
-100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.28933333333333333,0.272,0.5858169912956517,0.6199212,imagenet
+100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.28933333333333333,0.27066666666666667,0.5858169912956517,0.6199212,imagenet-a
+100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.28933333333333333,0.272,0.5858169912956517,0.6199212,imagenet-a
+
+# a partir daqui os testes foram feitos com uma nova função: chunkedSpearman
+
+100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.0,0.0,0.5858169912956509,0.6199212,imagenet-a
+100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.9608,0.949,0.10893172843310465,0.35390002,timm/mini-imagenet
+10,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.7509,0.7741,0.6492254482015241,0.69558525,cifar10
+10,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.744,0.7664,0.6492254482015241,0.69558525,cifar10

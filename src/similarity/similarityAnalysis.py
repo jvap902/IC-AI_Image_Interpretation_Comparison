@@ -2,25 +2,12 @@ import torch.nn.functional as F
 import torch
 import numpy as np
 import math
-from scipy.stats import spearmanr, pearsonr
-from src.memoryManagement import aggressive_cleanup
+from scipy.stats import pearsonr
+from . import similarityUtils
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 total_memory_gb = torch.cuda.get_device_properties(0).total_memory if torch.cuda.is_available() else 0
-
-def similarityVectorIndex(first, second, numEmbeddings):
-    if second > first:
-        first, second = second, first
-
-    temp = 0
-
-    fst = 0
-
-    while(temp < first):
-        fst += numEmbeddings - fst
-
-    return fst + (second - first)    
 
 def cosineSimilarity(ptPath, save_path): #retorna vetor de similaridades de cosseno
     
@@ -94,44 +81,29 @@ def calculateCorrelations(path_a, path_b, correlation_type='spearman'):
     array_b = None
     
     try:
-        print(f"\n--- Starting Spearman Correlation Calculation ---")
+        print(f"\n--- Starting {correlation_type} Correlation Calculation ---")
         
-        # 1. Load the first array safely onto CPU
-        print(f"Loading first array from {path_a} (CPU)...")
-        # Ensure it loads directly to CPU to avoid GPU conflicts and preserve GPU memory
-        array_a = torch.load(path_a, map_location='cpu', weights_only=True)
+        print("\nLoading similarity arrays from disk...\n")
         
-        # 2. Load the second array safely onto CPU
-        print(f"Loading second array from {path_b} (CPU)...")
-        array_b = torch.load(path_b, map_location='cpu', weights_only=True)
+        a = similarityUtils.loadTensorAsNP(path_a)
+        b = similarityUtils.loadTensorAsNP(path_b)
         
-        print(f"Array A size: {array_a.numel()}, Array B size: {array_b.numel()}")
-        if array_a.numel() != array_b.numel():
-            raise ValueError("Similarity arrays must have the same number of elements for correlation.")
-            
-        # 3. Convert to NumPy for efficient SciPy correlation calculation
-        # .numpy() conversion shares memory if possible, which is efficient
-        array_a_np = array_a.numpy()
-        del array_a
-        array_b_np = array_b.numpy()
-        del array_b
+        if a.shape != b.shape:
+            raise ValueError("Arrays must match in size.")
         
-        # 4. Calculate correlation
-        print(f"Calculating {correlation_type} correlation...")
-        if correlation_type == 'spearman':
-            correlation, p_value = spearmanr(array_a_np, array_b_np)
-        elif correlation_type == 'pearson':
-            correlation, p_value = pearsonr(array_a_np, array_b_np)
+        if correlation_type == 'pearson':
+            print("Calculating Pearson...")
+            r, _ = pearsonr(a, b)
+            return r, None
         
-        print(f"Spearman Correlation calculated: R={correlation:.4f}, P={p_value:.4e}")
-        
-        # 5. Cleanup the massive arrays immediately after calculation
-        aggressive_cleanup([array_a_np, array_b_np]) # Cleanup NumPy arrays and PyTorch cache
-        
-        return correlation, p_value
-        
+        elif correlation_type == 'spearman':
+            print("Calculating Spearman (chunked)...")
+            r, _ = similarityUtils.chunkedSpearman(path_a, path_b)
+            return r, None
+
+        else:
+            raise ValueError("correlation_type must be 'pearson' or 'spearman'.")
+
     except Exception as e:
-        print(f"ERROR during Spearman Correlation: {e}")
-        # Ensure cleanup even on error
-        aggressive_cleanup([array_a, array_b])
+        print(f"ERROR: {e}")
         raise

@@ -36,7 +36,7 @@ parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify n
 parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify number of images per class in the dataset")
 parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10, cifar100, imagenet-a or a link for huggingface dataset)")
 parser.add_argument("-e", "--epochs", type=int, required=False, help="Specify the number of epochs to train the head for validation")
-parser.add_argument("-nv", "--not_validate", action='store_false', help="Whether to validate the models after training the heads")
+parser.add_argument("-nv", "--not_validate", action='store_false', help="Turns off model validation step")
 
 args = parser.parse_args()
 
@@ -78,7 +78,7 @@ if __name__ == "__main__":
         dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.getOrCreateDataset(
             data_dir='./data', 
             imagesPerClass=imagesPerClass, 
-            transform=data_transforms["train"],
+            transform=fst_transforms,
             cache_dir=cache_dir, # Use dataStorage for cache files
             dataset_name=dataset_name
         )
@@ -137,16 +137,14 @@ if __name__ == "__main__":
     similarityAnalysis.cosineSimilarity(output_dir+"/first_global_embedding.pt", save_path=fst_similarity_path)
     similarityAnalysis.cosineSimilarity(output_dir+"/second_global_embedding.pt", save_path=snd_similarity_path)
 
-    spearman, p_value = similarityAnalysis.calculateCorrelations(fst_similarity_path, snd_similarity_path, correlation_type='spearman')
-
-    print(f"Spearman's Rank Correlation Coefficient (ρ): {spearman:.4f}")
-    print(f"P-value: {p_value:.4e}")
-
     print("\nCalculating Pearson's correlation\n")
     pearson, p_value = similarityAnalysis.calculateCorrelations(fst_similarity_path, snd_similarity_path, correlation_type='pearson')
 
     print(f"Pearson's Rank Correlation Coefficient (ρ): {pearson:.4f}")
-    print(f"P-value: {p_value:.4e}")
+
+    spearman, p_value = similarityAnalysis.calculateCorrelations(fst_similarity_path, snd_similarity_path, correlation_type='spearman')
+
+    print(f"Spearman's Rank Correlation Coefficient (ρ): {spearman:.4f}")
 
     runData = [str(imagesPerClass), first_model_name, second_model_name, str(fst_acc), str(snd_acc), str(spearman), str(pearson), dataset_name]
 

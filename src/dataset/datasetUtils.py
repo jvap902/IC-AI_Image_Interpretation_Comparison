@@ -4,6 +4,7 @@ from urllib.request import urlretrieve
 from tqdm.auto import tqdm
 import requests
 from torch.utils.data import Dataset
+import torch
 
 # ImageNet-A download details
 IMAGENET_A_URL = "https://people.eecs.berkeley.edu/~hendrycks/imagenet-a.tar"
