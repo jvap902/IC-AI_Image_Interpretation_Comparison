@@ -4,6 +4,10 @@ import numpy as np
 import math
 from scipy.stats import pearsonr
 from . import similarityUtils
+from src import memoryManagement
+
+# Constants for memory calculation (assuming torch.float32)
+FLOAT_BYTES = 4 
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -19,15 +23,8 @@ def cosineSimilarity(ptPath, save_path): #retorna vetor de similaridades de coss
     print(f"Feature tensor loaded with shape: {feature_tensor.shape}\n")
     print(f"Normalizing features...\n")
     normalized_features = F.normalize(feature_tensor, p=2, dim=1)
-
-
-    # Constants for memory calculation (assuming torch.float32)
-    FLOAT_BYTES = 4 
     
-    # Use a safe fraction of the available VRAM in bytes (80% of the allocated GB)
-    available_bytes = total_memory_gb * 1024**3 * 0.8  
-    
-    max_batch_size = math.floor(available_bytes / (numEmbeddings * FLOAT_BYTES))
+    max_batch_size = memoryManagement.getBatchSize(numEmbeddings, feature_tensor.shape, available_memory_gb=total_memory_gb, safe_fraction=0.8, FLOAT_BYTES=FLOAT_BYTES)
     
     # Ensure batch_size is at least 1 and not larger than the total size
     batch_size = max(1, min(max_batch_size, numEmbeddings))
@@ -64,7 +61,7 @@ def cosineSimilarity(ptPath, save_path): #retorna vetor de similaridades de coss
         torch.cuda.empty_cache()
 
     # 3. Extract the unique pairwise similarities
-    similarity_array_tensor = torch.cat(similarity_parts_cpu)#similarity_matrix[torch.triu(torch.ones(numEmbeddings, numEmbeddings, dtype=torch.bool), diagonal=1)]
+    similarity_array_tensor = torch.cat(similarity_parts_cpu)
     
     if save_path:
             print(f"Saving similarity array to {save_path} to free up system memory.")
@@ -98,7 +95,10 @@ def calculateCorrelations(path_a, path_b, correlation_type='spearman'):
         
         elif correlation_type == 'spearman':
             print("Calculating Spearman (chunked)...")
-            r, _ = similarityUtils.chunkedSpearman(path_a, path_b)
+            
+            chunk_size = memoryManagement.getBatchSize(len(a), a.shape, available_memory_gb=32)
+            
+            r, _ = similarityUtils.chunkedSpearman(path_a, path_b, chunk_size=chunk_size)
             return r, None
 
         else:

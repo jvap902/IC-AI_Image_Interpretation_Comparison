@@ -1,4 +1,5 @@
 import torch
+import math
 
 def aggressive_cleanup(tensors_to_delete):
     """Aggressively deletes tensors and clears CUDA cache."""
@@ -19,3 +20,14 @@ def aggressive_cleanup(tensors_to_delete):
     import gc
     gc.collect()
     print("Cleanup complete.")
+    
+def getBatchSize(num_embeddings, embedding_shape, available_memory_gb=8, safe_fraction=0.8, FLOAT_BYTES=4):
+    
+    if len(embedding_shape) == 1:
+        row_elements = 1       # 1 element per row
+    else:
+        row_elements = embedding_shape[1] 
+    
+    available_bytes = available_memory_gb * 1024**3 * 0.8
+    row_size_bytes = row_elements * FLOAT_BYTES
+    return math.floor(available_bytes / (num_embeddings * row_size_bytes))

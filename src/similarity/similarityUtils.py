@@ -22,7 +22,7 @@ def similarityVectorIndex(first, second, numEmbeddings):
 
     return fst + (second - first)
 
-def chunkedSpearman(path_a, path_b, chunk_size=1000000):
+def chunkedSpearman(path_a, path_b, chunk_size=8000000):
     tmp_a, n = write_chunks(path_a, chunk_size)
     tmp_b, _ = write_chunks(path_b, chunk_size)
 
