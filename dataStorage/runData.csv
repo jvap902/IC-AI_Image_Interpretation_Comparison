@@ -1,6 +1,3 @@
-100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.0,0.0,0.5858169912956509,0.6199212,imagenet-a
-100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.9608,0.949,0.10893172843310465,0.35390002,timm/mini-imagenet
-10,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.7509,0.7741,0.6492254482015241,0.69558525,cifar10
-10,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.744,0.7664,0.6492254482015241,0.69558525,cifar10
-100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.8695,0.8756,0.6447541869636857,0.68553406,cifar10
-200,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.8861,0.8851,0.6425856122021987,0.6826269,cifar10
+total_images,num_classes, first_model,second_model,first_model_accuracy,second_model_accuracy,spearman,pearson,dataset
+10,10,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.5544,0.4992,0.7408432147562581,0.84711665,cifar10
+100,10,resnet50.a1_in1k,efficientnet_b0.ra_in1k,1.0,1.0,0.34587392484142865,0.81957537,timm/mini-imagenet

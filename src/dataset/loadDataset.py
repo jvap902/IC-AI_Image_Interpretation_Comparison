@@ -5,13 +5,16 @@ import os
 from . import datasetUtils
 from datasets import load_dataset
 from huggingface_hub import login
+from collections import defaultdict
 
 
-def loadCifar10Subset(root, imagesPerClass, data_transforms):
+def loadCifar10Subset(root, total_images, data_transforms):
     # Assuming you have already defined and downloaded your dataset:
     # train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=data_transforms['train'])
     dataset = torchvision.datasets.CIFAR10(root=root, train=True, download=True, transform=data_transforms) # Use train set for example
     val_dataset = torchvision.datasets.CIFAR10(root=root, train=False, download=True, transform=data_transforms)
+    
+    imagesPerClass = total_images // 10
 
     # 1. Initialize storage for selected indices
     selected_indexes = datasetUtils.selectIndexes(dataset, imagesPerClass, 10)
@@ -25,11 +28,13 @@ def loadCifar10Subset(root, imagesPerClass, data_transforms):
     return subset_train_dataset, dataset, val_dataset
     # Expected output: Total images selected: 1000
     
-def loadCifar100Subset(root, imagesPerClass, data_transforms):
+def loadCifar100Subset(root, total_images, data_transforms):
     # Assuming you have already defined and downloaded your dataset:
     # train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=data_transforms['train'])
     dataset = torchvision.datasets.CIFAR100(root=root, train=True, download=True, transform=data_transforms) # Use train set for example
     val_dataset = torchvision.datasets.CIFAR100(root=root, train=False, download=True, transform=data_transforms)
+
+    imagesPerClass = total_images // 100
 
     # 1. Initialize storage for selected indices
     selected_indices = datasetUtils.selectIndexes(dataset, imagesPerClass, 100)
@@ -75,8 +80,10 @@ def loadImagenetA(root, data_transforms, val_split_ratio=0.1):
     # Return structure matching CIFAR: (subset, full_train_for_compat, val)
     return train_subset, full_dataset, val_subset
 
-def loadHuggingFaceImageNetSubset(root, imagesPerClass, data_transforms, dataset_link="timm/mini-imagenet", num_classes=10, val_split_ratio=0.1):
+def loadHuggingFaceDataset(root, total_images, data_transforms, dataset_link="timm/mini-imagenet", num_classes=10, val_split_ratio=0.1):
     print("\n--- Loading ImageNet Subset via Hugging Face ---")
+    
+    images_per_class = total_images // num_classes
     
     try:
         
@@ -84,51 +91,78 @@ def loadHuggingFaceImageNetSubset(root, imagesPerClass, data_transforms, dataset
         
         login(token=hf_token, add_to_git_credential=False)
         
-        # We use 'huggingface/imagenet-100' as a public, manageable proxy for ImageNet-1K
         hf_dataset = load_dataset(dataset_link, split='train', streaming=False)
-        
-        # Filter down to the desired number of classes for a quick test run
-        #hf_dataset = hf_dataset.filter(lambda x: x['label'] < num_classes)
         
     except Exception as e:
          raise RuntimeError(f"Failed to load Hugging Face ImageNet subset: {e}")
              
     print(f"Loaded HF Dataset of size: {len(hf_dataset)} (IPC: {len(hf_dataset) // num_classes})")
-
-    # 1. Wrap the Hugging Face Dataset in the custom PyTorch class
-    full_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_dataset, transform=data_transforms)
     
-    # 2. Split the wrapped PyTorch dataset
+    # 1. Pick num_classes classes
+    selected_classes = list(range(num_classes))
+
+    # 2. Collect indices per class
+    class_indices = defaultdict(list)
+
+    for idx, item in enumerate(hf_dataset):
+        label = item["label"]
+        if label in selected_classes:
+            class_indices[label].append(idx)
+
+    # 3. Check availability
+    for c in selected_classes:
+        if len(class_indices[c]) < images_per_class:
+            raise ValueError(
+                f"Class {c} only has {len(class_indices[c])} images, "
+                f"requested {images_per_class}."
+            )
+
+    # 4. Select balanced subset
+    selected_indices = []
+    for c in selected_classes:
+        selected_indices.extend(class_indices[c][:images_per_class])
+
+    hf_dataset = hf_dataset.select(selected_indices)
+
+    print(
+        f"Loaded {num_classes} classes × {images_per_class} images = "
+        f"{len(hf_dataset)} total images"
+    )
+
+    # 5. Wrap in PyTorch Dataset
+    full_dataset = datasetUtils.HuggingFaceImageNetDataset(
+        hf_dataset=hf_dataset,
+        transform=data_transforms,
+    )
+
+    # 6. Train / validation split
     dataset_size = len(full_dataset)
     val_size = int(val_split_ratio * dataset_size)
     train_size = dataset_size - val_size
-    
-    g = torch.Generator().manual_seed(42)
-    train_subset, val_subset = random_split(full_dataset, [train_size, val_size], generator=g)
 
-    # 3. Re-attach classes property for compatibility
+    g = torch.Generator().manual_seed(42)
+    train_subset, val_subset = random_split(
+        full_dataset, [train_size, val_size], generator=g
+    )
+
     train_subset.classes = full_dataset.classes
     val_subset.classes = full_dataset.classes
-    
-    print(f"ImageNet-HF loaded: Total images: {dataset_size}")
-    print(f"Split into Train ({train_size}) and Validation ({val_size}).")
-    
+
+    print(f"Train: {train_size} | Val: {val_size}")
+
     return train_subset, full_dataset, val_subset
     
-def getOrCreateDataset(data_dir, imagesPerClass, transform, cache_dir, dataset_name):
+def getOrCreateDataset(data_dir, total_images, num_classes, transform, cache_dir, dataset_name):
     """
     Checks for a cached version of the dataset subset. If found, loads it.
     Otherwise, creates the subset, saves it, and returns it.
     """
+    num_classes = 10 if dataset_name == "cifar10" else num_classes
+    num_classes = 100 if dataset_name == "cifar100" else num_classes
     
     # 1. Define the cache file path
-    if dataset_name == "cifar10":
-        cache_file = os.path.join(cache_dir, f"cifar10_subset_ipc{imagesPerClass}.pt")
-    elif dataset_name == "cifar100":
-        cache_file = os.path.join(cache_dir, f"cifar100_subset_ipc{imagesPerClass}.pt")
-    else:
-        dt_name = dataset_name.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
-        cache_file = os.path.join(cache_dir, f"{dt_name}_ipc{imagesPerClass}.pt")
+    dt_name = dataset_name.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
+    cache_file = os.path.join(cache_dir, f"{dt_name}_subset_i{total_images}_c{num_classes}.pt")
 
     if os.path.exists(cache_file):
         print(f"\nLoading cached dataset subset from: {cache_file}")
@@ -141,14 +175,14 @@ def getOrCreateDataset(data_dir, imagesPerClass, transform, cache_dir, dataset_n
             os.remove(cache_file) # Delete corrupted cache file
 
     # 2. If cache doesn't exist or failed to load, create the dataset
-    print(f"\nCreating new dataset subset (IPC={imagesPerClass}) and caching it...")
+    print(f"\nCreating new dataset subset ({total_images}) and caching it...")
     # Assuming loadDataset is correctly imported from src
     if dataset_name == "cifar10":
-        subset, full_train, val = loadCifar10Subset(data_dir, imagesPerClass, transform)
+        subset, full_train, val = loadCifar10Subset(data_dir, total_images, transform)
     elif dataset_name == "cifar100":
-        subset, full_train, val = loadCifar100Subset(data_dir, imagesPerClass, transform)
+        subset, full_train, val = loadCifar100Subset(data_dir, total_images, transform)
     else:
-        subset, full_train, val = loadHuggingFaceImageNetSubset(data_dir, imagesPerClass, transform, dataset_name)
+        subset, full_train, val = loadHuggingFaceDataset(data_dir, total_images, transform, dataset_name, num_classes=num_classes)
     
     # 3. Cache the newly created dataset
     data_to_save = {

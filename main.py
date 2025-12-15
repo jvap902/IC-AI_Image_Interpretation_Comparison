@@ -31,13 +31,14 @@ data_transforms = {
 }
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-s", "--size", type=int, required=False, help="Specify number of images per class in the dataset")
+parser.add_argument("-s", "--size", type=int, required=False, help="Specify number of images to be used from the dataset")
 parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify number of images per class in the dataset")
 parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify number of images per class in the dataset")
 parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10, cifar100, imagenet-a or a link for huggingface dataset)")
 parser.add_argument("-e", "--epochs", type=int, required=False, help="Specify the number of epochs to train the head for validation")
 parser.add_argument("-nv", "--not_validate", action='store_false', help="Turns off model validation step")
-parser.add_argument("--chunking", action='store_true', help="Enables spearman calculation in chunks to save memory")
+parser.add_argument("--chunked", action='store_true', help="Enables spearman calculation in chunks to save memory")
+parser.add_argument("--n_classes", type=int, required=False, help="Specify number of classes in the dataset (only for non cifar datasets)")
 
 args = parser.parse_args()
 
@@ -62,11 +63,16 @@ if __name__ == "__main__":
     
     dataset_name = args.dataset if args.dataset else "cifar10"
     
-    imagesPerClass = args.size if args.size else 100
+    total_images = args.size if args.size else 2000
+    
+    num_classes = args.n_classes if args.n_classes else 10
+    
+    if total_images < num_classes:
+        raise ValueError(f"Total images ({total_images}) must be at least equal to number of classes ({num_classes}).")
     
     epochs = args.epochs if args.epochs else 10
 
-    print(f"Number of images per class: {imagesPerClass}")
+    print(f"Number of images total: {total_images}")
 
     fst_data_config = timm.data.resolve_model_data_config(fst_model)
     snd_data_config = timm.data.resolve_model_data_config(snd_model)
@@ -75,16 +81,7 @@ if __name__ == "__main__":
 
     dataset = {}
 
-    if dataset_name != "imagenet-a":
-        dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.getOrCreateDataset(
-            data_dir='./data', 
-            imagesPerClass=imagesPerClass, 
-            transform=fst_transforms,
-            cache_dir=cache_dir, # Use dataStorage for cache files
-            dataset_name=dataset_name
-        )
-    else:
-        dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.loadImagenetA('./data', fst_transforms)
+    dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.getOrCreateDataset(data_dir='./data', total_images=total_images, num_classes=num_classes, transform=fst_transforms, cache_dir=cache_dir, dataset_name=dataset_name)
     
     batch_size = 64
     full_train_loader = DataLoader(dataset['full_train'], batch_size=batch_size, shuffle=False, num_workers=4)
@@ -143,10 +140,10 @@ if __name__ == "__main__":
 
     print(f"Pearson's Rank Correlation Coefficient (ρ): {pearson:.4f}")
 
-    spearman, p_value = similarityAnalysis.calculateCorrelations(fst_similarity_path, snd_similarity_path, correlation_type='spearman', chunking=args.chunking)
+    spearman, p_value = similarityAnalysis.calculateCorrelations(fst_similarity_path, snd_similarity_path, correlation_type='spearman', chunked=args.chunked)
 
     print(f"Spearman's Rank Correlation Coefficient (ρ): {spearman:.4f}")
 
-    runData = [str(imagesPerClass), first_model_name, second_model_name, str(fst_acc), str(snd_acc), str(spearman), str(pearson), dataset_name]
+    runData = [str(total_images), str(num_classes), first_model_name, second_model_name, str(fst_acc), str(snd_acc), str(spearman), str(pearson), dataset_name]
 
     plot.collectRunData(output_dir+"/runData.csv", runData)
