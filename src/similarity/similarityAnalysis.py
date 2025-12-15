@@ -2,7 +2,7 @@ import torch.nn.functional as F
 import torch
 import numpy as np
 import math
-from scipy.stats import pearsonr
+from scipy.stats import pearsonr, spearmanr
 from . import similarityUtils
 from src import memoryManagement
 
@@ -72,7 +72,7 @@ def cosineSimilarity(ptPath, save_path): #retorna vetor de similaridades de coss
     
     return np.array(similarity_array_tensor)
 
-def calculateCorrelations(path_a, path_b, correlation_type='spearman'):
+def calculateCorrelations(path_a, path_b, correlation_type='spearman', chunked=False):
     print("\nLoading similarity arrays from disk for correlation analysis...\n")
     array_a = None
     array_b = None
@@ -94,11 +94,16 @@ def calculateCorrelations(path_a, path_b, correlation_type='spearman'):
             return r, None
         
         elif correlation_type == 'spearman':
-            print("Calculating Spearman (chunked)...")
+            print("Calculating Spearman...")
+            if chunked:
+                
+                chunk_size = memoryManagement.getBatchSize(len(a), a.shape, available_memory_gb=32)
+                
+                r, _ = similarityUtils.chunkedSpearman(path_a, path_b, chunk_size=chunk_size)
             
-            chunk_size = memoryManagement.getBatchSize(len(a), a.shape, available_memory_gb=32)
-            
-            r, _ = similarityUtils.chunkedSpearman(path_a, path_b, chunk_size=chunk_size)
+            else:
+                r, _ = spearmanr(a, b)
+                
             return r, None
 
         else:
