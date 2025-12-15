@@ -5,8 +5,6 @@ import os
 from . import datasetUtils
 from datasets import load_dataset
 from huggingface_hub import login
-from collections import defaultdict
-
 
 def loadCifar10Subset(root, total_images, data_transforms):
     # Assuming you have already defined and downloaded your dataset:
@@ -98,29 +96,9 @@ def loadHuggingFaceDataset(root, total_images, data_transforms, dataset_link="ti
              
     print(f"Loaded HF Dataset of size: {len(hf_dataset)} (IPC: {len(hf_dataset) // num_classes})")
     
-    # 1. Pick num_classes classes
-    selected_classes = list(range(num_classes))
-
-    # 2. Collect indices per class
-    class_indices = defaultdict(list)
-
-    for idx, item in enumerate(hf_dataset):
-        label = item["label"]
-        if label in selected_classes:
-            class_indices[label].append(idx)
-
-    # 3. Check availability
-    for c in selected_classes:
-        if len(class_indices[c]) < images_per_class:
-            raise ValueError(
-                f"Class {c} only has {len(class_indices[c])} images, "
-                f"requested {images_per_class}."
-            )
-
-    # 4. Select balanced subset
-    selected_indices = []
-    for c in selected_classes:
-        selected_indices.extend(class_indices[c][:images_per_class])
+    print(f"\nCreating subset with {images_per_class} images per class for {num_classes} classes.")
+        
+    selected_indices = datasetUtils.getRandomImages(num_classes, images_per_class, hf_dataset, hf_dataset.features['label'].num_classes)
 
     hf_dataset = hf_dataset.select(selected_indices)
 
@@ -152,7 +130,7 @@ def loadHuggingFaceDataset(root, total_images, data_transforms, dataset_link="ti
 
     return train_subset, full_dataset, val_subset
     
-def getOrCreateDataset(data_dir, total_images, num_classes, transform, cache_dir, dataset_name):
+def getOrCreateDataset(data_dir, total_images, num_classes, transform, cache_dir, dataset_name, subset_num=0):
     """
     Checks for a cached version of the dataset subset. If found, loads it.
     Otherwise, creates the subset, saves it, and returns it.
@@ -162,7 +140,7 @@ def getOrCreateDataset(data_dir, total_images, num_classes, transform, cache_dir
     
     # 1. Define the cache file path
     dt_name = dataset_name.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
-    cache_file = os.path.join(cache_dir, f"{dt_name}_subset_i{total_images}_c{num_classes}.pt")
+    cache_file = os.path.join(cache_dir, f"{dt_name}_subset_i{total_images}_c{num_classes}({subset_num}).pt")
 
     if os.path.exists(cache_file):
         print(f"\nLoading cached dataset subset from: {cache_file}")

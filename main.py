@@ -39,6 +39,7 @@ parser.add_argument("-e", "--epochs", type=int, required=False, help="Specify th
 parser.add_argument("-nv", "--not_validate", action='store_false', help="Turns off model validation step")
 parser.add_argument("--chunked", action='store_true', help="Enables spearman calculation in chunks to save memory")
 parser.add_argument("--n_classes", type=int, required=False, help="Specify number of classes in the dataset (only for non cifar datasets)")
+parser.add_argument("--specific_subset", type=int, required=False, help="Specify a specific subset number to load from cache")
 
 args = parser.parse_args()
 
@@ -80,8 +81,10 @@ if __name__ == "__main__":
     fst_transforms = timm.data.create_transform(**fst_data_config, is_training=False) #assumindo que data_config do primeiro e segundo são iguais
 
     dataset = {}
+    
+    specific_subset = args.subset_num if args.specific_subset is not None else 0
 
-    dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.getOrCreateDataset(data_dir='./data', total_images=total_images, num_classes=num_classes, transform=fst_transforms, cache_dir=cache_dir, dataset_name=dataset_name)
+    dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.getOrCreateDataset(data_dir='./data', total_images=total_images, num_classes=num_classes, transform=fst_transforms, cache_dir=cache_dir, dataset_name=dataset_name, subset_num=specific_subset)
     
     batch_size = 64
     full_train_loader = DataLoader(dataset['full_train'], batch_size=batch_size, shuffle=False, num_workers=4)

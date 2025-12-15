@@ -1,3 +1,5 @@
 total_images,num_classes, first_model,second_model,first_model_accuracy,second_model_accuracy,spearman,pearson,dataset
 10,10,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.5544,0.4992,0.7408432147562581,0.84711665,cifar10
 100,10,resnet50.a1_in1k,efficientnet_b0.ra_in1k,1.0,1.0,0.34587392484142865,0.81957537,timm/mini-imagenet
+100,100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,1.0,1.0,0.33851308274448844,0.7625195,timm/mini-imagenet
+2000,100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.975,0.945,0.10151197907157307,0.34934145,timm/mini-imagenet

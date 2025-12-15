@@ -4,7 +4,9 @@ from urllib.request import urlretrieve
 from tqdm.auto import tqdm
 import requests
 from torch.utils.data import Dataset
-import torch
+import random
+from collections import defaultdict
+
 
 # ImageNet-A download details
 IMAGENET_A_URL = "https://people.eecs.berkeley.edu/~hendrycks/imagenet-a.tar"
@@ -151,3 +153,33 @@ def selectIndexes(dataset, imagesPerClass, num_classes):
         
         
     return selected_indexes
+
+def getRandomImages(num_classes, images_per_class, hf_dataset, dataset_classes):
+    
+    class_interval_start = random.randint(0, dataset_classes - num_classes)
+    
+    # 1. Pick num_classes classes
+    selected_classes = list(range(class_interval_start, class_interval_start+num_classes))
+
+    # 2. Collect indices per class
+    class_indices = defaultdict(list)
+
+    for idx, item in enumerate(hf_dataset):
+        label = item["label"]
+        if label in selected_classes:
+            class_indices[label].append(idx)
+
+    # 3. Check availability
+    for c in selected_classes:
+        if len(class_indices[c]) < images_per_class:
+            raise ValueError(
+                f"Class {c} only has {len(class_indices[c])} images, "
+                f"requested {images_per_class}."
+            )
+
+    # 4. Select balanced subset
+    selected_indices = []
+    for c in selected_classes:
+        selected_indices.extend(class_indices[c][:images_per_class])
+        
+    return selected_indices
