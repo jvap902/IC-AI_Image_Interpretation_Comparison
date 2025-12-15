@@ -32,8 +32,8 @@ data_transforms = {
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--size", type=int, required=False, help="Specify number of images to be used from the dataset")
-parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify number of images per class in the dataset")
-parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify number of images per class in the dataset")
+parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify the model to be used as first model (within timm library)")
+parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify the model to be used as second model (within timm library)")
 parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10, cifar100, imagenet-a or a link for huggingface dataset)")
 parser.add_argument("-e", "--epochs", type=int, required=False, help="Specify the number of epochs to train the head for validation")
 parser.add_argument("-nv", "--not_validate", action='store_false', help="Turns off model validation step")
@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     dataset = {}
     
-    specific_subset = args.subset_num if args.specific_subset is not None else 0
+    specific_subset = args.specific_subset if args.specific_subset is not None else 0
 
     dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.getOrCreateDataset(data_dir='./data', total_images=total_images, num_classes=num_classes, transform=fst_transforms, cache_dir=cache_dir, dataset_name=dataset_name, subset_num=specific_subset)
     
@@ -147,6 +147,6 @@ if __name__ == "__main__":
 
     print(f"Spearman's Rank Correlation Coefficient (ρ): {spearman:.4f}")
 
-    runData = [str(total_images), str(num_classes), first_model_name, second_model_name, str(fst_acc), str(snd_acc), str(spearman), str(pearson), dataset_name]
+    runData = [str(total_images), str(num_classes), first_model_name, second_model_name, str(fst_acc), str(snd_acc), str(spearman), str(pearson), dataset_name+f"({specific_subset})"]
 
     plot.collectRunData(output_dir+"/runData.csv", runData)

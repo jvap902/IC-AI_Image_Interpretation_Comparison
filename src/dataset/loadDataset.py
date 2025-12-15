@@ -103,15 +103,12 @@ def loadHuggingFaceDataset(root, total_images, data_transforms, dataset_link="ti
     hf_dataset = hf_dataset.select(selected_indices)
 
     print(
-        f"Loaded {num_classes} classes × {images_per_class} images = "
+        f"Loaded {num_classes} classes * {images_per_class} images = "
         f"{len(hf_dataset)} total images"
     )
 
     # 5. Wrap in PyTorch Dataset
-    full_dataset = datasetUtils.HuggingFaceImageNetDataset(
-        hf_dataset=hf_dataset,
-        transform=data_transforms,
-    )
+    full_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_dataset, transform=data_transforms)
 
     # 6. Train / validation split
     dataset_size = len(full_dataset)
@@ -119,9 +116,7 @@ def loadHuggingFaceDataset(root, total_images, data_transforms, dataset_link="ti
     train_size = dataset_size - val_size
 
     g = torch.Generator().manual_seed(42)
-    train_subset, val_subset = random_split(
-        full_dataset, [train_size, val_size], generator=g
-    )
+    train_subset, val_subset = random_split(full_dataset, [train_size, val_size], generator=g)
 
     train_subset.classes = full_dataset.classes
     val_subset.classes = full_dataset.classes
