@@ -37,6 +37,7 @@ parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify n
 parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10, cifar100, imagenet-a or a link for huggingface dataset)")
 parser.add_argument("-e", "--epochs", type=int, required=False, help="Specify the number of epochs to train the head for validation")
 parser.add_argument("-nv", "--not_validate", action='store_false', help="Turns off model validation step")
+parser.add_argument("--chunking", action='store_true', help="Enables spearman calculation in chunks to save memory")
 
 args = parser.parse_args()
 
@@ -142,7 +143,7 @@ if __name__ == "__main__":
 
     print(f"Pearson's Rank Correlation Coefficient (ρ): {pearson:.4f}")
 
-    spearman, p_value = similarityAnalysis.calculateCorrelations(fst_similarity_path, snd_similarity_path, correlation_type='spearman')
+    spearman, p_value = similarityAnalysis.calculateCorrelations(fst_similarity_path, snd_similarity_path, correlation_type='spearman', chunking=args.chunking)
 
     print(f"Spearman's Rank Correlation Coefficient (ρ): {spearman:.4f}")
 
