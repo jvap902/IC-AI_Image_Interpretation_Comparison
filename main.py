@@ -24,11 +24,10 @@ cache_dir = "datasetCache"
 os.makedirs(cache_dir, exist_ok=True)
 # ---------------------
 
-
-data_transforms = {
-    'train': transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])]),
-    'val': transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])]),
-}
+# data_transforms = {
+#     'train': transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])]),
+#     'val': transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])]),
+# }
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--size", type=int, required=False, help="Specify number of images to be used from the dataset")
@@ -40,6 +39,7 @@ parser.add_argument("-nv", "--not_validate", action='store_false', help="Turns o
 parser.add_argument("--chunked", action='store_true', help="Enables spearman calculation in chunks to save memory")
 parser.add_argument("--n_classes", type=int, required=False, help="Specify number of classes in the dataset (only for non cifar datasets)")
 parser.add_argument("--specific_subset", type=int, required=False, help="Specify a specific subset number to load from cache")
+parser.add_argument("--torchvision_models", action='store_true', required=False, help="Specify if the model is a pytorch model, if not specified it is timm")
 
 args = parser.parse_args()
 
@@ -51,14 +51,12 @@ if __name__ == "__main__":
     # --- Model Creation ---
 
     first_model_name = args.model1 if args.model1 else 'resnet50.a1_in1k'
-    # Use num_classes=0 to get the feature vector *before* the classification head
-    fst_model = timm.create_model(first_model_name, pretrained=True, num_classes=0).to(device)
-
     second_model_name = args.model2 if args.model2 else 'efficientnet_b0.ra_in1k'
-    snd_model = timm.create_model(second_model_name, pretrained=True, num_classes=0).to(device)
-
-    fst_model.eval()
-    snd_model.eval()
+    
+    if(args.torchvision_models):
+        fst_model, snd_model, data_transforms = getAdaptedModel.loadTorchvisonModels(first_model_name, second_model_name)
+    else:
+        fst_model, snd_model, data_transforms = getAdaptedModel.loadTimmModels(first_model_name, second_model_name)
     
     # --- Data Setup ---
     
@@ -75,16 +73,11 @@ if __name__ == "__main__":
 
     print(f"Number of images total: {total_images}")
 
-    fst_data_config = timm.data.resolve_model_data_config(fst_model)
-    snd_data_config = timm.data.resolve_model_data_config(snd_model)
-
-    fst_transforms = timm.data.create_transform(**fst_data_config, is_training=False) #assumindo que data_config do primeiro e segundo são iguais
-
     dataset = {}
     
     specific_subset = args.specific_subset if args.specific_subset is not None else 0
 
-    dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.getOrCreateDataset(data_dir='./data', total_images=total_images, num_classes=num_classes, transform=fst_transforms, cache_dir=cache_dir, dataset_name=dataset_name, subset_num=specific_subset, output_dir=output_dir)
+    dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.getOrCreateDataset(data_dir='./data', total_images=total_images, num_classes=num_classes, transform=data_transforms, cache_dir=cache_dir, dataset_name=dataset_name, subset_num=specific_subset, output_dir=output_dir)
     
     batch_size = 64
     full_train_loader = DataLoader(dataset['full_train'], batch_size=batch_size, shuffle=False, num_workers=4)

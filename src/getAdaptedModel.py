@@ -3,6 +3,9 @@ import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 import timm
+import torchvision.models as models
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 def getAdaptedModel():
     # Define the transformation pipeline for CIFAR-10
@@ -52,3 +55,21 @@ def getAdaptedModel():
     print(f"\nModel moved to: {device}")
 
     return model
+
+def loadTimmModels(first_model_name, second_model_name):
+    # Use num_classes=0 to get the feature vector *before* the classification head
+    fst_model = timm.create_model(first_model_name, pretrained=True, num_classes=0).to(device)
+    snd_model = timm.create_model(second_model_name, pretrained=True, num_classes=0).to(device)
+
+    fst_model.eval()
+    snd_model.eval()
+    
+    fst_data_config = timm.data.resolve_model_data_config(fst_model)
+    snd_data_config = timm.data.resolve_model_data_config(snd_model)
+    
+    data_transforms = timm.data.create_transform(**fst_data_config, is_training=False) #assumindo que data_config do primeiro e segundo são iguais
+
+    return fst_model, snd_model, data_transforms
+
+def loadTorchvisionModels(first_model_name, second_model_name):
+    raise NotImplementedError
