@@ -131,9 +131,9 @@ def loadToken(file_path):
     except Exception as e:
         print(f"An error occurred: {e}")
     
-def selectIndexes(dataset, imagesPerClass, num_classes):
+def selectindices(dataset, imagesPerClass, num_classes):
     # 1. Initialize storage for selected indices
-    selected_indexes = []
+    selected_indices = []
     count_per_class = {i: 0 for i in range(num_classes)}
 
     # 2. Iterate through the dataset's indices
@@ -144,22 +144,20 @@ def selectIndexes(dataset, imagesPerClass, num_classes):
 
         # 3. Check if we need more samples for this class
         if count_per_class[label] < imagesPerClass:
-            selected_indexes.append(i)
+            selected_indices.append(i)
             count_per_class[label] += 1
         
         # Optional: Stop early once all classes have x samples
-        if len(selected_indexes) == imagesPerClass * num_classes: # x * 10 classes
+        if len(selected_indices) == imagesPerClass * num_classes: # x * 10 classes
             break
         
         
-    return selected_indexes
+    return selected_indices
 
 def getRandomImages(num_classes, images_per_class, hf_dataset, dataset_classes):
     
-    class_interval_start = random.randint(0, dataset_classes - num_classes)
-    
     # 1. Pick num_classes classes
-    selected_classes = list(range(class_interval_start, class_interval_start+num_classes))
+    selected_classes = random.sample(range(dataset_classes), num_classes)
 
     # 2. Collect indices per class
     class_indices = defaultdict(list)
@@ -169,7 +167,7 @@ def getRandomImages(num_classes, images_per_class, hf_dataset, dataset_classes):
         if label in selected_classes:
             class_indices[label].append(idx)
 
-    # 3. Check availability
+    # 3. Check availability - verifica se existe o número de imagens por classe nesta classe
     for c in selected_classes:
         if len(class_indices[c]) < images_per_class:
             raise ValueError(
@@ -180,6 +178,8 @@ def getRandomImages(num_classes, images_per_class, hf_dataset, dataset_classes):
     # 4. Select balanced subset
     selected_indices = []
     for c in selected_classes:
-        selected_indices.extend(class_indices[c][:images_per_class])
-        
+        indices = class_indices[c]
+        rand_img_start = random.randint(0, len(indices)-images_per_class)
+        selected_indices.extend(indices[rand_img_start : rand_img_start + images_per_class])
+                
     return selected_indices

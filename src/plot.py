@@ -91,7 +91,7 @@ def similarityCsv(similarity_array, file_path, num_embeddings, model_name):
 
             current_second_id += 1
 
-def collectRunData(file_path, data):
+def writeCsvLine(file_path, data):
     with open(file_path, 'a', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
 

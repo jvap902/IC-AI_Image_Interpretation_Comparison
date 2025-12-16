@@ -5,6 +5,7 @@ import os
 from . import datasetUtils
 from datasets import load_dataset
 from huggingface_hub import login
+from .. import plot
 
 def loadCifar10Subset(root, total_images, data_transforms):
     # Assuming you have already defined and downloaded your dataset:
@@ -15,15 +16,15 @@ def loadCifar10Subset(root, total_images, data_transforms):
     imagesPerClass = total_images // 10
 
     # 1. Initialize storage for selected indices
-    selected_indexes = datasetUtils.selectIndexes(dataset, imagesPerClass, 10)
+    selected_indices = datasetUtils.selectindices(dataset, imagesPerClass, 10)
     
     # 4. Create the new subset dataset
     # This new dataset contains exactly 100 non-random images from each class.
-    subset_train_dataset = Subset(dataset, selected_indexes)
+    subset_train_dataset = Subset(dataset, selected_indices)
 
     print(f"Total images selected: {len(subset_train_dataset)}")
 
-    return subset_train_dataset, dataset, val_dataset
+    return subset_train_dataset, dataset, val_dataset, selected_indices
     # Expected output: Total images selected: 1000
     
 def loadCifar100Subset(root, total_images, data_transforms):
@@ -35,14 +36,14 @@ def loadCifar100Subset(root, total_images, data_transforms):
     imagesPerClass = total_images // 100
 
     # 1. Initialize storage for selected indices
-    selected_indices = datasetUtils.selectIndexes(dataset, imagesPerClass, 100)
+    selected_indices = datasetUtils.selectindices(dataset, imagesPerClass, 100)
     # 4. Create the new subset dataset
     # This new dataset contains exactly 100 non-random images from each class.
     subset_train_dataset = Subset(dataset, selected_indices)
 
     print(f"Total images selected: {len(subset_train_dataset)}")
 
-    return subset_train_dataset, dataset, val_dataset
+    return subset_train_dataset, dataset, val_dataset, selected_indices
     # Expected output: Total images selected: 1000
     
 def loadImagenetA(root, data_transforms, val_split_ratio=0.1):
@@ -94,7 +95,7 @@ def loadHuggingFaceDataset(root, total_images, data_transforms, dataset_link="ti
     except Exception as e:
          raise RuntimeError(f"Failed to load Hugging Face ImageNet subset: {e}")
              
-    print(f"Loaded HF Dataset of size: {len(hf_dataset)} (IPC: {len(hf_dataset) // num_classes})")
+    print(f"Loaded HF Dataset of size: {len(hf_dataset)}")
     
     print(f"\nCreating subset with {images_per_class} images per class for {num_classes} classes.")
         
@@ -123,9 +124,9 @@ def loadHuggingFaceDataset(root, total_images, data_transforms, dataset_link="ti
 
     print(f"Train: {train_size} | Val: {val_size}")
 
-    return train_subset, full_dataset, val_subset
+    return train_subset, full_dataset, val_subset, selected_indices
     
-def getOrCreateDataset(data_dir, total_images, num_classes, transform, cache_dir, dataset_name, subset_num=0):
+def getOrCreateDataset(data_dir, total_images, num_classes, transform, cache_dir, dataset_name, subset_num=0, output_dir="./dataStorage"):
     """
     Checks for a cached version of the dataset subset. If found, loads it.
     Otherwise, creates the subset, saves it, and returns it.
@@ -135,7 +136,8 @@ def getOrCreateDataset(data_dir, total_images, num_classes, transform, cache_dir
     
     # 1. Define the cache file path
     dt_name = dataset_name.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
-    cache_file = os.path.join(cache_dir, f"{dt_name}_subset_i{total_images}_c{num_classes}({subset_num}).pt")
+    file_name = f"{dt_name}_subset_i{total_images}_c{num_classes}({subset_num}).pt"
+    cache_file = os.path.join(cache_dir, file_name)
 
     if os.path.exists(cache_file):
         print(f"\nLoading cached dataset subset from: {cache_file}")
@@ -151,11 +153,13 @@ def getOrCreateDataset(data_dir, total_images, num_classes, transform, cache_dir
     print(f"\nCreating new dataset subset ({total_images}) and caching it...")
     # Assuming loadDataset is correctly imported from src
     if dataset_name == "cifar10":
-        subset, full_train, val = loadCifar10Subset(data_dir, total_images, transform)
+        subset, full_train, val, selected_indices = loadCifar10Subset(data_dir, total_images, transform)
     elif dataset_name == "cifar100":
-        subset, full_train, val = loadCifar100Subset(data_dir, total_images, transform)
+        subset, full_train, val, selected_indices = loadCifar100Subset(data_dir, total_images, transform)
     else:
-        subset, full_train, val = loadHuggingFaceDataset(data_dir, total_images, transform, dataset_name, num_classes=num_classes)
+        subset, full_train, val, selected_indices = loadHuggingFaceDataset(data_dir, total_images, transform, dataset_name, num_classes=num_classes)
+        
+    plot.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, selected_indices])
     
     # 3. Cache the newly created dataset
     data_to_save = {

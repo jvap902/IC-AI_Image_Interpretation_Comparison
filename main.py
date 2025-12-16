@@ -66,7 +66,7 @@ if __name__ == "__main__":
     
     total_images = args.size if args.size else 2000
     
-    num_classes = args.n_classes if args.n_classes else 10
+    num_classes = args.n_classes if args.n_classes else 100
     
     if total_images < num_classes:
         raise ValueError(f"Total images ({total_images}) must be at least equal to number of classes ({num_classes}).")
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     
     specific_subset = args.specific_subset if args.specific_subset is not None else 0
 
-    dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.getOrCreateDataset(data_dir='./data', total_images=total_images, num_classes=num_classes, transform=fst_transforms, cache_dir=cache_dir, dataset_name=dataset_name, subset_num=specific_subset)
+    dataset['subset'], dataset['full_train'], dataset['val'] = loadDataset.getOrCreateDataset(data_dir='./data', total_images=total_images, num_classes=num_classes, transform=fst_transforms, cache_dir=cache_dir, dataset_name=dataset_name, subset_num=specific_subset, output_dir=output_dir)
     
     batch_size = 64
     full_train_loader = DataLoader(dataset['full_train'], batch_size=batch_size, shuffle=False, num_workers=4)
@@ -149,4 +149,4 @@ if __name__ == "__main__":
 
     runData = [str(total_images), str(num_classes), first_model_name, second_model_name, str(fst_acc), str(snd_acc), str(spearman), str(pearson), dataset_name+f"({specific_subset})"]
 
-    plot.collectRunData(output_dir+"/runData.csv", runData)
+    plot.writeCsvLine(output_dir+"/runData.csv", runData)

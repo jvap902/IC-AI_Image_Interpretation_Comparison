@@ -55,11 +55,6 @@ if __name__ == "__main__":
     # Capture all command-line arguments passed to this script, 
     # excluding the script name itself (sys.argv[0] is 'run_pipeline.py').
 
-    sizes = [500, 300, 200]
-    models = [('resnet50.a1_in1k', 'efficientnet_b0.ra_in1k')]
-
-    for size in sizes:
-        for model in models:
-            m1, m2 = model
-            arguments_to_pass = ['--size', str(size), "--model1", m1, "--model2", m2, "--dataset", "cifar100"]
-            run_main_with_subprocess(arguments_to_pass)
+    for specific_subset in range(5):
+        arguments_to_pass = ['--size', "2000", "--dataset", "timm/mini-imagenet", "--n_classes", "100", "--specific_subset", str(specific_subset)]
+        run_main_with_subprocess(arguments_to_pass)
