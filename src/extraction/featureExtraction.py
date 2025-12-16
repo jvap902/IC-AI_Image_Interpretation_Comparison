@@ -20,7 +20,7 @@ def _extract_all_data(dataloader, model=None) -> Tuple[torch.Tensor, torch.Tenso
     labels_list = []
     
     with torch.no_grad():
-        for inputs, labels in tqdm(dataloader, desc="Extracting Data for Head Training"):
+        for inputs, labels in tqdm(dataloader, desc="Extracting Data"):
             inputs = inputs.to(device)
             if model:
                 model.eval()

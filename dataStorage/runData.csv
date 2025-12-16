@@ -8,3 +8,5 @@ total_images,num_classes,first_model,second_model,first_model_accuracy,second_mo
 2000,100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.955,0.915,0.12162343448915898,0.35566062,timm/mini-imagenet(2)
 2000,100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.945,0.885,0.09813719591019911,0.3312122,timm/mini-imagenet(3)
 2000,100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,0.955,0.955,0.12797330715445457,0.36031127,timm/mini-imagenet(4)
+2000,100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,1.0,1.0,0.10107270664737845,0.3342252,timm/mini-imagenet(0)
+2000,100,resnet50.a1_in1k,efficientnet_b0.ra_in1k,1.0,1.0,0.10080872357687116,0.34781405,timm/mini-imagenet(0)

@@ -90,41 +90,31 @@ def loadHuggingFaceDataset(root, total_images, data_transforms, dataset_link="ti
         
         login(token=hf_token, add_to_git_credential=False)
         
-        hf_dataset = load_dataset(dataset_link, split='train', streaming=False)
+        hf_train = load_dataset(dataset_link, split='train', streaming=False)
+        hf_validation = load_dataset(dataset_link, split='validation', streaming=False)
         
     except Exception as e:
          raise RuntimeError(f"Failed to load Hugging Face ImageNet subset: {e}")
              
-    print(f"Loaded HF Dataset of size: {len(hf_dataset)}")
+    print(f"Loaded HF Dataset of size: {len(hf_train) + len(hf_validation)}")
     
     print(f"\nCreating subset with {images_per_class} images per class for {num_classes} classes.")
         
-    selected_indices = datasetUtils.getRandomImages(num_classes, images_per_class, hf_dataset, hf_dataset.features['label'].num_classes)
+    train_selected_indices = datasetUtils.getRandomImages(num_classes, images_per_class, hf_train, hf_train.features['label'].num_classes)
+    val_selected_indices = datasetUtils.getRandomImages(num_classes, images_per_class, hf_validation, hf_train.features['label'].num_classes)
 
-    hf_dataset = hf_dataset.select(selected_indices)
+    hf_train = hf_train.select(train_selected_indices)
+    hf_validation = hf_validation.select(val_selected_indices)
 
-    print(
-        f"Loaded {num_classes} classes * {images_per_class} images = "
-        f"{len(hf_dataset)} total images"
-    )
+    print(f"Loaded {num_classes} classes * {images_per_class} images per class")
 
     # 5. Wrap in PyTorch Dataset
-    full_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_dataset, transform=data_transforms)
+    train_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=data_transforms)
+    val_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=data_transforms)
 
-    # 6. Train / validation split
-    dataset_size = len(full_dataset)
-    val_size = int(val_split_ratio * dataset_size)
-    train_size = dataset_size - val_size
+    print(f"Train: {len(train_dataset)} | Val: {len(val_dataset)}")
 
-    g = torch.Generator().manual_seed(42)
-    train_subset, val_subset = random_split(full_dataset, [train_size, val_size], generator=g)
-
-    train_subset.classes = full_dataset.classes
-    val_subset.classes = full_dataset.classes
-
-    print(f"Train: {train_size} | Val: {val_size}")
-
-    return train_subset, full_dataset, val_subset, selected_indices
+    return train_dataset, train_selected_indices, val_dataset, val_selected_indices
     
 def getOrCreateDataset(data_dir, total_images, num_classes, transform, cache_dir, dataset_name, subset_num=0, output_dir="./dataStorage"):
     """
@@ -144,7 +134,7 @@ def getOrCreateDataset(data_dir, total_images, num_classes, transform, cache_dir
         try:
             # We save the three parts of the dataset in a dictionary
             cached_data = torch.load(cache_file)
-            return cached_data['subset'], cached_data['full_train'], cached_data['val']
+            return cached_data['full_train'], cached_data['val']
         except Exception as e:
             print(f"Error loading cache file: {e}. Rebuilding dataset.")
             os.remove(cache_file) # Delete corrupted cache file
@@ -153,21 +143,20 @@ def getOrCreateDataset(data_dir, total_images, num_classes, transform, cache_dir
     print(f"\nCreating new dataset subset ({total_images}) and caching it...")
     # Assuming loadDataset is correctly imported from src
     if dataset_name == "cifar10":
-        subset, full_train, val, selected_indices = loadCifar10Subset(data_dir, total_images, transform)
+        subset, train, val, selected_indices = loadCifar10Subset(data_dir, total_images, transform)
     elif dataset_name == "cifar100":
-        subset, full_train, val, selected_indices = loadCifar100Subset(data_dir, total_images, transform)
+        subset, train, val, selected_indices = loadCifar100Subset(data_dir, total_images, transform)
     else:
-        subset, full_train, val, selected_indices = loadHuggingFaceDataset(data_dir, total_images, transform, dataset_name, num_classes=num_classes)
+        train, train_indices, val, val_indices = loadHuggingFaceDataset(data_dir, total_images, transform, dataset_name, num_classes=num_classes)
         
-    plot.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, selected_indices])
+    plot.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
     
     # 3. Cache the newly created dataset
     data_to_save = {
-        'subset': subset,
-        'full_train': full_train,
+        'full_train': train,
         'val': val
     }
     torch.save(data_to_save, cache_file)
     print(f"Dataset subset saved successfully to: {cache_file}")
     
-    return subset, full_train, val
+    return train, val
