@@ -5,39 +5,15 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 import torch.nn as nn
 from typing import Tuple
+from .extractionUtils import _extract_all_data
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-# --- Utility to get features/labels from a DataLoader ---
-def _extract_all_data(dataloader, model=None) -> Tuple[torch.Tensor, torch.Tensor]:
-    """
-    Utility function to extract all data (features or raw images) and labels 
-    from a DataLoader into a single Tensor.
-    
-    If model is provided, it extracts features; otherwise, it extracts raw inputs.
-    """
-    data_list = []
-    labels_list = []
-    
-    with torch.no_grad():
-        for inputs, labels in tqdm(dataloader, desc="Extracting Data"):
-            inputs = inputs.to(device)
-            if model:
-                model.eval()
-                data = model(inputs).cpu() # Extract features using the backbone
-            else:
-                data = inputs.cpu() # Extract raw inputs
-                
-            data_list.append(data)
-            labels_list.append(labels.cpu())
-            
-    return torch.cat(data_list), torch.cat(labels_list)
 
-
-def extract_features_to_tensors(dataloader, model) -> Tuple[torch.Tensor, torch.Tensor]:
+def extract_features_to_tensors(dataloader, model, model_type) -> Tuple[torch.Tensor, torch.Tensor]:
     """Extracts features from a dataloader using a feature extractor model and returns them as tensors."""
     # Reuses the generalized internal utility
-    return _extract_all_data(dataloader, model)
+    return _extract_all_data(dataloader, model_type, model)
 
 
 def evaluate_model(test_loader: DataLoader, model: nn.Module) -> float:
@@ -124,7 +100,7 @@ def train_and_validate_head_on_features(
     return accuracy
 
 
-def train_and_validate_head(model: timm.create_model, train_loader: DataLoader, val_loader: DataLoader, epochs=15, num_classes=10) -> float:
+def train_and_validate_head(model: timm.create_model, train_loader: DataLoader, val_loader: DataLoader, epochs=15, num_classes=10, model_type='timm') -> float:
     """
     DEPRECATED: This function is now just a wrapper that performs feature extraction 
     and then calls the faster, feature-based training.
@@ -136,10 +112,10 @@ def train_and_validate_head(model: timm.create_model, train_loader: DataLoader, 
 
     # 2. Extract features ONCE (the slow step, but only happens here)
     print("  Step 1/3: Extracting features from training subset...")
-    train_features, train_labels = _extract_all_data(train_loader, model)
+    train_features, train_labels = _extract_all_data(train_loader, model_type, model)
     
     print("  Step 2/3: Extracting features from full validation set...")
-    val_features, val_labels = _extract_all_data(val_loader, model)
+    val_features, val_labels = _extract_all_data(val_loader, model_type, model)
 
     feature_dim = train_features.size(1)
 

@@ -4,6 +4,7 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 import timm
 import torchvision.models as models
+import clip
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -56,36 +57,57 @@ def getAdaptedModel():
 
     return model
 
-def loadTimmModels(first_model_name, second_model_name):
+
+def loadTimmModel(model_name):
     # Use num_classes=0 to get the feature vector *before* the classification head
-    fst_model = timm.create_model(first_model_name, pretrained=True, num_classes=0).to(device)
-    snd_model = timm.create_model(second_model_name, pretrained=True, num_classes=0).to(device)
+    model = timm.create_model(model_name, pretrained=True, num_classes=0).to(device)
 
-    fst_model.eval()
-    snd_model.eval()
+    model.eval()
     
-    fst_data_config = timm.data.resolve_model_data_config(fst_model)
-    snd_data_config = timm.data.resolve_model_data_config(snd_model)
+    data_config = timm.data.resolve_model_data_config(model)
     
-    data_transforms = timm.data.create_transform(**fst_data_config, is_training=False) #assumindo que data_config do primeiro e segundo são iguais
+    data_transforms = timm.data.create_transform(**data_config, is_training=False) #assumindo que data_config do primeiro e segundo são iguais
 
-    return fst_model, snd_model, data_transforms
+    return model, data_transforms
 
-def loadTorchvisionModels(first_model_name, second_model_name, weights="DEFAULT"):
-    m1 = getattr(models, first_model_name)
-    m2 = getattr(models, second_model_name)
+
+def loadTorchvisionModel(model_name, weights="DEFAULT"):
+    m = getattr(models, model_name)
     
-    weights_enum = models.get_model_weights(m1)
+    weights_enum = models.get_model_weights(m)
     weights = weights_enum.DEFAULT
-    fst_model = m1(weights=weights).to(device)
+    model = m(weights=weights).to(device)
     
-    weights_enum = models.get_model_weights(m2)
-    weights = weights_enum.DEFAULT
-    snd_model = m2(weights=weights).to(device)
-    
-    fst_model.eval()
-    snd_model.eval()
+    model.eval()
     
     data_transforms = weights.transforms() #assumindo que ambos modelos utilizam as mesmas transformações
 
-    return fst_model, snd_model, data_transforms
+    return model, data_transforms
+
+
+def loadClipModel(model_name):
+    model, data_transforms = clip.load(model_name, device=device)
+    
+    model.eval()
+    
+    return model, data_transforms
+
+
+def getModel(model_source, model_name):
+    
+    print(f"\nLoading model {model_name}")
+    
+    match model_source:
+        case 'timm':
+            model, data_transforms = loadTimmModel(model_name)
+            
+        case 'torchvision':
+            model, data_transforms = loadTorchvisionModel(model_name)
+        
+        case 'clip':
+            model, data_transforms = loadClipModel(model_name)
+            
+        case _:
+            raise ValueError(f"Not supported source typed")
+    
+    return model, data_transforms
