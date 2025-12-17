@@ -90,8 +90,8 @@ if __name__ == "__main__":
     fst_acc = 0.0
     snd_acc = 0.0
     if (args.not_validate):
-        fst_acc = featureExtraction.train_and_validate_head(first_model_name, train_loader, val_loader, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
-        snd_acc = featureExtraction.train_and_validate_head(second_model_name, train_loader, val_loader, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+        fst_acc = featureExtraction.train_and_validate_head(fst_model, train_loader, val_loader, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+        snd_acc = featureExtraction.train_and_validate_head(snd_model, train_loader, val_loader, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
 
         print(f"\n{first_model_name} Validation Accuracy: {fst_acc:.4f}")
         print(f"\n{second_model_name} Validation Accuracy: {snd_acc:.4f}")

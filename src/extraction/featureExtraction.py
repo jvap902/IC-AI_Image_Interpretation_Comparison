@@ -59,9 +59,10 @@ def evaluate_model(test_loader: DataLoader, model: nn.Module) -> float:
             X_batch, y_batch = X_batch.to(device), y_batch.to(device)
             outputs = model(X_batch)
             
-            _, predicted = torch.max(outputs.data, 1)
-            total += y_batch.size(0)
+            #_, predicted = torch.max(outputs.data, 1)
+            predicted = outputs.argmax(dim=1)
             correct += (predicted == y_batch).sum().item()
+            total += y_batch.size(0)
 
     accuracy = correct / total
     return accuracy
@@ -76,7 +77,6 @@ class LinearHead(nn.Module):
         return self.fc(x)
 
 def train_and_validate_head_on_features(
-    model_name: str, 
     train_features_loader: DataLoader, 
     val_features_loader: DataLoader, 
     feature_dim: int, 
@@ -96,7 +96,7 @@ def train_and_validate_head_on_features(
     Returns:
         The final validation accuracy (float) after training the head.
     """
-    print(f"\n--- Training Linear Head for {model_name} (on features, Epochs={epochs}) ---")
+    print(f"\n--- Training Linear Head (on features, Epochs={epochs}) ---")
     
     # 1. Initialize the new Linear Head
     head_model = LinearHead(input_dim=feature_dim, num_classes=num_classes).to(device)
@@ -107,7 +107,7 @@ def train_and_validate_head_on_features(
 
     # 3. Training loop (Linear Probe)
     head_model.train()
-    for epoch in tqdm(range(epochs), desc=f"Training Head ({model_name})"):
+    for epoch in tqdm(range(epochs), desc=f"Training Head"):
         for inputs, labels in train_features_loader:
             inputs, labels = inputs.to(device), labels.to(device)
 
@@ -119,31 +119,27 @@ def train_and_validate_head_on_features(
 
     # 4. Evaluation (on pre-extracted validation features)
     accuracy = evaluate_model(val_features_loader, head_model)
-    print(f"  {model_name} Final Accuracy on Full Validation Set: {accuracy:.4f}")
+    print(f"Final Accuracy on Full Validation Set: {accuracy:.4f}")
     
     return accuracy
 
 
-def train_and_validate_head(model_name: str, train_loader: DataLoader, val_loader: DataLoader, epochs=15, num_classes=10) -> float:
+def train_and_validate_head(model: timm.create_model, train_loader: DataLoader, val_loader: DataLoader, epochs=15, num_classes=10) -> float:
     """
     DEPRECATED: This function is now just a wrapper that performs feature extraction 
     and then calls the faster, feature-based training.
     """
-    print(f"\n--- FAST VALIDATION WORKFLOW for {model_name} ---")
+    print(f"\n--- FAST VALIDATION WORKFLOW ---")
     
     # 1. Load model for feature extraction (without classification head)
-    try:
-        feature_extractor = timm.create_model(model_name, pretrained=True, num_classes=0).to(device)
-    except Exception as e:
-        print(f"Error: Could not load model '{model_name}'. Exception: {e}")
-        return 0.0
+    
 
     # 2. Extract features ONCE (the slow step, but only happens here)
     print("  Step 1/3: Extracting features from training subset...")
-    train_features, train_labels = _extract_all_data(train_loader, feature_extractor)
+    train_features, train_labels = _extract_all_data(train_loader, model)
     
     print("  Step 2/3: Extracting features from full validation set...")
-    val_features, val_labels = _extract_all_data(val_loader, feature_extractor)
+    val_features, val_labels = _extract_all_data(val_loader, model)
 
     feature_dim = train_features.size(1)
 
@@ -158,7 +154,6 @@ def train_and_validate_head(model_name: str, train_loader: DataLoader, val_loade
     # 4. Train the head on features (the fast step)
     print("  Step 3/3: Training linear head on extracted features...")
     accuracy = train_and_validate_head_on_features(
-        model_name, 
         train_features_loader, 
         val_features_loader, 
         feature_dim, 

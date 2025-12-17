@@ -110,7 +110,7 @@ def loadHuggingFaceDataset(root, total_images, data_transforms, dataset_link="ti
 
     # 5. Wrap in PyTorch Dataset
     train_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=data_transforms)
-    val_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=data_transforms)
+    val_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_validation, transform=data_transforms)
 
     print(f"Train: {len(train_dataset)} | Val: {len(val_dataset)}")
 
