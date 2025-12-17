@@ -71,5 +71,21 @@ def loadTimmModels(first_model_name, second_model_name):
 
     return fst_model, snd_model, data_transforms
 
-def loadTorchvisionModels(first_model_name, second_model_name):
-    raise NotImplementedError
+def loadTorchvisionModels(first_model_name, second_model_name, weights="DEFAULT"):
+    m1 = getattr(models, first_model_name)
+    m2 = getattr(models, second_model_name)
+    
+    weights_enum = models.get_model_weights(m1)
+    weights = weights_enum.DEFAULT
+    fst_model = m1(weights=weights).to(device)
+    
+    weights_enum = models.get_model_weights(m2)
+    weights = weights_enum.DEFAULT
+    snd_model = m2(weights=weights).to(device)
+    
+    fst_model.eval()
+    snd_model.eval()
+    
+    data_transforms = weights.transforms() #assumindo que ambos modelos utilizam as mesmas transformações
+
+    return fst_model, snd_model, data_transforms

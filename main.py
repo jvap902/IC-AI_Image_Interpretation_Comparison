@@ -54,7 +54,7 @@ if __name__ == "__main__":
     second_model_name = args.model2 if args.model2 else 'efficientnet_b0.ra_in1k'
     
     if(args.torchvision_models):
-        fst_model, snd_model, data_transforms = getAdaptedModel.loadTorchvisonModels(first_model_name, second_model_name)
+        fst_model, snd_model, data_transforms = getAdaptedModel.loadTorchvisionModels(first_model_name, second_model_name)
     else:
         fst_model, snd_model, data_transforms = getAdaptedModel.loadTimmModels(first_model_name, second_model_name)
     
