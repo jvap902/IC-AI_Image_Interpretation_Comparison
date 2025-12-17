@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 import timm
 import torchvision.models as models
 import clip
+import open_clip
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -91,6 +92,10 @@ def loadClipModel(model_name):
     model.eval()
     
     return model, data_transforms
+
+
+def loadHuggingfaceModel(model_name):
+    raise NotImplementedError
 
 
 def getModel(model_source, model_name):
