@@ -11,3 +11,6 @@ class Model:
         
         self.featureExtractor = getExtractor(self.source)
         
+    def extract(self, inputs):
+        return self.featureExtractor(self, inputs)
+        

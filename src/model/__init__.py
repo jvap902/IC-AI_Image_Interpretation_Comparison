@@ -1,5 +1,5 @@
 from . import modelCreation
-from . import modelUtils
 from . import classUtils
+from . import modelClass
 
-__all__ = ["modelCreation", "modelUtils", "classUtils"]
+__all__ = ["modelCreation", "classUtils", "modelClass"]

@@ -4,7 +4,6 @@ import torchvision.models as models
 import clip
 import open_clip
 from transformers import AutoModel, AutoImageProcessor
-from . import modelUtils
 from huggingface_hub import login
 from ..dataset import datasetUtils
 
