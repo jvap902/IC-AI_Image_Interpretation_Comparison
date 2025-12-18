@@ -3,7 +3,7 @@ import timm
 import torchvision.models as models
 import clip
 import open_clip
-from transformers import AutoModel, pipeline
+from transformers import AutoModel, AutoImageProcessor
 from . import modelUtils
 from huggingface_hub import login
 from ..dataset import datasetUtils
@@ -56,7 +56,7 @@ def loadHuggingfaceModel(model_name):
     model.to(device)
     model.eval()
     
-    data_transforms = modelUtils.dinoDataTransforms()
+    data_transforms = AutoImageProcessor.from_pretrained(model_name)
     
     return model, data_transforms
 

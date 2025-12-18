@@ -1,19 +1,36 @@
 import torch
 from tqdm.auto import tqdm
 from typing import Tuple
+from ..model.modelClass import Model
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-def extractFeatures(model, inputs, model_type):
-    if (model_type == 'clip'):
-        data = model.encode_image(inputs)
-    else:
-        data = model(inputs).cpu()
-        
+def clipExtractor(modelClass: Model, inputs):
+    data = modelClass.model.encode_image(inputs)
+    
     if data.dim() > 2:
         data = torch.flatten(data, start_dim=1)
-        
+    
     return data.float()
+
+def generalExtractor(modelClass: Model, inputs):
+    data = modelClass.model(inputs)
+    
+    if data.dim() > 2:
+        data = torch.flatten(data, start_dim=1)
+    
+    return data.float()
+
+def huggingfaceExtractor(modelClass: Model, inputs):
+    
+    inp = modelClass.data_transforms(inputs, return_tensors="pt").to(modelClass.model.device)
+    
+    with torch.inference_mode():    
+        data = modelClass.model(**inp)
+    
+    return data.float()
+    
+    
         
 # --- Utility to get features/labels from a DataLoader ---
 def _extract_all_data(dataloader, model_type, model=None) -> Tuple[torch.Tensor, torch.Tensor]:
