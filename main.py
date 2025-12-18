@@ -119,18 +119,18 @@ if __name__ == "__main__":
 
     # --- Montando matriz ---
 
-    fst_similarity_path = os.path.join(output_dir, "first_similarity_array.pt")
-    snd_similarity_path = os.path.join(output_dir, "second_similarity_array.pt")
+    fst_dissimilarity_path = os.path.join(output_dir, "first_similarity_array.pt")
+    snd_dissimilarity_path = os.path.join(output_dir, "second_similarity_array.pt")
 
-    similarityAnalysis.cosineSimilarity(output_dir+"/first_global_embedding.pt", save_path=fst_similarity_path)
-    similarityAnalysis.cosineSimilarity(output_dir+"/second_global_embedding.pt", save_path=snd_similarity_path)
+    similarityAnalysis.cosineDissimilarity(output_dir+"/first_global_embedding.pt", save_path=fst_dissimilarity_path)
+    similarityAnalysis.cosineDissimilarity(output_dir+"/second_global_embedding.pt", save_path=snd_dissimilarity_path)
 
     print("\nCalculating Pearson's correlation\n")
-    pearson, p_value = similarityAnalysis.calculateCorrelations(fst_similarity_path, snd_similarity_path, correlation_type='pearson')
+    pearson, p_value = similarityAnalysis.calculateCorrelations(fst_dissimilarity_path, snd_dissimilarity_path, correlation_type='pearson')
 
     print(f"Pearson's Rank Correlation Coefficient (ρ): {pearson:.4f}")
 
-    spearman, p_value = similarityAnalysis.calculateCorrelations(fst_similarity_path, snd_similarity_path, correlation_type='spearman', chunked=args.chunked)
+    spearman, p_value = similarityAnalysis.calculateCorrelations(fst_dissimilarity_path, snd_dissimilarity_path, correlation_type='spearman', chunked=args.chunked)
 
     print(f"Spearman's Rank Correlation Coefficient (ρ): {spearman:.4f}")
 

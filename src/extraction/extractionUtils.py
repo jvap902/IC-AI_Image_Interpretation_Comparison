@@ -21,8 +21,13 @@ def generalExtractor(modelc, inputs):
 def huggingfaceExtractor(modelc, inputs):
     
     inp = modelc.data_transforms(inputs, return_tensors="pt").to(modelc.model.device)
-    
-    with torch.inference_mode():    
-        data = modelc.model(**inp)
-    
+
+    with torch.inference_mode():
+        outputs = modelc.model(**inp)
+
+    data = outputs.last_hidden_state  # (B, T, D)
+
+    # pool tokens → feature vector
+    data = data.mean(dim=1)  # (B, D)
+
     return data.float()
