@@ -4,6 +4,7 @@ import sys
 import torch
 from torch.utils.data import DataLoader
 from src import *
+from src.model.modelClass import Model
 
 # If 'src' is one level up, add the parent directory to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -46,8 +47,11 @@ if __name__ == "__main__":
     first_model_name = args.model1 if args.model1 else 'resnet50.a1_in1k'
     second_model_name = args.model2 if args.model2 else 'efficientnet_b0.ra_in1k'
     
-    fst_model, data_transforms = modelCreation.getModel(args.m1_source, first_model_name)
-    snd_model, snd_dt = modelCreation.getModel(args.m2_source, second_model_name)
+    fst_modelc = Model(first_model_name, args.m1_source)
+    snd_modelc = Model(second_model_name, args.m2_source)
+    
+    #fst_model, data_transforms = modelCreation.getModel(args.m1_source, first_model_name)
+    #snd_model, snd_dt = modelCreation.getModel(args.m2_source, second_model_name)
     
     # --- Data Setup ---
     
@@ -68,7 +72,7 @@ if __name__ == "__main__":
     
     specific_subset = args.specific_subset if args.specific_subset is not None else 0
 
-    dataset['train'], dataset['val'] = loadDataset.getOrCreateDataset(data_dir='./data', total_images=total_images, num_classes=num_classes, transform=data_transforms, cache_dir=cache_dir, dataset_name=dataset_name, subset_num=specific_subset, output_dir=output_dir)
+    dataset['train'], dataset['val'] = loadDataset.getOrCreateDataset(data_dir='./data', total_images=total_images, num_classes=num_classes, transform=fst_modelc.data_transforms, cache_dir=cache_dir, dataset_name=dataset_name, subset_num=specific_subset, output_dir=output_dir)
     
     batch_size = 64
     train_loader = DataLoader(dataset['train'], batch_size=batch_size, shuffle=False, num_workers=4)
@@ -81,8 +85,8 @@ if __name__ == "__main__":
     fst_acc = 0.0
     snd_acc = 0.0
     if (args.not_validate):
-        fst_acc = featureExtraction.train_and_validate_head(fst_model, train_loader, val_loader, epochs=epochs, num_classes=num_classes, model_type=args.m1_source) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
-        snd_acc = featureExtraction.train_and_validate_head(snd_model, train_loader, val_loader, epochs=epochs, num_classes=num_classes, model_type=args.m2_source) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+        fst_acc = featureExtraction.train_and_validate_head(fst_modelc, train_loader, val_loader, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+        snd_acc = featureExtraction.train_and_validate_head(snd_modelc, train_loader, val_loader, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
 
         print(f"\n{first_model_name} Validation Accuracy: {fst_acc:.4f}")
         print(f"\n{second_model_name} Validation Accuracy: {snd_acc:.4f}")
@@ -92,10 +96,10 @@ if __name__ == "__main__":
     with torch.no_grad():
         print(f"\n--- Extracting Features for {first_model_name} ---")
         # This function iterates over all batches in val_loader and returns ONE large tensor
-        first_features, _ = featureExtraction.extract_features_to_tensors(val_loader, fst_model, args.m1_source)
+        first_features, _ = featureExtraction.getFeatureTensors(val_loader, fst_modelc)
         
         print(f"\n--- Extracting Features for {second_model_name} ---")
-        second_features, _ = featureExtraction.extract_features_to_tensors(val_loader, snd_model, args.m2_source)
+        second_features, _ = featureExtraction.getFeatureTensors(val_loader, snd_modelc)
 
     # --- Saving the Full Embeddings ---
     
@@ -115,18 +119,18 @@ if __name__ == "__main__":
 
     # --- Montando matriz ---
 
-    fst_similarity_path = os.path.join(output_dir, "first_similarity_array.pt")
-    snd_similarity_path = os.path.join(output_dir, "second_similarity_array.pt")
+    fst_dissimilarity_path = os.path.join(output_dir, "first_similarity_array.pt")
+    snd_dissimilarity_path = os.path.join(output_dir, "second_similarity_array.pt")
 
-    similarityAnalysis.cosineSimilarity(output_dir+"/first_global_embedding.pt", save_path=fst_similarity_path)
-    similarityAnalysis.cosineSimilarity(output_dir+"/second_global_embedding.pt", save_path=snd_similarity_path)
+    similarityAnalysis.cosineDissimilarity(output_dir+"/first_global_embedding.pt", save_path=fst_dissimilarity_path)
+    similarityAnalysis.cosineDissimilarity(output_dir+"/second_global_embedding.pt", save_path=snd_dissimilarity_path)
 
     print("\nCalculating Pearson's correlation\n")
-    pearson, p_value = similarityAnalysis.calculateCorrelations(fst_similarity_path, snd_similarity_path, correlation_type='pearson')
+    pearson, p_value = similarityAnalysis.calculateCorrelations(fst_dissimilarity_path, snd_dissimilarity_path, correlation_type='pearson')
 
     print(f"Pearson's Rank Correlation Coefficient (ρ): {pearson:.4f}")
 
-    spearman, p_value = similarityAnalysis.calculateCorrelations(fst_similarity_path, snd_similarity_path, correlation_type='spearman', chunked=args.chunked)
+    spearman, p_value = similarityAnalysis.calculateCorrelations(fst_dissimilarity_path, snd_dissimilarity_path, correlation_type='spearman', chunked=args.chunked)
 
     print(f"Spearman's Rank Correlation Coefficient (ρ): {spearman:.4f}")
 
