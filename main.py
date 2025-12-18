@@ -46,8 +46,8 @@ if __name__ == "__main__":
     first_model_name = args.model1 if args.model1 else 'resnet50.a1_in1k'
     second_model_name = args.model2 if args.model2 else 'efficientnet_b0.ra_in1k'
     
-    fst_model, data_transforms = getAdaptedModel.getModel(args.m1_source, first_model_name)
-    snd_model, snd_dt = getAdaptedModel.getModel(args.m2_source, second_model_name)
+    fst_model, data_transforms = modelCreation.getModel(args.m1_source, first_model_name)
+    snd_model, snd_dt = modelCreation.getModel(args.m2_source, second_model_name)
     
     # --- Data Setup ---
     

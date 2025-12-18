@@ -3,8 +3,8 @@ from .extraction import featureExtraction
 from .dataset import loadDataset
 from .dataset import datasetUtils
 from .similarity import similarityAnalysis
-from . import getAdaptedModel
+from .model import modelCreation
 from . import plot
 from . import memoryManagement
 
-__all__ = ["extractionTraining", "featureExtraction", "getAdaptedModel", "plot", "loadDataset", "similarityAnalysis", "datasetUtils", "memoryManagement"]
+__all__ = ["extractionTraining", "featureExtraction", "modelCreation", "plot", "loadDataset", "similarityAnalysis", "datasetUtils", "memoryManagement"]
