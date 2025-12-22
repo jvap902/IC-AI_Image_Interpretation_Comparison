@@ -28,7 +28,7 @@ parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify t
 parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify the model to be used as second model (within timm library)")
 parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10, cifar100, imagenet-a or a link for huggingface dataset)")
 parser.add_argument("-e", "--epochs", type=int, required=False, help="Specify the number of epochs to train the head for validation")
-parser.add_argument("-nv", "--not_validate", action='store_false', help="Turns off model validation step")
+parser.add_argument("-nv", "--no_validation", action='store_false', help="Turns off model validation step")
 parser.add_argument("--chunked", action='store_true', help="Enables spearman calculation in chunks to save memory")
 parser.add_argument("--n_classes", type=int, required=False, help="Specify number of classes in the dataset (only for non cifar datasets)")
 parser.add_argument("--specific_subset", type=int, required=False, help="Specify a specific subset number to load from cache")
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     # --- teste se modelos estão funcionando de acordo ---
     fst_acc = 0.0
     snd_acc = 0.0
-    if (args.not_validate):
+    if (args.no_validation):
         fst_acc = featureExtraction.train_and_validate_head(fst_modelc, train_loader, val_loader, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
         snd_acc = featureExtraction.train_and_validate_head(snd_modelc, train_loader, val_loader, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
 
@@ -119,11 +119,15 @@ if __name__ == "__main__":
 
     # --- Montando matriz ---
 
-    fst_dissimilarity_path = os.path.join(output_dir, "first_similarity_array.pt")
-    snd_dissimilarity_path = os.path.join(output_dir, "second_similarity_array.pt")
+    fst_dissimilarity_path = os.path.join(output_dir, "first_dissimilarity_array.pt")
+    snd_dissimilarity_path = os.path.join(output_dir, "second_dissimilarity_array.pt")
+    dissimilarity_csv_path = os.path.join(output_dir, "cosineDissimilarity.csv")
+    np_folder = output_dir+"/dissimilarity_arrays"
+    dt_name_w_subset = dataset_name+f"({specific_subset})"
 
-    similarityAnalysis.cosineDissimilarity(output_dir+"/first_global_embedding.pt", save_path=fst_dissimilarity_path)
-    similarityAnalysis.cosineDissimilarity(output_dir+"/second_global_embedding.pt", save_path=snd_dissimilarity_path)
+    similarityAnalysis.getCosineDissimilarity(output_dir+"/first_global_embedding.pt", save_path=fst_dissimilarity_path, dissimilarity_csv=dissimilarity_csv_path, np_folder=np_folder, modelc=fst_modelc, dataset=dt_name_w_subset)
+    
+    similarityAnalysis.getCosineDissimilarity(output_dir+"/second_global_embedding.pt", save_path=snd_dissimilarity_path, dissimilarity_csv=dissimilarity_csv_path, np_folder=np_folder, modelc=snd_modelc, dataset=dt_name_w_subset)
 
     print("\nCalculating Pearson's correlation\n")
     pearson, p_value = similarityAnalysis.calculateCorrelations(fst_dissimilarity_path, snd_dissimilarity_path, correlation_type='pearson')
@@ -134,6 +138,6 @@ if __name__ == "__main__":
 
     print(f"Spearman's Rank Correlation Coefficient (ρ): {spearman:.4f}")
 
-    runData = [str(total_images), str(num_classes), f"({args.m1_source}){first_model_name}", f"({args.m2_source}){second_model_name}", str(fst_acc), str(snd_acc), str(spearman), str(pearson), dataset_name+f"({specific_subset})"]
+    runData = [str(total_images), str(num_classes), fst_modelc.source, fst_modelc.name, fst_modelc.archType, snd_modelc.source, snd_modelc.name, snd_modelc.archType, str(fst_acc), str(snd_acc), str(spearman), str(pearson), dt_name_w_subset]
 
     plot.writeCsvLine(output_dir+"/runData.csv", runData)

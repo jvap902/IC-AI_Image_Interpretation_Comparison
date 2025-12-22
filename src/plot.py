@@ -155,6 +155,27 @@ def correlationGraphic(filepath, xlabel, ylabel, subplot_fields=[]):
         print(f"An unexpected error occurred in correlationGraphic: {e}")
 
 
+def findInCsv(file_path, params, values):
+    if(len(params) != len(values)):
+        raise ValueError("The number of parameters should be the as the number of values serched")
+    
+    with open(file_path, mode='r', newline='', encoding='utf-8') as file:
+        reader = list(csv.DictReader(file))
+        
+        ans = []
+        
+        for row in reader:
+            all_equal = True
+            
+            for idx, param in enumerate(params):
+                if (str(values[idx]) != row[param]):
+                    all_equal = False
+                    break
+            
+            if all_equal:
+                ans.append(row)
+                
+    return ans
 
 if __name__ == '__main__':
     pass

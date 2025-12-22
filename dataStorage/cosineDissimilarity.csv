@@ -1,0 +1,6 @@
+model,model_source,dataset,path
+resnet50.a1_in1k,timm,timm/mini-imagenet(0),dataStorage\dissimilarity_arrays\resnet50.a1_in1k_timm_timm-mini-imagenet(0).npy
+efficientnet_b0.ra_in1k,timm,timm/mini-imagenet(0),dataStorage\dissimilarity_arrays\efficientnet_b0.ra_in1k_timm_timm-mini-imagenet(0).npy
+resnet50.a1_in1k,timm,timm/mini-imagenet(1),dataStorage/dissimilarity_arrays\resnet50.a1_in1k_timm_timm-mini-imagenet(1).npy
+efficientnet_b0.ra_in1k,timm,timm/mini-imagenet(1),dataStorage/dissimilarity_arrays\efficientnet_b0.ra_in1k_timm_timm-mini-imagenet(1).npy
+ViT-B/32,clip,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\ViT-B-32_clip_timm-mini-imagenet(0).npy
