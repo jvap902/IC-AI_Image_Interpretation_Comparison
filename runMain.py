@@ -1,7 +1,5 @@
 import subprocess
 import sys
-import os
-import time
 from src import *
 
 def run_main_with_subprocess(args):
@@ -9,52 +7,55 @@ def run_main_with_subprocess(args):
     Executes the main.py script as an external command, passing along 
     any command-line arguments provided to this script.
     """
-    print("--- Starting Execution of main.py via Subprocess ---")
     
     # Base command: [python interpreter, 'main.py']
-    command = [sys.executable, 'main.py']
-    
-    # Append all arguments passed to run_pipeline.py to the command list
-    if args:
-        print(f"--- Passing arguments to main.py: {args} ---")
-        command.extend(args) # Use .extend() to add the list of arguments
+    command = [sys.executable, 'main.py'] + args
     
     try:
-        # Run the command
-        # check=True raises an exception if main.py exits with an error
-        start_time = time.time()
-        process = subprocess.run(
-            command, 
-            check=True,  
-            capture_output=True, 
-            text=True    
-        )
-        end_time = time.time()
+        # subprocess.run waits for the command to complete
+        result = subprocess.run(command, check=True, stdout=sys.stdout, stderr=sys.stderr)
+        print("Output from called_script.py:")
+        print(result.stdout)
 
-        print("\n--- main.py Output (stdout) ---")
-        print(process.stdout)
-        
-        if process.stderr:
-            # Note: Errors here mean main.py printed to stderr, not necessarily failed (unless check=True caught it)
-            print("\n--- main.py Errors (stderr) ---")
-            print(process.stderr)
-        
-        print(f"--- Execution of main.py finished successfully in {end_time - start_time:.2f} seconds ---")
-
+        if result.returncode != 0:
+            print(f"Process exited with code {result.returncode}")
+            
     except subprocess.CalledProcessError as e:
-        print(f"\nERROR: main.py failed with exit code {e.returncode}")
-        print("\n--- main.py Errors (stderr) ---")
-        print(e.stderr)
-    except FileNotFoundError:
-        print("ERROR: Could not find 'main.py'. Ensure it is in the same directory.")
-    except Exception as e:
-        print(f"An unexpected error occurred during subprocess execution: {e}")
+        print(f"An error occurred: {e.stderr}")
 
 
 if __name__ == "__main__":
     # Capture all command-line arguments passed to this script, 
     # excluding the script name itself (sys.argv[0] is 'run_pipeline.py').
+    
+    instances = [
+        ('resnet18', 'IMAGENET1K_V1'),
+        ('resnet50', 'IMAGENET1K_V1'),
+        ('resnet152', 'IMAGENET1K_V1'),
+        ('convnext_tiny', 'IMAGENET1K_V1'),
+        ('convnext_base', 'IMAGENET1K_V1'),
+        ('regnet_y_16gf', 'IMAGENET1K_V1'),
+        ('regnet_y_16gf', 'IMAGENET1K_V2'),
+        ('regnet_y_16gf', 'IMAGENET1K_SWAG_E2E_V1'),
+        ('regnet_y_32gf', 'IMAGENET1K_V2'),
+        ('vit_b_16', 'IMAGENET1K_V1'),
+        ('vit_b_16', 'IMAGENET1K_SWAG_E2E_V1'),
+        ('vit_l_16', 'IMAGENET1K_V1'),
+        ('vit_h_14', 'IMAGENET1K_SWAG_E2E_V1'),
+        ('swin_t', 'IMAGENET1K_V1'),
+        ('swin_v2_t', 'IMAGENET1K_V1'),
+        ('maxvit_t', 'IMAGENET1K_V1'),
+        ('efficientnet_b0', 'IMAGENET1K_V1'),
+        ('efficientnet_b4', 'IMAGENET1K_V1'),
+        ('efficientnet_b7', 'IMAGENET1K_V1')
+        
+    ]
 
-    for specific_subset in range(5):
-        arguments_to_pass = ['--size', "2000", "--dataset", "timm/mini-imagenet", "--n_classes", "100", "--specific_subset", str(specific_subset)]
-        run_main_with_subprocess(arguments_to_pass)
+    for idx, (model1, weight1) in enumerate(instances[1:]):
+        for (model2, weight2) in instances[idx+1:]:
+        
+            print(f"    --- Running test: {model1} x {model2} ---")
+        
+            arguments_to_pass = ["--dataset", "timm/mini-imagenet", "--m1_source", "torchvision", "-m1", model1, "--m1_weights", weight1, 
+                                 "--m2_source", "torchvision", "-m2", model2, "--m2_weights", weight2]
+            run_main_with_subprocess(arguments_to_pass)

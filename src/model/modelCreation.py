@@ -26,12 +26,23 @@ def loadTorchvisionModel(model_name, weights="DEFAULT"):
     m = getattr(models, model_name)
     
     weights_enum = models.get_model_weights(m)
-    weights = weights_enum.DEFAULT
-    model = m(weights=weights).to(device)
+    
+    if weights == "DEFAULT":
+        weights_obj = weights_enum.DEFAULT
+    
+    elif isinstance(weights, str):
+        try:
+            weights_obj = getattr(weights_enum, weights)
+        except AttributeError:
+            raise ValueError(
+                f"Invalid weights '{weights}' for model {model_name}. "
+                f"Available: {[w.name for w in weights_enum]}")
+    
+    model = m(weights=weights_obj).to(device)
     
     model.eval()
     
-    data_transforms = weights.transforms() #assumindo que ambos modelos utilizam as mesmas transformações
+    data_transforms = weights_obj.transforms() if weights_obj is not None else None   #assumindo que ambos modelos utilizam as mesmas transformações
 
     return model, data_transforms
 
@@ -96,7 +107,7 @@ def get_default_openclip_pretrained(model_name: str) -> str:
 
 
 
-def getModel(model_source, model_name):
+def getModel(model_source, model_name, weights):
     
     print(f"\nLoading model {model_name}")
     
@@ -105,7 +116,7 @@ def getModel(model_source, model_name):
             model, data_transforms = loadTimmModel(model_name)
             
         case 'torchvision':
-            model, data_transforms = loadTorchvisionModel(model_name)
+            model, data_transforms = loadTorchvisionModel(model_name, weights=weights)
         
         case 'clip':
             model, data_transforms = loadClipModel(model_name)

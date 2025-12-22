@@ -34,6 +34,8 @@ parser.add_argument("--n_classes", type=int, required=False, help="Specify numbe
 parser.add_argument("--specific_subset", type=int, required=False, help="Specify a specific subset number to load from cache")
 parser.add_argument("--m1_source", type=str, required=False, default="timm", help="Specify from where the first model to be loaded come from, default is timm lib")
 parser.add_argument("--m2_source", type=str, required=False, default="timm", help="Specify from where the second model to be loaded come from, default is timm lib")
+parser.add_argument("--m1_weights", type=str, required=False, default="DEFAULT", help="Specify weights for torchvision models")
+parser.add_argument("--m2_weights", type=str, required=False, default="DEFAULT", help="Specify weights for torchvision models")
 
 args = parser.parse_args()
 
@@ -47,8 +49,8 @@ if __name__ == "__main__":
     first_model_name = args.model1 if args.model1 else 'resnet50.a1_in1k'
     second_model_name = args.model2 if args.model2 else 'efficientnet_b0.ra_in1k'
     
-    fst_modelc = Model(first_model_name, args.m1_source)
-    snd_modelc = Model(second_model_name, args.m2_source)
+    fst_modelc = Model(first_model_name, args.m1_source, args.m1_weights)
+    snd_modelc = Model(second_model_name, args.m2_source, args.m2_weights)
     
     #fst_model, data_transforms = modelCreation.getModel(args.m1_source, first_model_name)
     #snd_model, snd_dt = modelCreation.getModel(args.m2_source, second_model_name)
@@ -138,6 +140,6 @@ if __name__ == "__main__":
 
     print(f"Spearman's Rank Correlation Coefficient (ρ): {spearman:.4f}")
 
-    runData = [str(total_images), str(num_classes), fst_modelc.source, fst_modelc.name, snd_modelc.source, snd_modelc.name, str(fst_acc), str(snd_acc), str(spearman), str(pearson), dt_name_w_subset]
+    runData = [str(total_images), str(num_classes), fst_modelc.source, fst_modelc.name, args.m1_weights, snd_modelc.source, snd_modelc.name, args.m2_weights, str(fst_acc), str(snd_acc), str(spearman), str(pearson), dt_name_w_subset]
 
     plot.writeCsvLine(output_dir+"/runData.csv", runData)
