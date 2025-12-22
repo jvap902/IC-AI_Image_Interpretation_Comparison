@@ -138,6 +138,6 @@ if __name__ == "__main__":
 
     print(f"Spearman's Rank Correlation Coefficient (ρ): {spearman:.4f}")
 
-    runData = [str(total_images), str(num_classes), fst_modelc.source, fst_modelc.name, fst_modelc.archType, snd_modelc.source, snd_modelc.name, snd_modelc.archType, str(fst_acc), str(snd_acc), str(spearman), str(pearson), dt_name_w_subset]
+    runData = [str(total_images), str(num_classes), fst_modelc.source, fst_modelc.name, snd_modelc.source, snd_modelc.name, str(fst_acc), str(snd_acc), str(spearman), str(pearson), dt_name_w_subset]
 
     plot.writeCsvLine(output_dir+"/runData.csv", runData)

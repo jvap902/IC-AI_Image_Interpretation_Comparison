@@ -59,6 +59,42 @@ def loadHuggingfaceModel(model_name):
     
     return model, data_transforms
 
+def loadOpenClipModel(model_name):
+    
+    pretrained = get_default_openclip_pretrained(model_name)
+    
+    model, _, data_transforms = open_clip.create_model_and_transforms(model_name, pretrained=pretrained)
+    model.to(device)
+    model.eval()
+    
+    return model, data_transforms
+    
+def get_default_openclip_pretrained(model_name: str) -> str:
+    candidates = [
+        p for m, p in open_clip.list_pretrained()
+        if m == model_name
+    ]
+
+    if not candidates:
+        raise ValueError(f"No pretrained weights found for {model_name}")
+
+    # Preference order (best → fallback)
+    priority = [
+        "laion2b_s34b",
+        "laion2b",
+        "datacomp",
+        "openai",
+    ]
+
+    for key in priority:
+        for p in candidates:
+            if key in p:
+                return p
+
+    # Absolute fallback
+    return candidates[0]
+
+
 
 def getModel(model_source, model_name):
     
@@ -76,6 +112,9 @@ def getModel(model_source, model_name):
             
         case 'huggingface':
             model, data_transforms = loadHuggingfaceModel(model_name)
+            
+        case 'open_clip':
+            model, data_transforms = loadOpenClipModel(model_name)
             
         case _:
             raise ValueError(f"Not supported model source")

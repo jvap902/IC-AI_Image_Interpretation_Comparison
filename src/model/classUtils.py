@@ -2,7 +2,7 @@ from ..extraction.extractionUtils import clipExtractor, generalExtractor, huggin
 import torch.nn as nn
 
 def getExtractor(model_type):
-    if (model_type == 'clip'):
+    if (model_type == 'clip' or model_type == 'open_clip'):
         return clipExtractor
     elif (model_type == 'huggingface'):
         return huggingfaceExtractor
