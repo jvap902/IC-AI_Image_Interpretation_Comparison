@@ -4,7 +4,9 @@ import numpy as np
 import math
 from scipy.stats import pearsonr, spearmanr
 from . import similarityUtils
-from src import memoryManagement
+from src import memoryManagement, plot
+from ..model.modelClass import Model
+import os
 
 # Constants for memory calculation (assuming torch.float32)
 FLOAT_BYTES = 4 
@@ -13,9 +15,9 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 total_memory_gb = torch.cuda.get_device_properties(0).total_memory if torch.cuda.is_available() else 0
 
-def cosineSimilarity(ptPath, save_path): #retorna vetor de similaridades de cosseno
+def cosineDissimilarity(ptPath, save_path, csv_path, np_path, modelc: Model, dataset_name): #retorna vetor de dissimilaridades de cosseno
     
-    print(f"Loding feature tensor for cosine similarity \n")
+    print(f"Loding feature tensor for cosine dissimilarity \n")
     
     feature_tensor = torch.load(ptPath, map_location='cpu', weights_only=True).to(device)
     numEmbeddings = feature_tensor.size(0)
@@ -31,17 +33,17 @@ def cosineSimilarity(ptPath, save_path): #retorna vetor de similaridades de coss
         
     num_batches = math.ceil(numEmbeddings / batch_size)
     
-    similarity_parts_cpu = []
+    dissimilarity_parts_cpu = []
     
-    print(f"Calculating cosine similarity in batches of size {batch_size} MB\n")
-    # 2. Calculate the full pairwise similarity matrix
+    print(f"Calculating cosine dissimilarity in batches of size {batch_size} MB\n")
+    # 2. Calculate the full pairwise dissimilarity matrix
     for i in range(num_batches):
         start_i = i * batch_size
         end_i = min((i + 1) * batch_size, numEmbeddings)
         
         batch_features = normalized_features[start_i:end_i]
         
-        batch_similarity = torch.matmul(batch_features, normalized_features.T)
+        batch_dissimilarity = 1.0 - torch.matmul(batch_features, normalized_features.T)
         
         # Iterate through each row in the calculated batch
         for k in range(end_i - start_i):
@@ -50,27 +52,31 @@ def cosineSimilarity(ptPath, save_path): #retorna vetor de similaridades de coss
             # For row 'global_row_index', we only need similarities against 
             # columns 'j' where j > global_row_index (the upper triangle).
             # The slice starts at global_row_index + 1
-            row_slice = batch_similarity[k, global_row_index + 1:]
+            row_slice = batch_dissimilarity[k, global_row_index + 1:]
             
             # Move the slice to the CPU and append
-            similarity_parts_cpu.append(row_slice.cpu())
+            dissimilarity_parts_cpu.append(row_slice.cpu())
             
         # Cleanup GPU memory for the next batch
         del batch_features
-        del batch_similarity
+        del batch_dissimilarity
         torch.cuda.empty_cache()
 
     # 3. Extract the unique pairwise similarities
-    similarity_array_tensor = torch.cat(similarity_parts_cpu)
+    dissimilarity_array_tensor = torch.cat(dissimilarity_parts_cpu)
+    np_dissimilarity = dissimilarity_array_tensor.cpu().numpy()
     
     if save_path:
-            print(f"Saving similarity array to {save_path} to free up system memory.")
-            torch.save(similarity_array_tensor, save_path)
-            # Delete the large tensor from RAM immediately after saving
-            del similarity_array_tensor
-            return save_path
+        print(f"Saving similarity array to {save_path} to free up system memory.")
+        torch.save(np_dissimilarity, save_path)
+        np.save(np_path, np_dissimilarity)
+        plot.writeCsvLine(csv_path, [modelc.name, modelc.source, dataset_name, np_path])
+        # Delete the large tensor from RAM immediately after saving
+        del dissimilarity_array_tensor
+        del np_dissimilarity
+        return save_path
     
-    return np.array(similarity_array_tensor)
+    return np.array(dissimilarity_array_tensor)
 
 def calculateCorrelations(path_a, path_b, correlation_type='spearman', chunked=False):
     print("\nLoading similarity arrays from disk for correlation analysis...\n")
@@ -82,8 +88,8 @@ def calculateCorrelations(path_a, path_b, correlation_type='spearman', chunked=F
         
         print("\nLoading similarity arrays from disk...\n")
         
-        a = similarityUtils.loadTensorAsNP(path_a)
-        b = similarityUtils.loadTensorAsNP(path_b)
+        a = torch.load(path_a)
+        b = torch.load(path_b)
         
         if a.shape != b.shape:
             raise ValueError("Arrays must match in size.")
@@ -112,3 +118,23 @@ def calculateCorrelations(path_a, path_b, correlation_type='spearman', chunked=F
     except Exception as e:
         print(f"ERROR: {e}")
         raise
+    
+def getCosineDissimilarity(ptPath, save_path, dissimilarity_csv, np_folder, modelc: Model, dataset):
+    
+    dt_name = dataset.replace('/', '-')
+    m_name = modelc.name.replace('/','-')
+    s_name = modelc.source.replace('/','-')
+    
+    params = ['model', 'model_source', 'dataset']
+    values = [modelc.name, modelc.source, dataset]
+    
+    ans = plot.findInCsv(dissimilarity_csv, params, values)
+    
+    if(len(ans) != 0):
+        print(f"Loading previously calculated cosine similarity")
+        dissimilarity_np = np.load(ans[0]['path'])
+        torch.save(dissimilarity_np, save_path)
+    else:
+        np_path = os.path.join(np_folder, f"{m_name}_{s_name}_{dt_name}.npy")
+        cosineDissimilarity(ptPath, save_path, dissimilarity_csv, np_path, modelc, dataset)
+    

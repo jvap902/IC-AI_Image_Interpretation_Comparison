@@ -2,16 +2,9 @@ import argparse
 import os
 import sys
 import torch
-import torchvision
-import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-import timm
-import torch.optim as optim
-import torch.nn as nn
-import time
-from tqdm.auto import tqdm
 from src import *
-from scipy.stats import spearmanr, pearsonr
+from src.model.modelClass import Model
 
 # If 'src' is one level up, add the parent directory to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -35,11 +28,12 @@ parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify t
 parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify the model to be used as second model (within timm library)")
 parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10, cifar100, imagenet-a or a link for huggingface dataset)")
 parser.add_argument("-e", "--epochs", type=int, required=False, help="Specify the number of epochs to train the head for validation")
-parser.add_argument("-nv", "--not_validate", action='store_false', help="Turns off model validation step")
+parser.add_argument("-nv", "--no_validation", action='store_false', help="Turns off model validation step")
 parser.add_argument("--chunked", action='store_true', help="Enables spearman calculation in chunks to save memory")
 parser.add_argument("--n_classes", type=int, required=False, help="Specify number of classes in the dataset (only for non cifar datasets)")
 parser.add_argument("--specific_subset", type=int, required=False, help="Specify a specific subset number to load from cache")
-parser.add_argument("--torchvision_models", action='store_true', required=False, help="Specify if the model is a pytorch model, if not specified it is timm")
+parser.add_argument("--m1_source", type=str, required=False, default="timm", help="Specify from where the first model to be loaded come from, default is timm lib")
+parser.add_argument("--m2_source", type=str, required=False, default="timm", help="Specify from where the second model to be loaded come from, default is timm lib")
 
 args = parser.parse_args()
 
@@ -53,14 +47,15 @@ if __name__ == "__main__":
     first_model_name = args.model1 if args.model1 else 'resnet50.a1_in1k'
     second_model_name = args.model2 if args.model2 else 'efficientnet_b0.ra_in1k'
     
-    if(args.torchvision_models):
-        fst_model, snd_model, data_transforms = getAdaptedModel.loadTorchvisonModels(first_model_name, second_model_name)
-    else:
-        fst_model, snd_model, data_transforms = getAdaptedModel.loadTimmModels(first_model_name, second_model_name)
+    fst_modelc = Model(first_model_name, args.m1_source)
+    snd_modelc = Model(second_model_name, args.m2_source)
+    
+    #fst_model, data_transforms = modelCreation.getModel(args.m1_source, first_model_name)
+    #snd_model, snd_dt = modelCreation.getModel(args.m2_source, second_model_name)
     
     # --- Data Setup ---
     
-    dataset_name = args.dataset if args.dataset else "cifar10"
+    dataset_name = args.dataset if args.dataset else "cifar100"
     
     total_images = args.size if args.size else 2000
     
@@ -71,13 +66,13 @@ if __name__ == "__main__":
     
     epochs = args.epochs if args.epochs else 10
 
-    print(f"Number of images total: {total_images}")
+    print(f"\nNumber of images total: {total_images}")
 
     dataset = {}
     
     specific_subset = args.specific_subset if args.specific_subset is not None else 0
 
-    dataset['train'], dataset['val'] = loadDataset.getOrCreateDataset(data_dir='./data', total_images=total_images, num_classes=num_classes, transform=data_transforms, cache_dir=cache_dir, dataset_name=dataset_name, subset_num=specific_subset, output_dir=output_dir)
+    dataset['train'], dataset['val'] = loadDataset.getOrCreateDataset(data_dir='./data', total_images=total_images, num_classes=num_classes, transform=fst_modelc.data_transforms, cache_dir=cache_dir, dataset_name=dataset_name, subset_num=specific_subset, output_dir=output_dir)
     
     batch_size = 64
     train_loader = DataLoader(dataset['train'], batch_size=batch_size, shuffle=False, num_workers=4)
@@ -89,9 +84,9 @@ if __name__ == "__main__":
     # --- teste se modelos estão funcionando de acordo ---
     fst_acc = 0.0
     snd_acc = 0.0
-    if (args.not_validate):
-        fst_acc = featureExtraction.train_and_validate_head(fst_model, train_loader, val_loader, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
-        snd_acc = featureExtraction.train_and_validate_head(snd_model, train_loader, val_loader, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+    if (args.no_validation):
+        fst_acc = featureExtraction.train_and_validate_head(fst_modelc, train_loader, val_loader, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+        snd_acc = featureExtraction.train_and_validate_head(snd_modelc, train_loader, val_loader, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
 
         print(f"\n{first_model_name} Validation Accuracy: {fst_acc:.4f}")
         print(f"\n{second_model_name} Validation Accuracy: {snd_acc:.4f}")
@@ -101,10 +96,10 @@ if __name__ == "__main__":
     with torch.no_grad():
         print(f"\n--- Extracting Features for {first_model_name} ---")
         # This function iterates over all batches in val_loader and returns ONE large tensor
-        first_features, _ = featureExtraction.extract_features_to_tensors(val_loader, fst_model)
+        first_features, _ = featureExtraction.getFeatureTensors(val_loader, fst_modelc)
         
         print(f"\n--- Extracting Features for {second_model_name} ---")
-        second_features, _ = featureExtraction.extract_features_to_tensors(val_loader, snd_model)
+        second_features, _ = featureExtraction.getFeatureTensors(val_loader, snd_modelc)
 
     # --- Saving the Full Embeddings ---
     
@@ -124,21 +119,25 @@ if __name__ == "__main__":
 
     # --- Montando matriz ---
 
-    fst_similarity_path = os.path.join(output_dir, "first_similarity_array.pt")
-    snd_similarity_path = os.path.join(output_dir, "second_similarity_array.pt")
+    fst_dissimilarity_path = os.path.join(output_dir, "first_dissimilarity_array.pt")
+    snd_dissimilarity_path = os.path.join(output_dir, "second_dissimilarity_array.pt")
+    dissimilarity_csv_path = os.path.join(output_dir, "cosineDissimilarity.csv")
+    np_folder = output_dir+"/dissimilarity_arrays"
+    dt_name_w_subset = dataset_name+f"({specific_subset})"
 
-    similarityAnalysis.cosineSimilarity(output_dir+"/first_global_embedding.pt", save_path=fst_similarity_path)
-    similarityAnalysis.cosineSimilarity(output_dir+"/second_global_embedding.pt", save_path=snd_similarity_path)
+    similarityAnalysis.getCosineDissimilarity(output_dir+"/first_global_embedding.pt", save_path=fst_dissimilarity_path, dissimilarity_csv=dissimilarity_csv_path, np_folder=np_folder, modelc=fst_modelc, dataset=dt_name_w_subset)
+    
+    similarityAnalysis.getCosineDissimilarity(output_dir+"/second_global_embedding.pt", save_path=snd_dissimilarity_path, dissimilarity_csv=dissimilarity_csv_path, np_folder=np_folder, modelc=snd_modelc, dataset=dt_name_w_subset)
 
     print("\nCalculating Pearson's correlation\n")
-    pearson, p_value = similarityAnalysis.calculateCorrelations(fst_similarity_path, snd_similarity_path, correlation_type='pearson')
+    pearson, p_value = similarityAnalysis.calculateCorrelations(fst_dissimilarity_path, snd_dissimilarity_path, correlation_type='pearson')
 
     print(f"Pearson's Rank Correlation Coefficient (ρ): {pearson:.4f}")
 
-    spearman, p_value = similarityAnalysis.calculateCorrelations(fst_similarity_path, snd_similarity_path, correlation_type='spearman', chunked=args.chunked)
+    spearman, p_value = similarityAnalysis.calculateCorrelations(fst_dissimilarity_path, snd_dissimilarity_path, correlation_type='spearman', chunked=args.chunked)
 
     print(f"Spearman's Rank Correlation Coefficient (ρ): {spearman:.4f}")
 
-    runData = [str(total_images), str(num_classes), first_model_name, second_model_name, str(fst_acc), str(snd_acc), str(spearman), str(pearson), dataset_name+f"({specific_subset})"]
+    runData = [str(total_images), str(num_classes), fst_modelc.source, fst_modelc.name, snd_modelc.source, snd_modelc.name, str(fst_acc), str(snd_acc), str(spearman), str(pearson), dt_name_w_subset]
 
     plot.writeCsvLine(output_dir+"/runData.csv", runData)

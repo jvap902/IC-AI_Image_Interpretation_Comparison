@@ -3,4 +3,5 @@ data/
 *.pyc
 */__pycache__
 */*/__pycache__
-*.pt
+dataStorage/*.pt
+token.txt
