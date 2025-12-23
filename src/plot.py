@@ -177,5 +177,12 @@ def findInCsv(file_path, params, values):
                 
     return ans
 
+def getStringIntArray(string):
+    
+    string = string[1:-1]
+    ans = [int(num) for num in string.split(', ')]
+    
+    return ans
+
 if __name__ == '__main__':
     pass

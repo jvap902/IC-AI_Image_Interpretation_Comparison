@@ -11,7 +11,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 # --- Utility to get features/labels from a DataLoader ---
-def getFeatureTensors(dataloader, modelc: Model) -> Tuple[torch.Tensor, torch.Tensor]:
+def getFeatureTensors(modelc: Model) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Utility function to extract all data (features or raw images) and labels 
     from a DataLoader into a single Tensor.
@@ -22,7 +22,7 @@ def getFeatureTensors(dataloader, modelc: Model) -> Tuple[torch.Tensor, torch.Te
     labels_list = []
     
     with torch.no_grad():
-        for inputs, labels in tqdm(dataloader, desc="Extracting Data"):
+        for inputs, labels in tqdm(modelc.val_loader, desc="Extracting Data"):
             inputs = inputs.to(device)
             if modelc.model:
                 modelc.model.eval()
@@ -120,7 +120,7 @@ def train_and_validate_head_on_features(
     return accuracy
 
 
-def train_and_validate_head(modelc: Model, train_loader: DataLoader, val_loader: DataLoader, epochs=15, num_classes=10) -> float:
+def train_and_validate_head(modelc: Model, epochs=15, num_classes=10) -> float:
     """
     DEPRECATED: This function is now just a wrapper that performs feature extraction 
     and then calls the faster, feature-based training.
@@ -132,15 +132,15 @@ def train_and_validate_head(modelc: Model, train_loader: DataLoader, val_loader:
 
     # 2. Extract features ONCE (the slow step, but only happens here)
     print("  Step 1/3: Extracting features from training subset...")
-    train_features, train_labels = getFeatureTensors(train_loader, modelc)
+    train_features, train_labels = getFeatureTensors(modelc.train_loader, modelc)
     
     print("  Step 2/3: Extracting features from full validation set...")
-    val_features, val_labels = getFeatureTensors(val_loader, modelc)
+    val_features, val_labels = getFeatureTensors(modelc.val_loader, modelc)
 
     feature_dim = train_features.size(1)
 
     # 3. Create DataLoaders for the extracted features (batching is still needed)
-    batch_size = train_loader.batch_size # Re-use the batch size
+    batch_size = modelc.train_loader.batch_size # Re-use the batch size
     train_features_dataset = TensorDataset(train_features, train_labels)
     val_features_dataset = TensorDataset(val_features, val_labels)
     

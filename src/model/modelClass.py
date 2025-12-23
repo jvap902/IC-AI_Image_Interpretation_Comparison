@@ -1,9 +1,13 @@
 from .modelCreation import getModel
 from .classUtils import getExtractor, get_attention_layers, get_conv_layers, is_vit_patch_embedding
+import os
+from src.plot import findInCsv
+from src import *
+from torch.utils.data import DataLoader
 
 class Model:
     
-    def __init__(self, model_name, model_source, weights="DEFAULT"):
+    def __init__(self, model_name, model_source, dataset_link, weights="DEFAULT"):
         self.name = model_name
         self.source = model_source
         
@@ -15,6 +19,35 @@ class Model:
         
     def extract(self, inputs):
         return self.featureExtractor(self, inputs)
+    
+    def getDataset(self, total_images, num_classes, dataset_link, subset_num=0, output_dir="./dataStorage"): #por enquanto apenas carregando datasets do Huggingface
+        
+        # 1. Define the cache file path
+        dt_name = dataset_link.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
+        file_name = f"{dt_name}_subset_i{total_images}_c{num_classes}({subset_num}).pt"
+        indices_file = os.path.join('selectedIndices.csv', file_name)
+        
+        if os.path.exists(indices_file):
+            
+            indices = findInCsv(indices_file, ['file_name'], [file_name])
+                
+            if len(indices) != 0:
+                train_indices = plot.getStringIntArray(indices[0]['train_indices'])
+                val_indices = plot.getStringIntArray(indices[0]['validation_indices'])
+                
+                self.train_dataset, self.val_dataset = loadDataset.loadIndicesFromDataset(dataset_link, train_indices, val_indices, self)
+                
+            else:
+                self.train_dataset, self.val_dataset = loadDataset.createNewDataset(dataset_link, total_images, num_classes, output_dir, subset_num, self)
+                
+        
+        else:
+            raise FileNotFoundError("Arquivo com indices não encontrado")
+        
+    
+    def getLoaders(self, batch_size):
+        self.train_loader = DataLoader(self.train_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
+        self.val_loader = DataLoader(self.val_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
     
     def getArchitectureType(self): #ideia bem inicial, provalvemente será necessário um método mais complicado para isso
         

@@ -6,7 +6,78 @@ from . import datasetUtils
 from datasets import load_dataset
 from huggingface_hub import login
 from .. import plot
+from ..model.modelClass import Model
 
+def loadIndicesFromDataset(dataset_link, train_indices, val_indices, modelc: Model):
+    print("\n--- Loading Huggingface dataset with pre-selected indices ---")
+    
+    try:
+        
+        hf_token = datasetUtils.loadToken('token.txt')
+        
+        login(token=hf_token, add_to_git_credential=False)
+        
+        hf_train = load_dataset(dataset_link, split='train', streaming=False)
+        hf_validation = load_dataset(dataset_link, split='validation', streaming=False)
+        
+    except Exception as e:
+         raise RuntimeError(f"Failed to load Hugging Face ImageNet subset: {e}")
+             
+    hf_train = hf_train.select(train_indices)
+    hf_validation = hf_validation.select(val_indices)
+
+    # 5. Wrap in PyTorch Dataset
+    train_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=modelc.data_transforms)
+    val_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_validation, transform=modelc.data_transforms)
+
+    print(f"\nLoaded dataset with previously selected indices")
+
+    return train_dataset, val_dataset
+
+def createNewDataset(dataset_link, total_images, num_classes, output_dir, subset_num, modelc: Model):
+    print("\n--- Loading ImageNet Subset via Hugging Face ---")
+    
+    images_per_class = total_images // num_classes
+    
+    try:
+        
+        hf_token = datasetUtils.loadToken('token.txt')
+        
+        login(token=hf_token, add_to_git_credential=False)
+        
+        hf_train = load_dataset(dataset_link, split='train', streaming=False)
+        hf_validation = load_dataset(dataset_link, split='validation', streaming=False)
+        
+    except Exception as e:
+         raise RuntimeError(f"Failed to load Hugging Face ImageNet subset: {e}")
+             
+    print(f"Loaded HF Dataset of size: {len(hf_train) + len(hf_validation)}")
+    
+    print(f"\nCreating subset with {images_per_class} images per class for {num_classes} classes.")
+        
+    train_indices = datasetUtils.getRandomImages(num_classes, images_per_class, hf_train, hf_train.features['label'].num_classes)
+    val_indices = datasetUtils.getRandomImages(num_classes, images_per_class, hf_validation, hf_train.features['label'].num_classes)
+
+    hf_train = hf_train.select(train_indices)
+    hf_validation = hf_validation.select(val_indices)
+
+    print(f"Loaded {num_classes} classes * {images_per_class} images per class")
+
+    # 5. Wrap in PyTorch Dataset
+    train_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=modelc.data_transforms)
+    val_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_validation, transform=modelc.data_transforms)
+
+    print(f"Train: {len(train_dataset)} | Val: {len(val_dataset)}")
+    
+    dt_name = dataset_link.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
+    file_name = f"{dt_name}_subset_i{total_images}_c{num_classes}({subset_num}).pt"
+    
+    plot.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
+
+    return train_dataset, val_dataset
+
+
+# ----- funções antigas que estão em desuso ou foram retrabalhadas em outras -----
 def loadCifar10Subset(root, total_images, data_transforms):
     # Assuming you have already defined and downloaded your dataset:
     # train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=data_transforms['train'])

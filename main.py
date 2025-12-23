@@ -57,7 +57,7 @@ if __name__ == "__main__":
     
     # --- Data Setup ---
     
-    dataset_name = args.dataset if args.dataset else "cifar100"
+    dataset_name = args.dataset if args.dataset else "timm/mini-imagenet"
     
     total_images = args.size if args.size else 2000
     
@@ -69,26 +69,24 @@ if __name__ == "__main__":
     epochs = args.epochs if args.epochs else 10
 
     print(f"\nNumber of images total: {total_images}")
-
-    dataset = {}
     
     specific_subset = args.specific_subset if args.specific_subset is not None else 0
 
-    dataset['train'], dataset['val'] = loadDataset.getOrCreateDataset(data_dir='./data', total_images=total_images, num_classes=num_classes, transform=fst_modelc.data_transforms, cache_dir=cache_dir, dataset_name=dataset_name, subset_num=specific_subset, output_dir=output_dir)
+    fst_modelc.getDataset(total_images, num_classes, dataset_name, specific_subset, output_dir)
     
     batch_size = 64
-    train_loader = DataLoader(dataset['train'], batch_size=batch_size, shuffle=False, num_workers=4)
-    val_loader = DataLoader(dataset['val'], batch_size=batch_size, shuffle=False, num_workers=4)
+    fst_modelc.getLoaders(batch_size)
+    snd_modelc.getLoaders(batch_size)
     
-    class_names = dataset['train'].classes
+    class_names = fst_modelc.train_dataset
     num_classes = len(class_names)
 
     # --- teste se modelos estão funcionando de acordo ---
     fst_acc = 0.0
     snd_acc = 0.0
     if (args.no_validation):
-        fst_acc = featureExtraction.train_and_validate_head(fst_modelc, train_loader, val_loader, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
-        snd_acc = featureExtraction.train_and_validate_head(snd_modelc, train_loader, val_loader, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+        fst_acc = featureExtraction.train_and_validate_head(fst_modelc, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+        snd_acc = featureExtraction.train_and_validate_head(snd_modelc, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
 
         print(f"\n{first_model_name} Validation Accuracy: {fst_acc:.4f}")
         print(f"\n{second_model_name} Validation Accuracy: {snd_acc:.4f}")
@@ -98,10 +96,10 @@ if __name__ == "__main__":
     with torch.no_grad():
         print(f"\n--- Extracting Features for {first_model_name} ---")
         # This function iterates over all batches in val_loader and returns ONE large tensor
-        first_features, _ = featureExtraction.getFeatureTensors(val_loader, fst_modelc)
+        first_features, _ = featureExtraction.getFeatureTensors(fst_modelc)
         
         print(f"\n--- Extracting Features for {second_model_name} ---")
-        second_features, _ = featureExtraction.getFeatureTensors(val_loader, snd_modelc)
+        second_features, _ = featureExtraction.getFeatureTensors(snd_modelc)
 
     # --- Saving the Full Embeddings ---
     
