@@ -11,7 +11,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 # --- Utility to get features/labels from a DataLoader ---
-def getFeatureTensors(modelc: Model) -> Tuple[torch.Tensor, torch.Tensor]:
+def getFeatureTensors(loader, modelc: Model) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Utility function to extract all data (features or raw images) and labels 
     from a DataLoader into a single Tensor.
@@ -22,7 +22,7 @@ def getFeatureTensors(modelc: Model) -> Tuple[torch.Tensor, torch.Tensor]:
     labels_list = []
     
     with torch.no_grad():
-        for inputs, labels in tqdm(modelc.val_loader, desc="Extracting Data"):
+        for inputs, labels in tqdm(loader, desc="Extracting Data"):
             inputs = inputs.to(device)
             if modelc.model:
                 modelc.model.eval()

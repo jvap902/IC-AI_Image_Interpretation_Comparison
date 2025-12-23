@@ -36,3 +36,4 @@ maxvit_t,torchvision,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\maxv
 efficientnet_b0,torchvision,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\efficientnet_b0_torchvision_timm-mini-imagenet(0).npy
 efficientnet_b4,torchvision,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\efficientnet_b4_torchvision_timm-mini-imagenet(0).npy
 efficientnet_b7,torchvision,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\efficientnet_b7_torchvision_timm-mini-imagenet(0).npy
+vit_h_14,torchvision,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\vit_h_14_torchvision_timm-mini-imagenet(0).npy

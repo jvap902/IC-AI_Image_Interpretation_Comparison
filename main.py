@@ -73,6 +73,7 @@ if __name__ == "__main__":
     specific_subset = args.specific_subset if args.specific_subset is not None else 0
 
     fst_modelc.getDataset(total_images, num_classes, dataset_name, specific_subset, output_dir)
+    snd_modelc.getDataset(total_images, num_classes, dataset_name, specific_subset, output_dir)
     
     batch_size = 64
     fst_modelc.getLoaders(batch_size)
@@ -96,10 +97,10 @@ if __name__ == "__main__":
     with torch.no_grad():
         print(f"\n--- Extracting Features for {first_model_name} ---")
         # This function iterates over all batches in val_loader and returns ONE large tensor
-        first_features, _ = featureExtraction.getFeatureTensors(fst_modelc)
+        first_features, _ = featureExtraction.getFeatureTensors(fst_modelc.val_loader, fst_modelc)
         
         print(f"\n--- Extracting Features for {second_model_name} ---")
-        second_features, _ = featureExtraction.getFeatureTensors(snd_modelc)
+        second_features, _ = featureExtraction.getFeatureTensors(snd_modelc.val_loader, snd_modelc)
 
     # --- Saving the Full Embeddings ---
     

@@ -1,13 +1,13 @@
 from .modelCreation import getModel
 from .classUtils import getExtractor, get_attention_layers, get_conv_layers, is_vit_patch_embedding
 import os
-from src.plot import findInCsv
-from src import *
+from src.dataset import loadDataset
+from src import plot
 from torch.utils.data import DataLoader
 
 class Model:
     
-    def __init__(self, model_name, model_source, dataset_link, weights="DEFAULT"):
+    def __init__(self, model_name, model_source, weights="DEFAULT"):
         self.name = model_name
         self.source = model_source
         
@@ -16,20 +16,19 @@ class Model:
         self.featureExtractor = getExtractor(self.source)
         
         self.archType = self.getArchitectureType()
-        
+            
     def extract(self, inputs):
         return self.featureExtractor(self, inputs)
     
     def getDataset(self, total_images, num_classes, dataset_link, subset_num=0, output_dir="./dataStorage"): #por enquanto apenas carregando datasets do Huggingface
         
-        # 1. Define the cache file path
         dt_name = dataset_link.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
         file_name = f"{dt_name}_subset_i{total_images}_c{num_classes}({subset_num}).pt"
-        indices_file = os.path.join('selectedIndices.csv', file_name)
+        indices_file = os.path.join(output_dir, 'selectedIndices.csv')
         
         if os.path.exists(indices_file):
             
-            indices = findInCsv(indices_file, ['file_name'], [file_name])
+            indices = plot.findInCsv(indices_file, ['file_name'], [file_name])
                 
             if len(indices) != 0:
                 train_indices = plot.getStringIntArray(indices[0]['train_indices'])

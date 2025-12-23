@@ -6,9 +6,8 @@ from . import datasetUtils
 from datasets import load_dataset
 from huggingface_hub import login
 from .. import plot
-from ..model.modelClass import Model
 
-def loadIndicesFromDataset(dataset_link, train_indices, val_indices, modelc: Model):
+def loadIndicesFromDataset(dataset_link, train_indices, val_indices, modelc):
     print("\n--- Loading Huggingface dataset with pre-selected indices ---")
     
     try:
@@ -34,7 +33,7 @@ def loadIndicesFromDataset(dataset_link, train_indices, val_indices, modelc: Mod
 
     return train_dataset, val_dataset
 
-def createNewDataset(dataset_link, total_images, num_classes, output_dir, subset_num, modelc: Model):
+def createNewDataset(dataset_link, total_images, num_classes, output_dir, subset_num, modelc):
     print("\n--- Loading ImageNet Subset via Hugging Face ---")
     
     images_per_class = total_images // num_classes
