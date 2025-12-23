@@ -79,7 +79,7 @@ if __name__ == "__main__":
     fst_modelc.getLoaders(batch_size)
     snd_modelc.getLoaders(batch_size)
     
-    class_names = fst_modelc.train_dataset
+    class_names = fst_modelc.train_dataset.classes
     num_classes = len(class_names)
 
     # --- teste se modelos estão funcionando de acordo ---
