@@ -51,8 +51,8 @@ if __name__ == "__main__":
         
     ]
 
-    for idx, (model1, weight1) in enumerate(instances[1:]):
-        for (model2, weight2) in instances[idx+1:]:
+    for idx, (model1, weight1) in enumerate(instances[3:]):
+        for (model2, weight2) in instances[idx+3:]:
         
             print(f"    --- Running test: {model1} x {model2} ---")
         
