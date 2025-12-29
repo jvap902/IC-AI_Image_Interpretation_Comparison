@@ -225,8 +225,6 @@ def paramMatrixFromCsv(csv_path, param):
 def heatMap(csv_path, correlation_type):
     matrix = paramMatrixFromCsv(csv_path, correlation_type)
     
-    print(matrix[2][0])
-    
     seaborn.heatmap(matrix)
     plt.show()
 
