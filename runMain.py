@@ -51,11 +51,11 @@ if __name__ == "__main__":
         
     ]
 
-    begin = 6
+    begin = 9
     for idx, (model1, weight1) in enumerate(instances[begin:]):
         for (model2, weight2) in instances[idx+begin+1:]:
         
-            print(f"    --- Running test: {model1} x {model2} ---")
+            print(f"    --- Running test: {model1} ({weight1}) x {model2} ({weight2}) ---")
         
             arguments_to_pass = ["--dataset", "timm/mini-imagenet", "--m1_source", "torchvision", "-m1", model1, "--m1_weights", weight1, 
                                  "--m2_source", "torchvision", "-m2", model2, "--m2_weights", weight2]

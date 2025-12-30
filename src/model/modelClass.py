@@ -20,9 +20,9 @@ class Model:
     def extract(self, inputs):
         return self.featureExtractor(self, inputs)
     
-    def getDataset(self, total_images, num_classes, dataset_link, subset_num=0, output_dir="./dataStorage"): #por enquanto apenas carregando datasets do Huggingface
+    def getDataset(self, total_images, num_classes, dataset, subset_num=0, output_dir="./dataStorage", data_dir="./data"): #por enquanto apenas carregando datasets do Huggingface
         
-        dt_name = dataset_link.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
+        dt_name = dataset.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
         file_name = f"{dt_name}_subset_i{total_images}_c{num_classes}({subset_num}).pt"
         indices_file = os.path.join(output_dir, 'selectedIndices.csv')
         
@@ -34,10 +34,10 @@ class Model:
                 train_indices = plot.getStringIntArray(indices[0]['train_indices'])
                 val_indices = plot.getStringIntArray(indices[0]['validation_indices'])
                 
-                self.train_dataset, self.val_dataset = loadDataset.loadIndicesFromDataset(dataset_link, train_indices, val_indices, self)
+                self.train_dataset, self.val_dataset = loadDataset.loadIndicesFromDataset(dataset, train_indices, val_indices, data_dir, self)
                 
             else:
-                self.train_dataset, self.val_dataset = loadDataset.createNewDataset(dataset_link, total_images, num_classes, output_dir, subset_num, self)
+                self.train_dataset, self.val_dataset = loadDataset.createNewDataset(dataset, total_images, num_classes, output_dir, subset_num, data_dir, self)
                 
         
         else:
