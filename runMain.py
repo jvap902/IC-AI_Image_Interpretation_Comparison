@@ -51,7 +51,7 @@ if __name__ == "__main__":
         
     ]
 
-    begin = 9
+    begin = 10
     for idx, (model1, weight1) in enumerate(instances[begin:]):
         for (model2, weight2) in instances[idx+begin+1:]:
         
