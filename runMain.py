@@ -29,34 +29,42 @@ if __name__ == "__main__":
     # excluding the script name itself (sys.argv[0] is 'run_pipeline.py').
     
     instances = [
-        ('resnet18', 'IMAGENET1K_V1'),
-        ('resnet50', 'IMAGENET1K_V1'),
-        ('resnet152', 'IMAGENET1K_V1'),
-        ('convnext_tiny', 'IMAGENET1K_V1'),
-        ('convnext_base', 'IMAGENET1K_V1'),
-        ('regnet_y_16gf', 'IMAGENET1K_V1'),
-        ('regnet_y_16gf', 'IMAGENET1K_V2'),
-        ('regnet_y_16gf', 'IMAGENET1K_SWAG_E2E_V1'),
-        ('regnet_y_32gf', 'IMAGENET1K_V2'),
-        ('vit_b_16', 'IMAGENET1K_V1'),
-        ('vit_b_16', 'IMAGENET1K_SWAG_E2E_V1'),
-        ('vit_l_16', 'IMAGENET1K_V1'),
-        ('vit_h_14', 'IMAGENET1K_SWAG_E2E_V1'),
-        ('swin_t', 'IMAGENET1K_V1'),
-        ('swin_v2_t', 'IMAGENET1K_V1'),
-        ('maxvit_t', 'IMAGENET1K_V1'),
-        ('efficientnet_b0', 'IMAGENET1K_V1'),
-        ('efficientnet_b4', 'IMAGENET1K_V1'),
-        ('efficientnet_b7', 'IMAGENET1K_V1')
+        ('huggingface', 'openai/clip-vit-base-patch32', 'DEFAULT'),
+        ('huggingface', 'openai/clip-vit-base-patch16', 'DEFAULT'),
+        ('huggingface', 'openai/clip-vit-large-patch14', 'DEFAULT'),
+        ('open_clip', 'ViT-B-32-256', 'DEFAULT'),
+        ('open_clip', 'ViT-B-16', 'DEFAULT'),
+        ('open_clip', 'ViT-L-14', 'DEFAULT'),
+        ('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
+        ('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT'),
+        ('torchvision', 'resnet18', 'IMAGENET1K_V1'),
+        ('torchvision', 'resnet50', 'IMAGENET1K_V1'),
+        ('torchvision', 'resnet152', 'IMAGENET1K_V1'),
+        ('torchvision', 'convnext_tiny', 'IMAGENET1K_V1'),
+        ('torchvision', 'convnext_base', 'IMAGENET1K_V1'),
+        ('torchvision', 'regnet_y_16gf', 'IMAGENET1K_V1'),
+        ('torchvision', 'regnet_y_16gf', 'IMAGENET1K_V2'),
+        ('torchvision', 'regnet_y_16gf', 'IMAGENET1K_SWAG_E2E_V1'),
+        ('torchvision', 'regnet_y_32gf', 'IMAGENET1K_V2'),
+        ('torchvision', 'vit_b_16', 'IMAGENET1K_V1'),
+        ('torchvision', 'vit_b_16', 'IMAGENET1K_SWAG_E2E_V1'),
+        ('torchvision', 'vit_l_16', 'IMAGENET1K_V1'),
+        ('torchvision', 'vit_h_14', 'IMAGENET1K_SWAG_E2E_V1'),
+        ('torchvision', 'swin_t', 'IMAGENET1K_V1'),
+        ('torchvision', 'swin_v2_t', 'IMAGENET1K_V1'),
+        ('torchvision', 'maxvit_t', 'IMAGENET1K_V1'),
+        ('torchvision', 'efficientnet_b0', 'IMAGENET1K_V1'),
+        ('torchvision', 'efficientnet_b4', 'IMAGENET1K_V1'),
+        ('torchvision', 'efficientnet_b7', 'IMAGENET1K_V1')
         
     ]
 
-    begin = 10
-    for idx, (model1, weight1) in enumerate(instances[begin:]):
-        for (model2, weight2) in instances[idx+begin+1:]:
+    begin = 0
+    for idx, (src1, model1, weight1) in enumerate(instances[begin:7]):
+        for (src2, model2, weight2) in instances[idx+begin+1:]:
         
             print(f"    --- Running test: {model1} ({weight1}) x {model2} ({weight2}) ---")
         
-            arguments_to_pass = ["--dataset", "timm/mini-imagenet", "--m1_source", "torchvision", "-m1", model1, "--m1_weights", weight1, 
-                                 "--m2_source", "torchvision", "-m2", model2, "--m2_weights", weight2]
+            arguments_to_pass = ["--dataset", "timm/mini-imagenet", "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
+                                 "--m2_source", src2, "-m2", model2, "--m2_weights", weight2]
             run_main_with_subprocess(arguments_to_pass)

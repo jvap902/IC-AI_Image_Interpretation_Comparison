@@ -1,3 +1,3 @@
 from src import plot
 
-plot.heatMap('./dataStorage/runData.csv', 'spearman')
+plot.heatMap('./dataStorage/runData.csv', 'pearson')
