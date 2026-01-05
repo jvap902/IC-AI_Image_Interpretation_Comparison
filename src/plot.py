@@ -47,7 +47,7 @@ def plot_pt_file(file_path):
         txt_path = pt_path.with_suffix(".txt")
         
         # 1. Load the tensor
-        embedding_tensor = torch.load(pt_path)
+        embedding_tensor = torch.load(pt_path, weights_only=False)
         np_array = embedding_tensor.cpu().numpy()
 
         print(f"Successfully loaded tensor with shape: {embedding_tensor.shape}")
@@ -195,12 +195,14 @@ def paramMatrixFromCsv(csv_path, param):
 
         # 1. Identificar todos os modelos únicos para saber o tamanho da matriz
         models = []
-        models.append(reader[0]['first_model'])
+        models.append((reader[0]['first_model'], reader[0]['fst_weights']))
         for row in reader:
-            if row['second_model'] not in models:
-                models.append(row['second_model'])
+            if (row['second_model'], row['snd_weights']) not in models:
+                models.append((row['second_model'], row['snd_weights']))
         
         n = len(models)
+        
+        print(n)
         
         # Criar matriz preenchida com zeros (ou 1.0 na diagonal)
         matrix = np.zeros((n, n))
@@ -211,8 +213,8 @@ def paramMatrixFromCsv(csv_path, param):
 
         # 2. Preencher a matriz com os valores do CSV
         for row in reader:
-            m1 = row['first_model']
-            m2 = row['second_model']
+            m1 = (row['first_model'], row['fst_weights'])
+            m2 = (row['second_model'], row['snd_weights'])
             val = float(row[param])
             
             i, j = model_to_idx[m1], model_to_idx[m2]
@@ -224,6 +226,8 @@ def paramMatrixFromCsv(csv_path, param):
 
 def heatMap(csv_path, correlation_type):
     matrix = paramMatrixFromCsv(csv_path, correlation_type)
+    
+    print(matrix.shape)
     
     seaborn.heatmap(matrix)
     plt.show()

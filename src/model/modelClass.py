@@ -10,6 +10,7 @@ class Model:
     def __init__(self, model_name, model_source, weights="DEFAULT"):
         self.name = model_name
         self.source = model_source
+        self.weights = weights
         
         self.model, self.data_transforms = getModel(self.source, self.name, weights)
         
