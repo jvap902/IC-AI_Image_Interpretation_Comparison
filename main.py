@@ -29,7 +29,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--size", type=int, required=False, help="Specify number of images to be used from the dataset")
 parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify the model to be used as first model (within timm library)")
 parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify the model to be used as second model (within timm library)")
-parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (imagenet-a, imagenet-sketch or a link for huggingface dataset)")
+parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar100, imagenet-a, imagenet-sketch or a link for huggingface dataset)")
 parser.add_argument("-e", "--epochs", type=int, required=False, help="Specify the number of epochs to train the head for validation")
 parser.add_argument("-nv", "--no_validation", action='store_false', help="Turns off model validation step")
 parser.add_argument("--chunked", action='store_true', help="Enables spearman calculation in chunks to save memory")
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     fst_modelc.getLoaders(batch_size)
     snd_modelc.getLoaders(batch_size)
     
-    class_names = fst_modelc.train_dataset.classes
+    class_names = datasetUtils.get_classes(fst_modelc.train_dataset)
     num_classes = len(class_names)
 
     # --- teste se modelos estão funcionando de acordo ---

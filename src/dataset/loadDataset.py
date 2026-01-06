@@ -10,6 +10,8 @@ from .. import plot
 def loadIndicesFromDataset(dataset, train_indices, val_indices, data_dir, modelc):
     if(dataset == 'imagenet-a' or dataset == 'imagenet-sketch'):
         return loadUrlDownloadedDataset(data_dir, train_indices, val_indices, dataset, modelc)
+    if dataset == 'cifar100':
+        return loadCifar100Dataset(data_dir, train_indices, val_indices, modelc)
     else:
         return loadHuggingfaceDataset(dataset, train_indices, val_indices, modelc)
 
@@ -17,8 +19,42 @@ def createNewDataset(dataset, total_images, num_classes, output_dir, subset_num,
     
     if (dataset == 'imagenet-a' or dataset == 'imagenet-sketch'):
         return newUrlDownloadedDataset(data_dir, total_images, num_classes, output_dir, subset_num, dataset, modelc)
+    if dataset == 'cifar100':
+        return newCifar100Dataset(data_dir, total_images, num_classes, output_dir, subset_num, modelc)
     else:
         return newHuggingfaceDataset(dataset, total_images, num_classes, output_dir, subset_num, modelc)
+    
+def loadCifar100Dataset(data_dir, train_indices, val_indices, modelc):
+    train_dataset = torchvision.datasets.CIFAR100(root=data_dir, train=True, download=True, transform=modelc.data_transforms)
+    val_dataset = torchvision.datasets.CIFAR100(root=data_dir, train=False, download=True, transform=modelc.data_transforms)
+    
+    train_subset = Subset(train_dataset, train_indices)
+    val_subset = Subset(val_dataset, val_indices)
+    
+    print(f"Cifar100 dataset loaded with pre-existing indices")
+    
+    return train_subset, val_subset
+    
+def newCifar100Dataset(data_dir, total_images, num_classes, output_dir, subset_num, modelc):
+
+    train_dataset = torchvision.datasets.CIFAR100(root=data_dir, train=True, download=True, transform=modelc.data_transforms)
+    val_dataset = torchvision.datasets.CIFAR100(root=data_dir, train=False, download=True, transform=modelc.data_transforms)
+
+    images_per_class = total_images // num_classes
+
+    train_indices = datasetUtils.getRandomImages(num_classes, images_per_class, train_dataset, len(train_dataset.classes))
+    val_indices = datasetUtils.getRandomImages(num_classes, images_per_class, val_dataset, len(val_dataset.classes))
+
+    subset_train_dataset = Subset(train_dataset, train_indices)
+    subset_val_dataset = Subset(val_dataset, val_indices)
+
+    print(f"Total images selected: {len(subset_train_dataset)}")
+    
+    file_name = f"cifar100_subset_i{total_images}_c{num_classes}({subset_num}).pt"
+    
+    plot.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
+
+    return subset_train_dataset, subset_val_dataset
 
 def newUrlDownloadedDataset(root, total_images, num_classes, output_dir, subset_num, dataset, modelc):
     # 1. Download and extract the data
@@ -35,7 +71,7 @@ def newUrlDownloadedDataset(root, total_images, num_classes, output_dir, subset_
     
     images_per_class = total_images // num_classes
     
-    val_indices = datasetUtils.getRandomImages(num_classes, images_per_class, full_dataset, full_dataset.classes)
+    val_indices = datasetUtils.getRandomImages(num_classes, images_per_class, full_dataset, len(full_dataset.classes))
     
     train_indices = [ # o resto fica para treinamento da cabeça de validação
         i for i in range(len(full_dataset))
@@ -161,25 +197,6 @@ def loadCifar10Subset(root, total_images, data_transforms):
     # 1. Initialize storage for selected indices
     selected_indices = datasetUtils.selectindices(dataset, imagesPerClass, 10)
     
-    # 4. Create the new subset dataset
-    # This new dataset contains exactly 100 non-random images from each class.
-    subset_train_dataset = Subset(dataset, selected_indices)
-
-    print(f"Total images selected: {len(subset_train_dataset)}")
-
-    return subset_train_dataset, dataset, val_dataset, selected_indices
-    # Expected output: Total images selected: 1000
-    
-def loadCifar100Subset(root, total_images, data_transforms):
-    # Assuming you have already defined and downloaded your dataset:
-    # train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=data_transforms['train'])
-    dataset = torchvision.datasets.CIFAR100(root=root, train=True, download=True, transform=data_transforms) # Use train set for example
-    val_dataset = torchvision.datasets.CIFAR100(root=root, train=False, download=True, transform=data_transforms)
-
-    imagesPerClass = total_images // 100
-
-    # 1. Initialize storage for selected indices
-    selected_indices = datasetUtils.selectindices(dataset, imagesPerClass, 100)
     # 4. Create the new subset dataset
     # This new dataset contains exactly 100 non-random images from each class.
     subset_train_dataset = Subset(dataset, selected_indices)

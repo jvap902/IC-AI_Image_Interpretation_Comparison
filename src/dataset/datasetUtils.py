@@ -4,7 +4,7 @@ import zipfile
 from urllib.request import urlretrieve
 from tqdm.auto import tqdm
 import requests
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, Subset
 import random
 from collections import defaultdict
 
@@ -181,10 +181,10 @@ def selectindices(dataset, imagesPerClass, num_classes):
         
     return selected_indices
 
-def getRandomImages(num_classes, images_per_class, dataset, dataset_classes):
+def getRandomImages(num_classes, images_per_class, dataset, dataset_classes : int):
     
     # 1. Pick num_classes classes
-    selected_classes = random.sample(range(len(dataset_classes)), num_classes)
+    selected_classes = random.sample(range(dataset_classes), num_classes)
 
     # 2. Collect indices per class
     class_indices = defaultdict(list)
@@ -210,3 +210,8 @@ def getRandomImages(num_classes, images_per_class, dataset, dataset_classes):
         selected_indices.extend(indices[rand_img_start : rand_img_start + images_per_class])
                 
     return selected_indices
+
+def get_classes(dataset):
+    if isinstance(dataset, Subset):
+        return dataset.dataset.classes
+    return dataset.classes

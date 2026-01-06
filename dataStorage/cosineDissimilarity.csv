@@ -233,3 +233,5 @@ resnet152,torchvision,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\res
 efficientnet_b4,torchvision,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\efficientnet_b4_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
 resnet152,torchvision,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\resnet152_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
 efficientnet_b7,torchvision,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\efficientnet_b7_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
+resnet50.a1_in1k,timm,cifar100(0),dataStorage/dissimilarity_arrays\resnet50.a1_in1k_DEFAULT_timm_cifar100(0).npy
+efficientnet_b0.ra_in1k,timm,cifar100(0),dataStorage/dissimilarity_arrays\efficientnet_b0.ra_in1k_DEFAULT_timm_cifar100(0).npy
