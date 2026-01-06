@@ -184,13 +184,13 @@ def selectindices(dataset, imagesPerClass, num_classes):
 def getRandomImages(num_classes, images_per_class, dataset, dataset_classes):
     
     # 1. Pick num_classes classes
-    selected_classes = random.sample(range(dataset_classes), num_classes)
+    selected_classes = random.sample(range(len(dataset_classes)), num_classes)
 
     # 2. Collect indices per class
     class_indices = defaultdict(list)
 
     for idx, item in enumerate(dataset):
-        label = item["label"]
+        _, label = item
         if label in selected_classes:
             class_indices[label].append(idx)
 

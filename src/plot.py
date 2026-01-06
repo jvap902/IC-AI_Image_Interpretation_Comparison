@@ -5,6 +5,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import csv
 import seaborn
+import pandas as pd
 
 
 def plot_history(history):
@@ -185,7 +186,7 @@ def getStringIntArray(string):
     
     return ans
 
-def paramMatrixFromCsv(csv_path, param):
+def paramDataFrameFromCsv(csv_path, param):
     
     with open(csv_path, mode='r', newline='', encoding='utf-8') as file:
         reader = list(csv.DictReader(file))
@@ -195,8 +196,9 @@ def paramMatrixFromCsv(csv_path, param):
 
         # 1. Identificar todos os modelos únicos para saber o tamanho da matriz
         models = []
-        models.append((reader[0]['first_model'], reader[0]['fst_weights']))
         for row in reader:
+            if (row['first_model'], row['fst_weights']) not in models:
+                models.append((row['first_model'], row['fst_weights']))
             if (row['second_model'], row['snd_weights']) not in models:
                 models.append((row['second_model'], row['snd_weights']))
         
@@ -220,16 +222,18 @@ def paramMatrixFromCsv(csv_path, param):
             i, j = model_to_idx[m1], model_to_idx[m2]
             matrix[i][j] = val
             matrix[j][i] = val # Garante a simetria se o CSV tiver apenas um lado
+    
+        dataFrame = pd.DataFrame(matrix, columns=models, index=models)
 
-    return matrix
+    return dataFrame
             
 
 def heatMap(csv_path, correlation_type):
-    matrix = paramMatrixFromCsv(csv_path, correlation_type)
+    data = paramDataFrameFromCsv(csv_path, correlation_type)
     
-    print(matrix.shape)
+    print(data.shape)
     
-    seaborn.heatmap(matrix)
+    seaborn.heatmap(data)
     plt.show()
 
 if __name__ == '__main__':

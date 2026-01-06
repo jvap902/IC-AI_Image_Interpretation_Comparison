@@ -1,4 +1,3 @@
-*.txt
 data/
 *.pyc
 */__pycache__

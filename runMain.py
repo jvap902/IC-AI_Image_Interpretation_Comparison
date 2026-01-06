@@ -68,19 +68,20 @@ if __name__ == "__main__":
     arguments_to_pass = ["--dataset", "timm/mini-imagenet", "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
                              "--m2_source", src2, "-m2", model2, "--m2_weights", weight2]
     run_main_with_subprocess(arguments_to_pass)
+    '''
     
-    (src1, model1, weight1) = instances[13]
-    for (src2, model2, weight2) in instances[15:]:
+    begin = 5
+    (src1, model1, weight1) = instances[begin]
+    for (src2, model2, weight2) in instances[17:]:
         print(f"    --- Running test: {model1} ({weight1}) x {model2} ({weight2}) ---")
     
         arguments_to_pass = ["--dataset", "timm/mini-imagenet", "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
                              "--m2_source", src2, "-m2", model2, "--m2_weights", weight2]
         run_main_with_subprocess(arguments_to_pass)
-    '''
     
 
-    begin = 0
-    for idx, (src1, model1, weight1) in enumerate(instances[begin:4]):
+    begin = begin + 1
+    for idx, (src1, model1, weight1) in enumerate(instances[begin:]):
         for (src2, model2, weight2) in instances[idx+begin+1:]:
         
             print(f"    --- Running test: {model1} ({weight1}) x {model2} ({weight2}) ---")
