@@ -1,4 +1,5 @@
-nome, url, hf_hub_id, arquitetura, num_param, escala, tipo_treinamento, datasetaimv2_1b_patch14_224.apple_pt,,aimv2_1b_patch14_224,1234958336,giant,TRAINING_TYPE,DATASET
+nome, url, hf_hub_id, arquitetura, num_param, escala, tipo_treinamento, dataset
+aimv2_1b_patch14_224.apple_pt,,,aimv2_1b_patch14_224,1234958336,giant,TRAINING_TYPE,DATASET
 aimv2_1b_patch14_224.apple_pt,,timm/aimv2_1b_patch14_224.apple_pt,aimv2_1b_patch14_224,1234958336,giant,TRAINING_TYPE,DATASET
 aimv2_1b_patch14_336.apple_pt,,timm/aimv2_1b_patch14_336.apple_pt,aimv2_1b_patch14_336,1235613696,giant,TRAINING_TYPE,DATASET
 aimv2_1b_patch14_448.apple_pt,,timm/aimv2_1b_patch14_448.apple_pt,aimv2_1b_patch14_448,1236531200,giant,TRAINING_TYPE,DATASET

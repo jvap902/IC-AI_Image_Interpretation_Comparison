@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 import matplotlib.pyplot as plt
 import csv
+import seaborn
+import pandas as pd
 
 
 def plot_history(history):
@@ -46,7 +48,7 @@ def plot_pt_file(file_path):
         txt_path = pt_path.with_suffix(".txt")
         
         # 1. Load the tensor
-        embedding_tensor = torch.load(pt_path)
+        embedding_tensor = torch.load(pt_path, weights_only=False)
         np_array = embedding_tensor.cpu().numpy()
 
         print(f"Successfully loaded tensor with shape: {embedding_tensor.shape}")
@@ -176,6 +178,63 @@ def findInCsv(file_path, params, values):
                 ans.append(row)
                 
     return ans
+
+def getStringIntArray(string):
+    
+    string = string[1:-1]
+    ans = [int(num) for num in string.split(', ')]
+    
+    return ans
+
+def paramDataFrameFromCsv(csv_path, param):
+    
+    with open(csv_path, mode='r', newline='', encoding='utf-8') as file:
+        reader = list(csv.DictReader(file))
+        
+        if not reader:
+            return np.array([])
+
+        # 1. Identificar todos os modelos únicos para saber o tamanho da matriz
+        models = []
+        for row in reader:
+            if (row['first_model'], row['fst_weights']) not in models:
+                models.append((row['first_model'], row['fst_weights']))
+            if (row['second_model'], row['snd_weights']) not in models:
+                models.append((row['second_model'], row['snd_weights']))
+        
+        n = len(models)
+        
+        print(n)
+        
+        # Criar matriz preenchida com zeros (ou 1.0 na diagonal)
+        matrix = np.zeros((n, n))
+        np.fill_diagonal(matrix, 1.0)
+
+        # Criar um mapeamento de nome do modelo para índice (0, 1, 2...)
+        model_to_idx = {model: i for i, model in enumerate(models)}
+
+        # 2. Preencher a matriz com os valores do CSV
+        for row in reader:
+            m1 = (row['first_model'], row['fst_weights'])
+            m2 = (row['second_model'], row['snd_weights'])
+            val = float(row[param])
+            
+            i, j = model_to_idx[m1], model_to_idx[m2]
+            matrix[i][j] = val
+            matrix[j][i] = val # Garante a simetria se o CSV tiver apenas um lado
+    
+        dataFrame = pd.DataFrame(matrix, columns=models, index=models)
+
+    return dataFrame
+            
+
+def heatMap(csv_path, correlation_type):
+    data = paramDataFrameFromCsv(csv_path, correlation_type)
+    
+    print(data.shape)
+    
+    seaborn.heatmap(data)
+    plt.show()
 
 if __name__ == '__main__':
     pass

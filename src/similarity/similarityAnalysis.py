@@ -88,8 +88,8 @@ def calculateCorrelations(path_a, path_b, correlation_type='spearman', chunked=F
         
         print("\nLoading similarity arrays from disk...\n")
         
-        a = torch.load(path_a)
-        b = torch.load(path_b)
+        a = torch.load(path_a, weights_only=False)
+        b = torch.load(path_b, weights_only=False)
         
         if a.shape != b.shape:
             raise ValueError("Arrays must match in size.")
@@ -123,10 +123,11 @@ def getCosineDissimilarity(ptPath, save_path, dissimilarity_csv, np_folder, mode
     
     dt_name = dataset.replace('/', '-')
     m_name = modelc.name.replace('/','-')
+    m_weights = modelc.weights.replace('/','-')
     s_name = modelc.source.replace('/','-')
     
-    params = ['model', 'model_source', 'dataset']
-    values = [modelc.name, modelc.source, dataset]
+    params = ['model', 'model_source', 'model_weights', 'dataset']
+    values = [modelc.name, modelc.source, modelc.weights, dataset]
     
     ans = plot.findInCsv(dissimilarity_csv, params, values)
     
@@ -135,6 +136,6 @@ def getCosineDissimilarity(ptPath, save_path, dissimilarity_csv, np_folder, mode
         dissimilarity_np = np.load(ans[0]['path'])
         torch.save(dissimilarity_np, save_path)
     else:
-        np_path = os.path.join(np_folder, f"{m_name}_{s_name}_{dt_name}.npy")
+        np_path = os.path.join(np_folder, f"{m_name}_{m_weights}_{s_name}_{dt_name}.npy")
         cosineDissimilarity(ptPath, save_path, dissimilarity_csv, np_path, modelc, dataset)
     

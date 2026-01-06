@@ -13,6 +13,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 output_dir = "dataStorage"
 os.makedirs(output_dir, exist_ok=True) # Ensure dataStorage folder exists
 
+data_dir = "data"
+os.makedirs(data_dir, exist_ok=True)
+
 cache_dir = "datasetCache"
 os.makedirs(cache_dir, exist_ok=True)
 # ---------------------
@@ -26,7 +29,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--size", type=int, required=False, help="Specify number of images to be used from the dataset")
 parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify the model to be used as first model (within timm library)")
 parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify the model to be used as second model (within timm library)")
-parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10, cifar100, imagenet-a or a link for huggingface dataset)")
+parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (imagenet-a, imagenet-sketch or a link for huggingface dataset)")
 parser.add_argument("-e", "--epochs", type=int, required=False, help="Specify the number of epochs to train the head for validation")
 parser.add_argument("-nv", "--no_validation", action='store_false', help="Turns off model validation step")
 parser.add_argument("--chunked", action='store_true', help="Enables spearman calculation in chunks to save memory")
@@ -57,7 +60,7 @@ if __name__ == "__main__":
     
     # --- Data Setup ---
     
-    dataset_name = args.dataset if args.dataset else "cifar100"
+    dataset_name = args.dataset if args.dataset else "timm/mini-imagenet"
     
     total_images = args.size if args.size else 2000
     
@@ -69,26 +72,25 @@ if __name__ == "__main__":
     epochs = args.epochs if args.epochs else 10
 
     print(f"\nNumber of images total: {total_images}")
-
-    dataset = {}
     
     specific_subset = args.specific_subset if args.specific_subset is not None else 0
 
-    dataset['train'], dataset['val'] = loadDataset.getOrCreateDataset(data_dir='./data', total_images=total_images, num_classes=num_classes, transform=fst_modelc.data_transforms, cache_dir=cache_dir, dataset_name=dataset_name, subset_num=specific_subset, output_dir=output_dir)
+    fst_modelc.getDataset(total_images, num_classes, dataset_name, specific_subset, output_dir)
+    snd_modelc.getDataset(total_images, num_classes, dataset_name, specific_subset, output_dir)
     
     batch_size = 64
-    train_loader = DataLoader(dataset['train'], batch_size=batch_size, shuffle=False, num_workers=4)
-    val_loader = DataLoader(dataset['val'], batch_size=batch_size, shuffle=False, num_workers=4)
+    fst_modelc.getLoaders(batch_size)
+    snd_modelc.getLoaders(batch_size)
     
-    class_names = dataset['train'].classes
+    class_names = fst_modelc.train_dataset.classes
     num_classes = len(class_names)
 
     # --- teste se modelos estão funcionando de acordo ---
     fst_acc = 0.0
     snd_acc = 0.0
     if (args.no_validation):
-        fst_acc = featureExtraction.train_and_validate_head(fst_modelc, train_loader, val_loader, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
-        snd_acc = featureExtraction.train_and_validate_head(snd_modelc, train_loader, val_loader, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+        fst_acc = featureExtraction.train_and_validate_head(fst_modelc, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+        snd_acc = featureExtraction.train_and_validate_head(snd_modelc, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
 
         print(f"\n{first_model_name} Validation Accuracy: {fst_acc:.4f}")
         print(f"\n{second_model_name} Validation Accuracy: {snd_acc:.4f}")
@@ -98,10 +100,10 @@ if __name__ == "__main__":
     with torch.no_grad():
         print(f"\n--- Extracting Features for {first_model_name} ---")
         # This function iterates over all batches in val_loader and returns ONE large tensor
-        first_features, _ = featureExtraction.getFeatureTensors(val_loader, fst_modelc)
+        first_features, _ = featureExtraction.getFeatureTensors(fst_modelc.val_loader, fst_modelc)
         
         print(f"\n--- Extracting Features for {second_model_name} ---")
-        second_features, _ = featureExtraction.getFeatureTensors(val_loader, snd_modelc)
+        second_features, _ = featureExtraction.getFeatureTensors(snd_modelc.val_loader, snd_modelc)
 
     # --- Saving the Full Embeddings ---
     

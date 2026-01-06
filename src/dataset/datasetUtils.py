@@ -1,5 +1,6 @@
 import os
 import tarfile
+import zipfile
 from urllib.request import urlretrieve
 from tqdm.auto import tqdm
 import requests
@@ -13,7 +14,7 @@ IMAGENET_A_URL = "https://people.eecs.berkeley.edu/~hendrycks/imagenet-a.tar"
 IMAGENET_A_FILENAME = "imagenet-a.tar"
 IMAGENET_A_EXTRACT_DIR = "imagenet-a"
 
-def download_imagenet_a(root_dir):
+def downloadUrlDataset(root_dir, url=IMAGENET_A_URL, file_name=IMAGENET_A_FILENAME, extract_dir=IMAGENET_A_EXTRACT_DIR, compression_type='tar'):
     """
     Downloads and extracts the ImageNet-A dataset from the corrected Berkeley URL.
 
@@ -27,8 +28,8 @@ def download_imagenet_a(root_dir):
     os.makedirs(root_dir, exist_ok=True)
     
     # Define paths
-    extract_path = os.path.join(root_dir, IMAGENET_A_EXTRACT_DIR)
-    tar_filepath = os.path.join(root_dir, IMAGENET_A_FILENAME)
+    extract_path = os.path.join(root_dir, extract_dir)
+    file_path = os.path.join(root_dir, file_name)
     
     # 1. Check if the dataset is already extracted
     # We check for a common file structure to avoid re-downloading large files
@@ -38,34 +39,60 @@ def download_imagenet_a(root_dir):
         return extract_path
 
     # 2. Download the file
-    print(f"Downloading ImageNet-A from: {IMAGENET_A_URL}")
+    print(f"Downloading dataset from: {url}")
     try:
-        response = requests.get(IMAGENET_A_URL, stream=True)
+        response = requests.get(url, stream=True)
         response.raise_for_status() # Raise an exception for bad status codes (4xx or 5xx)
 
         total_size = int(response.headers.get('content-length', 0))
         block_size = 1024 # 1 Kibibyte
         
-        with open(tar_filepath, 'wb') as f:
+        with open(file_path, 'wb') as f:
             for data in tqdm(response.iter_content(block_size), 
                              total=total_size//block_size, 
                              unit='KB', 
-                             desc=IMAGENET_A_FILENAME):
+                             desc=file_name):
                 f.write(data)
         
-        print(f"\nDownload complete. File saved to: {tar_filepath}")
+        print(f"\nDownload complete. File saved to: {file_path}")
 
     except requests.exceptions.RequestException as e:
-        print(f"Error during download from {IMAGENET_A_URL}: {e}")
+        print(f"Error during download from {url}: {e}")
         return None
 
-    # 3. Extract the tar file
-    print(f"Extracting {IMAGENET_A_FILENAME} to {extract_path}...")
+    # 3. Extract the file
+    if compression_type=='tar':
+        return extractTarFile(root_dir, file_name, extract_path, file_path)
+    elif compression_type=='zip':
+        return extractZipFile(root_dir, file_name, extract_path, file_path)
+    else:
+        raise ValueError(f"compression type {compression_type} not supported for extraction")
+    
+def extractZipFile(root, file_name, extract_path, zip_filepath):
+    print(f"Extracting {file_name} to {extract_path}...")
+    try:
+        with zipfile.ZipFile(zip_filepath, 'r') as zip_ref:
+            zip_ref.extractall(path=root)
+
+        os.remove(zip_filepath)
+        print("Extraction complete and ZIP file removed.")
+
+        return extract_path
+
+    except zipfile.BadZipFile as e:
+        print(f"Invalid ZIP file: {e}")
+        return None
+    except OSError as e:
+        print(f"OS error during cleanup: {e}")
+        return extract_path
+
+def extractTarFile(root, file_name, extract_path, tar_filepath):
+    print(f"Extracting {file_name} to {extract_path}...")
     try:
         with tarfile.open(tar_filepath, 'r') as tar:
             # The tarball contains a single folder named 'imagenet-a'
             # We extract it directly into the root_dir
-            tar.extractall(path=root_dir) 
+            tar.extractall(path=root) 
         
         # Clean up the tar file after successful extraction
         os.remove(tar_filepath)
@@ -154,16 +181,16 @@ def selectindices(dataset, imagesPerClass, num_classes):
         
     return selected_indices
 
-def getRandomImages(num_classes, images_per_class, hf_dataset, dataset_classes):
+def getRandomImages(num_classes, images_per_class, dataset, dataset_classes):
     
     # 1. Pick num_classes classes
-    selected_classes = random.sample(range(dataset_classes), num_classes)
+    selected_classes = random.sample(range(len(dataset_classes)), num_classes)
 
     # 2. Collect indices per class
     class_indices = defaultdict(list)
 
-    for idx, item in enumerate(hf_dataset):
-        label = item["label"]
+    for idx, item in enumerate(dataset):
+        _, label = item
         if label in selected_classes:
             class_indices[label].append(idx)
 
