@@ -1,7 +1,7 @@
 
 
 Tarefas:
-    rodar com dataset diferente (cifar100)
+    rodar com dataset diferente (cifar100) - próximo é maxvit
     testar imagenet-a e imagenet-sketch
     incluir modelos que professor pediu nos testes - próximo:  ViT-B/32 (DEFAULT) x vit_h_14 (IMAGENET1K_SWAG_E2E_V1) --
 
