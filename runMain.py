@@ -72,9 +72,9 @@ if __name__ == "__main__":
     
     dataset = 'cifar100'
     
-    begin = 1
+    begin = 7
     (src1, model1, weight1) = instances[begin]
-    for (src2, model2, weight2) in instances[8:]:
+    for (src2, model2, weight2) in instances[15:]:
         print(f"    --- Running test: {model1} ({weight1}) x {model2} ({weight2}) ---")
     
         arguments_to_pass = ["--dataset", dataset, "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 

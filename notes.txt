@@ -1,8 +1,13 @@
-
+relatório
 
 Tarefas:
-    rodar com dataset diferente (cifar100) - próximo é maxvit
-    testar imagenet-a e imagenet-sketch
+    Rodar no cifar10 os experimentos
+    Avaliar a maxvit
+    Rodar em algum outro dataset clássico (podemos pensar em qual)
+    Reavaliar timm/mini-imagenet
+    Com os resultados disso fazer uma avaliação dos heatmaps: diferenças entre datasets, padrões que aparecem entre modelos e etc.
+    Documentar tudo isso e o que foi feito até agora pra gente realizar uma discussão
+    
     incluir modelos que professor pediu nos testes - próximo:  ViT-B/32 (DEFAULT) x vit_h_14 (IMAGENET1K_SWAG_E2E_V1) --
 
 segunda parte do runDataOld é o mais atual mas ainda com o bug dos pesos
@@ -39,6 +44,7 @@ resultados revalidação - faltou resnet18 com efficientnet_b7:
 2000,100,torchvision,resnet18,IMAGENET1K_V1,torchvision,maxvit_t,IMAGENET1K_V1,0.7585,0.981,0.10019999527475523,0.10188684,timm/mini-imagenet(0)
 2000,100,torchvision,resnet18,IMAGENET1K_V1,torchvision,efficientnet_b0,IMAGENET1K_V1,0.7795,0.9005,0.17238403249089862,0.33645463,timm/mini-imagenet(0)
 2000,100,torchvision,resnet18,IMAGENET1K_V1,torchvision,efficientnet_b4,IMAGENET1K_V1,0.79,0.976,-0.08012366793792565,-0.034026735,timm/mini-imagenet(0)
+2000,100,torchvision,resnet18,IMAGENET1K_V1,torchvision,efficientnet_b7,IMAGENET1K_V1,0.778,0.983,0.09518300813120399,0.28770655,timm/mini-imagenet(0)
 2000,100,torchvision,resnet50,IMAGENET1K_V1,torchvision,resnet152,IMAGENET1K_V1,0.8525,0.8915,0.8666729947329216,0.8875984,timm/mini-imagenet(0)
 2000,100,torchvision,resnet50,IMAGENET1K_V1,torchvision,regnet_y_32gf,IMAGENET1K_V2,0.855,0.976,0.32141623987202456,0.46619448,timm/mini-imagenet(0)
 2000,100,torchvision,resnet50,IMAGENET1K_V1,torchvision,convnext_tiny,IMAGENET1K_V1,0.877,0.953,0.24459711016107827,0.39179102,timm/mini-imagenet(0)
