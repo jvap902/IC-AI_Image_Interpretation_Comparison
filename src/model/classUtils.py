@@ -1,11 +1,16 @@
-from ..extraction.extractionUtils import clipExtractor, generalExtractor, huggingfaceExtractor
+from ..extraction.extractionUtils import clipExtractor, generalExtractor, huggingfaceExtractor, maxvitExtractor
 import torch.nn as nn
 
-def getExtractor(model_type):
+def getExtractor(modelc):
+    
+    model_type = modelc.source
+    
     if (model_type == 'clip' or model_type == 'open_clip'):
         return clipExtractor
     elif (model_type == 'huggingface'):
         return huggingfaceExtractor
+    elif (modelc.name == 'maxvit_t'):
+        return maxvitExtractor
     else:
         return generalExtractor
     

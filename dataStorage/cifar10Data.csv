@@ -1,0 +1,9 @@
+total_images,num_classes,fst_model_source,first_model,fst_weights,second_model_source,second_model,snd_weights,first_model_accuracy,second_model_accuracy,spearman,pearson,dataset
+2000,10,torchvision,regnet_y_16gf,IMAGENET1K_V1,torchvision,regnet_y_16gf,IMAGENET1K_V2,0.7975,0.8845,0.7459029044362596,0.75236964,cifar10(0)
+2000,10,torchvision,regnet_y_16gf,IMAGENET1K_V1,torchvision,regnet_y_16gf,IMAGENET1K_SWAG_E2E_V1,0.8155,0.883,0.7880949451622087,0.79211295,cifar10(0)
+2000,10,torchvision,regnet_y_16gf,IMAGENET1K_V1,torchvision,regnet_y_32gf,IMAGENET1K_V2,0.792,0.895,0.7691559541216063,0.7695745,cifar10(0)
+2000,10,torchvision,regnet_y_16gf,IMAGENET1K_V1,torchvision,vit_b_16,IMAGENET1K_V1,0.8195,0.916,0.6960307838297317,0.6939474,cifar10(0)
+2000,10,torchvision,regnet_y_16gf,IMAGENET1K_V1,torchvision,vit_b_16,IMAGENET1K_SWAG_E2E_V1,0.791,0.9265,0.739178854054306,0.7438432,cifar10(0)
+2000,10,torchvision,regnet_y_16gf,IMAGENET1K_V1,torchvision,vit_l_16,IMAGENET1K_V1,0.815,0.912,0.6782856465547694,0.67287964,cifar10(0)
+2000,10,torchvision,regnet_y_16gf,IMAGENET1K_V1,torchvision,vit_h_14,IMAGENET1K_SWAG_E2E_V1,0.8095,0.964,0.6842990867455795,0.6893424,cifar10(0)
+2000,10,torchvision,regnet_y_16gf,IMAGENET1K_V1,torchvision,maxvit_t,IMAGENET1K_V1,0.801,0.917,0.35646680083126037,0.38445646,cifar10(0)

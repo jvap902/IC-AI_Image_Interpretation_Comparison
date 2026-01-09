@@ -37,6 +37,7 @@ if __name__ == "__main__":
         #('open_clip', 'ViT-L-14', 'DEFAULT'),
         #('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
         #('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT'),
+        ('torchvision', 'maxvit_t', 'IMAGENET1K_V1'),
         ('torchvision', 'regnet_y_16gf', 'IMAGENET1K_V1'),
         ('torchvision', 'regnet_y_16gf', 'IMAGENET1K_V2'),
         ('torchvision', 'regnet_y_16gf', 'IMAGENET1K_SWAG_E2E_V1'),
@@ -45,7 +46,6 @@ if __name__ == "__main__":
         ('torchvision', 'vit_b_16', 'IMAGENET1K_SWAG_E2E_V1'),
         ('torchvision', 'vit_l_16', 'IMAGENET1K_V1'),
         ('torchvision', 'vit_h_14', 'IMAGENET1K_SWAG_E2E_V1'),
-        ('torchvision', 'maxvit_t', 'IMAGENET1K_V1'),
         ('torchvision', 'resnet18', 'IMAGENET1K_V1'),
         ('torchvision', 'resnet50', 'IMAGENET1K_V1'),
         ('torchvision', 'resnet152', 'IMAGENET1K_V1'),
@@ -70,24 +70,24 @@ if __name__ == "__main__":
     run_main_with_subprocess(arguments_to_pass)
     '''
     
-    dataset = 'cifar100'
+    dataset = 'cifar100' #ainda tem que continuar com o cifar10 depois
     
-    begin = 7
+    begin = 0
     (src1, model1, weight1) = instances[begin]
-    for (src2, model2, weight2) in instances[15:]:
+    for (src2, model2, weight2) in instances[1:]:
         print(f"    --- Running test: {model1} ({weight1}) x {model2} ({weight2}) ---")
     
         arguments_to_pass = ["--dataset", dataset, "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
                              "--m2_source", src2, "-m2", model2, "--m2_weights", weight2]
         run_main_with_subprocess(arguments_to_pass)
-    
 
-    begin = begin + 1
-    for idx, (src1, model1, weight1) in enumerate(instances[begin:]):
-        for (src2, model2, weight2) in instances[idx+begin+1:]:
-        
-            print(f"    --- Running test: {model1} ({weight1}) x {model2} ({weight2}) ---")
-        
-            arguments_to_pass = ["--dataset", dataset, "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
-                                 "--m2_source", src2, "-m2", model2, "--m2_weights", weight2]
-            run_main_with_subprocess(arguments_to_pass)
+
+#    begin = begin + 1
+#    for idx, (src1, model1, weight1) in enumerate(instances[begin:]):
+#        for (src2, model2, weight2) in instances[idx+begin+1:]:
+#        
+#            print(f"    --- Running test: {model1} ({weight1}) x {model2} ({weight2}) ---")
+#        
+#            arguments_to_pass = ["--dataset", dataset, "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
+#                                 "--m2_source", src2, "-m2", model2, "--m2_weights", weight2]
+#            run_main_with_subprocess(arguments_to_pass)

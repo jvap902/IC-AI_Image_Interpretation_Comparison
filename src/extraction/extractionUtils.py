@@ -1,4 +1,6 @@
 import torch
+import torch.nn as nn
+from torchvision.models.feature_extraction import create_feature_extractor
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -7,6 +9,25 @@ def clipExtractor(modelc, inputs):
     
     if data.dim() > 2:
         data = torch.flatten(data, start_dim=1)
+    
+    return data.float()
+
+def maxvitExtractor(modelc, inputs):
+    
+    # This node is the LayerNorm output. 
+    # It is the 512-dimensional vector used for the final decision.
+    return_nodes = {
+        'classifier.2': 'global_embedding'
+    }
+
+    extractor = create_feature_extractor(modelc.model, return_nodes=return_nodes)
+    
+    output = extractor(inputs)
+    
+    # This is already pooled and normalized. No need for adaptive_avg_pool2d!
+    data = output['global_embedding']
+    
+    data = torch.flatten(data, start_dim=1)
     
     return data.float()
 

@@ -119,7 +119,7 @@ def calculateCorrelations(path_a, path_b, correlation_type='spearman', chunked=F
         print(f"ERROR: {e}")
         raise
     
-def getCosineDissimilarity(ptPath, save_path, dissimilarity_csv, np_folder, modelc: Model, dataset):
+def getCosineDissimilarity(ptPath, save_path, dissimilarity_csv, np_folder, modelc: Model, dataset, previous_dissimilarity=False):
     
     dt_name = dataset.replace('/', '-')
     m_name = modelc.name.replace('/','-')
@@ -131,7 +131,7 @@ def getCosineDissimilarity(ptPath, save_path, dissimilarity_csv, np_folder, mode
     
     ans = plot.findInCsv(dissimilarity_csv, params, values)
     
-    if(len(ans) != 0):
+    if previous_dissimilarity:
         print(f"Loading previously calculated cosine similarity")
         dissimilarity_np = np.load(ans[0]['path'])
         torch.save(dissimilarity_np, save_path)

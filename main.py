@@ -39,6 +39,7 @@ parser.add_argument("--m1_source", type=str, required=False, default="timm", hel
 parser.add_argument("--m2_source", type=str, required=False, default="timm", help="Specify from where the second model to be loaded come from, default is timm lib")
 parser.add_argument("--m1_weights", type=str, required=False, default="DEFAULT", help="Specify weights for torchvision models")
 parser.add_argument("--m2_weights", type=str, required=False, default="DEFAULT", help="Specify weights for torchvision models")
+parser.add_argument("-ed", "--existing_dissimilarity", action='store_true', required=False, default=False, help="Use previously calculated cossine dissimilarity for run")
 
 args = parser.parse_args()
 
@@ -65,6 +66,9 @@ if __name__ == "__main__":
     total_images = args.size if args.size else 2000
     
     num_classes = args.n_classes if args.n_classes else 100
+    
+    if dataset_name == 'cifar10':
+        num_classes = 10
     
     if total_images < num_classes:
         raise ValueError(f"Total images ({total_images}) must be at least equal to number of classes ({num_classes}).")
@@ -129,9 +133,9 @@ if __name__ == "__main__":
     np_folder = output_dir+"/dissimilarity_arrays"
     dt_name_w_subset = dataset_name+f"({specific_subset})"
 
-    similarityAnalysis.getCosineDissimilarity(output_dir+"/first_global_embedding.pt", save_path=fst_dissimilarity_path, dissimilarity_csv=dissimilarity_csv_path, np_folder=np_folder, modelc=fst_modelc, dataset=dt_name_w_subset)
+    similarityAnalysis.getCosineDissimilarity(output_dir+"/first_global_embedding.pt", save_path=fst_dissimilarity_path, dissimilarity_csv=dissimilarity_csv_path, np_folder=np_folder, modelc=fst_modelc, dataset=dt_name_w_subset, previous_dissimilarity=args.existing_dissimilarity)
     
-    similarityAnalysis.getCosineDissimilarity(output_dir+"/second_global_embedding.pt", save_path=snd_dissimilarity_path, dissimilarity_csv=dissimilarity_csv_path, np_folder=np_folder, modelc=snd_modelc, dataset=dt_name_w_subset)
+    similarityAnalysis.getCosineDissimilarity(output_dir+"/second_global_embedding.pt", save_path=snd_dissimilarity_path, dissimilarity_csv=dissimilarity_csv_path, np_folder=np_folder, modelc=snd_modelc, dataset=dt_name_w_subset, previous_dissimilarity=args.existing_dissimilarity)
 
     print("\nCalculating Pearson's correlation\n")
     pearson, p_value = similarityAnalysis.calculateCorrelations(fst_dissimilarity_path, snd_dissimilarity_path, correlation_type='pearson')

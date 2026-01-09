@@ -9,7 +9,7 @@ from .. import plot
 
 def loadIndicesFromDataset(dataset, train_indices, val_indices, data_dir, modelc):
     
-    print(f"\nLoading previously select {dataset} indices\n")
+    print(f"\nLoading previously selected {dataset} indices\n")
     
     if(dataset == 'imagenet-a' or dataset == 'imagenet-sketch'):
         return loadUrlDownloadedDataset(data_dir, train_indices, val_indices, dataset, modelc)
@@ -228,6 +228,8 @@ def loadHuggingfaceDataset(dataset_link, train_indices, val_indices, modelc):
     # 5. Wrap in PyTorch Dataset
     train_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=modelc.data_transforms)
     val_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_validation, transform=modelc.data_transforms)
+    
+    print(val_dataset.classes)
 
     print(f"\nLoaded dataset with previously selected indices")
 
