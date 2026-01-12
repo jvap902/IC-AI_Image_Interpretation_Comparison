@@ -1,0 +1,16 @@
+model,model_source,model_weights,dataset,accuracy
+maxvit_t,torchvision,IMAGENET1K_V1,cifar100(0)(0),0.6895
+vit_b_16,torchvision,IMAGENET1K_SWAG_E2E_V1,cifar100(0)(0),0.603
+vit_l_16,torchvision,IMAGENET1K_V1,cifar100(0)(0),0.652
+regnet_y_16gf,torchvision,IMAGENET1K_SWAG_E2E_V1,cifar100(0),0.53
+vit_h_14,torchvision,IMAGENET1K_SWAG_E2E_V1,cifar100(0),0.7015
+resnet18,torchvision,IMAGENET1K_V1,cifar100(0),0.4015
+resnet50,torchvision,IMAGENET1K_V1,cifar100(0),0.4415
+resnet152,torchvision,IMAGENET1K_V1,cifar100(0),0.47
+convnext_tiny,torchvision,IMAGENET1K_V1,cifar100(0),0.591
+convnext_base,torchvision,IMAGENET1K_V1,cifar100(0),0.6065
+swin_t,torchvision,IMAGENET1K_V1,cifar100(0),0.587
+swin_v2_t,torchvision,IMAGENET1K_V1,cifar100(0),0.5695
+efficientnet_b0,torchvision,IMAGENET1K_V1,cifar100(0),0.4945
+efficientnet_b4,torchvision,IMAGENET1K_V1,cifar100(0),0.5735
+efficientnet_b7,torchvision,IMAGENET1K_V1,cifar100(0),0.534

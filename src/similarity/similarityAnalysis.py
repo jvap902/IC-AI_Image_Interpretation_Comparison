@@ -70,7 +70,7 @@ def cosineDissimilarity(ptPath, save_path, csv_path, np_path, modelc: Model, dat
         print(f"Saving similarity array to {save_path} to free up system memory.")
         torch.save(np_dissimilarity, save_path)
         np.save(np_path, np_dissimilarity)
-        plot.writeCsvLine(csv_path, [modelc.name, modelc.source, dataset_name, np_path])
+        plot.writeCsvLine(csv_path, [modelc.name, modelc.source, modelc.weights, dataset_name, np_path])
         # Delete the large tensor from RAM immediately after saving
         del dissimilarity_array_tensor
         del np_dissimilarity
@@ -126,16 +126,21 @@ def getCosineDissimilarity(ptPath, save_path, dissimilarity_csv, np_folder, mode
     m_weights = modelc.weights.replace('/','-')
     s_name = modelc.source.replace('/','-')
     
-    params = ['model', 'model_source', 'model_weights', 'dataset']
-    values = [modelc.name, modelc.source, modelc.weights, dataset]
+    ans = isDissimilarityCalculated(dataset, dissimilarity_csv, modelc)
     
-    ans = plot.findInCsv(dissimilarity_csv, params, values)
-    
-    if previous_dissimilarity:
+    if previous_dissimilarity and (len(ans) > 0):
         print(f"Loading previously calculated cosine similarity")
         dissimilarity_np = np.load(ans[0]['path'])
         torch.save(dissimilarity_np, save_path)
     else:
         np_path = os.path.join(np_folder, f"{m_name}_{m_weights}_{s_name}_{dt_name}.npy")
         cosineDissimilarity(ptPath, save_path, dissimilarity_csv, np_path, modelc, dataset)
+
+def isDissimilarityCalculated(dataset, dissimilarity_csv, modelc):
     
+    params = ['model', 'model_source', 'model_weights', 'dataset']
+    values = [modelc.name, modelc.source, modelc.weights, dataset]
+    
+    ans = plot.findInCsv(dissimilarity_csv, params, values)
+    
+    return ans

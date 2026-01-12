@@ -125,7 +125,7 @@ def train_and_validate_head(modelc: Model, epochs=15, num_classes=10) -> float:
     DEPRECATED: This function is now just a wrapper that performs feature extraction 
     and then calls the faster, feature-based training.
     """
-    print(f"\n--- FAST VALIDATION WORKFLOW ---")
+    print(f"\n--- FAST VALIDATION WORKFLOW ({modelc.name}) ---")
     
     # 1. Load model for feature extraction (without classification head)
     

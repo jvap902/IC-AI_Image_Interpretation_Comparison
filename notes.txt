@@ -4,9 +4,13 @@ para ativar venv :
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 .\venv\Scripts\activate
 
+ideia de otimização:
+    Fazer isso apenas depois que tiver uma run inteira sem alterar os arquivos -> forma de validação, uma run com cada conjunto de dados sem, depois que troca pode usar
+    Voltar com arquivos de dissimilaridade de cosseno, quando ativo faz validação do modelo e pula toda parte de extração.
+
 Tarefas:
     Rodar no cifar10 os experimentos
-    Avaliar a maxvit -> 
+    Reavaliar maxvit em cifar100
     Rodar em algum outro dataset clássico (podemos pensar em qual)
     Reavaliar timm/mini-imagenet -> apenas casos com erros conhecidos (modelos com variação de pesos e maxvit)
     Com os resultados disso fazer uma avaliação dos heatmaps: diferenças entre datasets, padrões que aparecem entre modelos e etc.
@@ -37,7 +41,7 @@ um dos modelos novos mas que precisa ser rodado sem o bug dos pesos (acho que va
 2000,100,clip,ViT-B/32,DEFAULT,torchvision,vit_b_16,IMAGENET1K_SWAG_E2E_V1,0.874,0.9535,0.05915954071560855,0.23494036,timm/mini-imagenet(0)
 2000,100,clip,ViT-B/32,DEFAULT,torchvision,vit_l_16,IMAGENET1K_V1,0.874,0.99,0.05651655585839529,0.25065383,timm/mini-imagenet(0)
 
-resultados revalidação - faltou resnet18 com efficientnet_b7:
+resultados revalidação timm/mini-imagenet:
 2000,100,torchvision,resnet18,IMAGENET1K_V1,torchvision,resnet50,IMAGENET1K_V1,0.774,0.8635,0.8476184966991839,0.86426497,timm/mini-imagenet(0)
 2000,100,torchvision,resnet18,IMAGENET1K_V1,torchvision,resnet152,IMAGENET1K_V1,0.784,0.89,0.8157543870232175,0.8365084,timm/mini-imagenet(0)
 2000,100,torchvision,resnet18,IMAGENET1K_V1,torchvision,regnet_y_32gf,IMAGENET1K_V2,0.792,0.971,0.2818943219021189,0.40705153,timm/mini-imagenet(0)

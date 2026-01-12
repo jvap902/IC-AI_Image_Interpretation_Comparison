@@ -2,9 +2,9 @@ import argparse
 import os
 import sys
 import torch
-from torch.utils.data import DataLoader
 from src import *
 from src.model.modelClass import Model
+import numpy as np
 
 # If 'src' is one level up, add the parent directory to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -79,6 +79,12 @@ if __name__ == "__main__":
     
     specific_subset = args.specific_subset if args.specific_subset is not None else 0
 
+    fst_dissimilarity_path = os.path.join(output_dir, "first_dissimilarity_array.pt")
+    snd_dissimilarity_path = os.path.join(output_dir, "second_dissimilarity_array.pt")
+    dissimilarity_csv_path = os.path.join(output_dir, "cosineDissimilarity.csv")
+    np_folder = output_dir+"/dissimilarity_arrays"
+    dt_name_w_subset = dataset_name+f"({specific_subset})"
+
     fst_modelc.getDataset(total_images, num_classes, dataset_name, specific_subset, output_dir)
     snd_modelc.getDataset(total_images, num_classes, dataset_name, specific_subset, output_dir)
     
@@ -92,46 +98,60 @@ if __name__ == "__main__":
     # --- teste se modelos estão funcionando de acordo ---
     fst_acc = 0.0
     snd_acc = 0.0
+    
+    validation_csv = output_dir+"/validation_results.csv"
+    
+    fst_val = plot.findInCsv(validation_csv, ["model","model_source","model_weights","dataset"], [fst_modelc.name, fst_modelc.source, fst_modelc.weights, dt_name_w_subset])
+    
+    snd_val = plot.findInCsv(validation_csv, ["model","model_source","model_weights","dataset"], [snd_modelc.name, snd_modelc.source, snd_modelc.weights, dt_name_w_subset])
+    
     if (args.no_validation):
-        fst_acc = featureExtraction.train_and_validate_head(fst_modelc, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
-        snd_acc = featureExtraction.train_and_validate_head(snd_modelc, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+        
+        if len(fst_val) == 0:
+            fst_acc = featureExtraction.train_and_validate_head(fst_modelc, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+            plot.writeCsvLine(validation_csv, [fst_modelc.name, fst_modelc.source, fst_modelc.weights, dt_name_w_subset, fst_acc])
+        else:
+            fst_acc = np.float32(fst_val[0]['accuracy'])
+            
+        if len(snd_val) == 0:
+            snd_acc = featureExtraction.train_and_validate_head(snd_modelc, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
+            plot.writeCsvLine(validation_csv, [snd_modelc.name, snd_modelc.source, snd_modelc.weights, dt_name_w_subset, snd_acc])
+        else:
+            snd_acc = np.float32(snd_val[0]['accuracy'])
 
         print(f"\n{first_model_name} Validation Accuracy: {fst_acc:.4f}")
         print(f"\n{second_model_name} Validation Accuracy: {snd_acc:.4f}")
-    
-    # --- Feature Extraction ---
-
-    with torch.no_grad():
-        print(f"\n--- Extracting Features for {first_model_name} ---")
-        # This function iterates over all batches in val_loader and returns ONE large tensor
-        first_features, _ = featureExtraction.getFeatureTensors(fst_modelc.val_loader, fst_modelc)
         
-        print(f"\n--- Extracting Features for {second_model_name} ---")
-        second_features, _ = featureExtraction.getFeatureTensors(snd_modelc.val_loader, snd_modelc)
-
-    # --- Saving the Full Embeddings ---
     
-    first_output_path = os.path.join(output_dir, "first_global_embedding.pt")
-    second_output_path = os.path.join(output_dir, "second_global_embedding.pt")
+    fst_diss_calculated = len(similarityAnalysis.isDissimilarityCalculated(dt_name_w_subset, dissimilarity_csv_path, fst_modelc)) > 0
+    snd_diss_calculated = len(similarityAnalysis.isDissimilarityCalculated(dt_name_w_subset, dissimilarity_csv_path, snd_modelc)) > 0
+        
+    dissimilarity_calculated = fst_diss_calculated and snd_diss_calculated
+    
+    
+    if ((not args.existing_dissimilarity) or not dissimilarity_calculated):
+    
+        first_output_path = os.path.join(output_dir, "first_global_embedding.pt")
+        second_output_path = os.path.join(output_dir, "second_global_embedding.pt")
+        
+        # --- Feature Extraction ---
 
-    torch.save(first_features, first_output_path)
-    torch.save(second_features, second_output_path)
-
-    print(f"\nSaved first embedding tensor (Shape: {first_features.shape}) to: {first_output_path}")
-    print(f"Saved second embedding tensor (Shape: {second_features.shape}) to: {second_output_path}")
-
-    # print("\n--- Generating Text Representations ---")
-    # # Call the plotting function on the saved .pt file
-    # plot.plot_pt_file(first_output_path)
-    # plot.plot_pt_file(second_output_path)
+        with torch.no_grad():
+            
+            if not fst_diss_calculated:            
+                print(f"\n--- Extracting Features for {first_model_name} ---")
+                # This function iterates over all batches in val_loader and returns ONE large tensor
+                first_features, _ = featureExtraction.getFeatureTensors(fst_modelc.val_loader, fst_modelc)
+                torch.save(first_features, first_output_path)
+                print(f"\nSaved first embedding tensor (Shape: {first_features.shape}) to: {first_output_path}")
+            
+            if not snd_diss_calculated:
+                print(f"\n--- Extracting Features for {second_model_name} ---")
+                second_features, _ = featureExtraction.getFeatureTensors(snd_modelc.val_loader, snd_modelc)
+                torch.save(second_features, second_output_path)
+                print(f"Saved second embedding tensor (Shape: {second_features.shape}) to: {second_output_path}")
 
     # --- Montando matriz ---
-
-    fst_dissimilarity_path = os.path.join(output_dir, "first_dissimilarity_array.pt")
-    snd_dissimilarity_path = os.path.join(output_dir, "second_dissimilarity_array.pt")
-    dissimilarity_csv_path = os.path.join(output_dir, "cosineDissimilarity.csv")
-    np_folder = output_dir+"/dissimilarity_arrays"
-    dt_name_w_subset = dataset_name+f"({specific_subset})"
 
     similarityAnalysis.getCosineDissimilarity(output_dir+"/first_global_embedding.pt", save_path=fst_dissimilarity_path, dissimilarity_csv=dissimilarity_csv_path, np_folder=np_folder, modelc=fst_modelc, dataset=dt_name_w_subset, previous_dissimilarity=args.existing_dissimilarity)
     

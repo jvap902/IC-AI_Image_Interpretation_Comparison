@@ -40,7 +40,7 @@ def loadCifar10Dataset(data_dir, train_indices, val_indices, modelc):
     train_subset = Subset(train_dataset, train_indices)
     val_subset = Subset(val_dataset, val_indices)
     
-    print(f"Cifar100 dataset loaded with pre-existing indices")
+    print(f"Cifar10 dataset loaded with pre-existing indices")
     
     return train_subset, val_subset
     
