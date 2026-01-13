@@ -190,8 +190,7 @@ total_images,num_classes,fst_model_source,first_model,fst_weights,second_model_s
 2000,10,torchvision,regnet_y_16gf,IMAGENET1K_V1,torchvision,efficientnet_b4,IMAGENET1K_V1,0.802,0.9025,0.6404416967852433,0.66815346,cifar10(0)
 2000,10,torchvision,regnet_y_16gf,IMAGENET1K_V1,torchvision,efficientnet_b7,IMAGENET1K_V1,0.7985,0.8835,0.7307665273144033,0.7376983,cifar10(0)
 2000,10,torchvision,regnet_y_16gf,IMAGENET1K_V2,torchvision,regnet_y_16gf,IMAGENET1K_SWAG_E2E_V1,0.8825,0.9015,0.7200092248881749,0.75024873,cifar10(0)
-
-
-2000,100,torchvision,regnet_y_16gf,IMAGENET1K_SWAG_E2E_V1,torchvision,maxvit_t,IMAGENET1K_V1,0.5875,0.6835,0.5020427394306863,0.532991,cifar100(0)
-2000,100,torchvision,regnet_y_32gf,IMAGENET1K_V2,torchvision,maxvit_t,IMAGENET1K_V1,0.5815,0.6815,0.6029658950029912,0.6574833,cifar100(0)
-2000,100,torchvision,vit_b_16,IMAGENET1K_V1,torchvision,maxvit_t,IMAGENET1K_V1,0.6275,0.684,0.5956937503560585,0.67219967,cifar100(0)
+2000,10,torchvision,regnet_y_16gf,IMAGENET1K_V2,torchvision,regnet_y_32gf,IMAGENET1K_V2,0.887,0.8865,0.8629942682144304,0.89478445,cifar10(0)
+2000,10,torchvision,regnet_y_16gf,IMAGENET1K_V2,torchvision,vit_b_16,IMAGENET1K_V1,0.887,0.9215,0.6855269091505752,0.76239353,cifar10(0)
+2000,10,torchvision,regnet_y_16gf,IMAGENET1K_V2,torchvision,vit_b_16,IMAGENET1K_SWAG_E2E_V1,0.887,0.9165,0.6817703905078676,0.7360496,cifar10(0)
+2000,10,torchvision,regnet_y_16gf,IMAGENET1K_V2,torchvision,vit_l_16,IMAGENET1K_V1,0.887,0.9105,0.7097128409450549,0.77903867,cifar10(0)

@@ -16,3 +16,10 @@ swin_v2_t,torchvision,IMAGENET1K_V1,cifar100(0),dataStorage/dissimilarity_arrays
 efficientnet_b0,torchvision,IMAGENET1K_V1,cifar100(0),dataStorage/dissimilarity_arrays\efficientnet_b0_IMAGENET1K_V1_torchvision_cifar100(0).npy
 efficientnet_b4,torchvision,IMAGENET1K_V1,cifar100(0),dataStorage/dissimilarity_arrays\efficientnet_b4_IMAGENET1K_V1_torchvision_cifar100(0).npy
 efficientnet_b7,torchvision,IMAGENET1K_V1,cifar100(0),dataStorage/dissimilarity_arrays\efficientnet_b7_IMAGENET1K_V1_torchvision_cifar100(0).npy
+maxvit_t,torchvision,IMAGENET1K_V1,cifar10(0),dataStorage/dissimilarity_arrays\maxvit_t_IMAGENET1K_V1_torchvision_cifar10(0).npy
+regnet_y_16gf,torchvision,IMAGENET1K_V1,cifar10(0),dataStorage/dissimilarity_arrays\regnet_y_16gf_IMAGENET1K_V1_torchvision_cifar10(0).npy
+regnet_y_16gf,torchvision,IMAGENET1K_V2,cifar10(0),dataStorage/dissimilarity_arrays\regnet_y_16gf_IMAGENET1K_V2_torchvision_cifar10(0).npy
+regnet_y_32gf,torchvision,IMAGENET1K_V2,cifar10(0),dataStorage/dissimilarity_arrays\regnet_y_32gf_IMAGENET1K_V2_torchvision_cifar10(0).npy
+vit_b_16,torchvision,IMAGENET1K_V1,cifar10(0),dataStorage/dissimilarity_arrays\vit_b_16_IMAGENET1K_V1_torchvision_cifar10(0).npy
+vit_b_16,torchvision,IMAGENET1K_SWAG_E2E_V1,cifar10(0),dataStorage/dissimilarity_arrays\vit_b_16_IMAGENET1K_SWAG_E2E_V1_torchvision_cifar10(0).npy
+vit_l_16,torchvision,IMAGENET1K_V1,cifar10(0),dataStorage/dissimilarity_arrays\vit_l_16_IMAGENET1K_V1_torchvision_cifar10(0).npy
