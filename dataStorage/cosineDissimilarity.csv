@@ -48,9 +48,9 @@ convnext_tiny,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissim
 convnext_base,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\convnext_base_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
 swin_t,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\swin_t_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
 swin_v2_t,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\swin_v2_t_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
-efficientnet_b0,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\efficientnet_b0_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
-efficientnet_b7,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\efficientnet_b7_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
-efficientnet_b4,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\efficientnet_b4_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
-resnet18,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\resnet18_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
 resnet50,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\resnet50_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
 resnet152,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\resnet152_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
+resnet18,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\resnet18_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
+efficientnet_b4,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\efficientnet_b4_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
+efficientnet_b7,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\efficientnet_b7_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
+efficientnet_b0,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\efficientnet_b0_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy

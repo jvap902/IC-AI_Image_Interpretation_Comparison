@@ -6,6 +6,7 @@ import open_clip
 from transformers import AutoModel, AutoImageProcessor
 from huggingface_hub import login
 from ..dataset import datasetUtils
+from .classUtils import stripModelHead
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -39,6 +40,8 @@ def loadTorchvisionModel(model_name, weights="DEFAULT"):
                 f"Available: {[w.name for w in weights_enum]}")
     
     model = m(weights=weights_obj).to(device)
+    
+    model = stripModelHead(model, model_name)
     
     model.eval()
     

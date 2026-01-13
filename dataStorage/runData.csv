@@ -171,3 +171,6 @@ total_images,num_classes,fst_model_source,first_model,fst_weights,snd_model_sour
 2000,100,torchvision,efficientnet_b0,IMAGENET1K_V1,torchvision,efficientnet_b7,IMAGENET1K_V1,0.8955,0.9855,0.23398441501992537,0.50567126,timm/mini-imagenet(0)
 2000,100,torchvision,efficientnet_b4,IMAGENET1K_V1,torchvision,efficientnet_b7,IMAGENET1K_V1,0.976,0.984,0.3083209868274986,0.4651914,timm/mini-imagenet(0)
 
+2000,100,torchvision,resnet18,IMAGENET1K_V1,torchvision,efficientnet_b4,IMAGENET1K_V1,0.7655,0.9765,-0.1828848640167132,-0.13751861,timm/mini-imagenet(0)
+2000,100,torchvision,efficientnet_b7,IMAGENET1K_V1,torchvision,efficientnet_b4,IMAGENET1K_V1,0.987,0.9765,0.5745735097627552,0.58332235,timm/mini-imagenet(0)
+2000,100,torchvision,efficientnet_b0,IMAGENET1K_V1,torchvision,efficientnet_b4,IMAGENET1K_V1,0.897,0.9765,-0.3106496278475159,-0.20980766,timm/mini-imagenet(0)

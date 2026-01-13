@@ -56,9 +56,6 @@ if __name__ == "__main__":
     fst_modelc = Model(first_model_name, args.m1_source, args.m1_weights)
     snd_modelc = Model(second_model_name, args.m2_source, args.m2_weights)
     
-    #fst_model, data_transforms = modelCreation.getModel(args.m1_source, first_model_name)
-    #snd_model, snd_dt = modelCreation.getModel(args.m2_source, second_model_name)
-    
     # --- Data Setup ---
     
     dataset_name = args.dataset if args.dataset else "timm/mini-imagenet"
