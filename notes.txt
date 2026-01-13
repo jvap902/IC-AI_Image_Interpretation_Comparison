@@ -9,10 +9,8 @@ ideia de otimização:
     Voltar com arquivos de dissimilaridade de cosseno, quando ativo faz validação do modelo e pula toda parte de extração.
 
 Tarefas:
-    Rodar no cifar10 os experimentos
-    Reavaliar maxvit em cifar100
+    Reavaliar timm/mini-imagenet -> apenas casos com erros conhecidos (modelos com variação de pesos e maxvit) - conferir quanto mudou com reavaliação (geral)
     Rodar em algum outro dataset clássico (podemos pensar em qual)
-    Reavaliar timm/mini-imagenet -> apenas casos com erros conhecidos (modelos com variação de pesos e maxvit)
     Com os resultados disso fazer uma avaliação dos heatmaps: diferenças entre datasets, padrões que aparecem entre modelos e etc.
     Documentar tudo isso e o que foi feito até agora pra gente realizar uma discussão
     

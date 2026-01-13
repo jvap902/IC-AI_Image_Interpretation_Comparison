@@ -228,8 +228,6 @@ def loadHuggingfaceDataset(dataset_link, train_indices, val_indices, modelc):
     # 5. Wrap in PyTorch Dataset
     train_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=modelc.data_transforms)
     val_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_validation, transform=modelc.data_transforms)
-    
-    print(val_dataset.classes)
 
     print(f"\nLoaded dataset with previously selected indices")
 
