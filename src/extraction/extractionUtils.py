@@ -32,10 +32,20 @@ def maxvitExtractor(modelc, inputs):
     return data.float()
 
 def generalExtractor(modelc, inputs):
+    #return_nodes = {
+    #    'avgpool': 'global_embedding'
+    #}
+
+    #extractor = create_feature_extractor(modelc.model, return_nodes=return_nodes)
+    
+    #output = extractor(inputs)
+    
+    # This is already pooled and normalized. No need for adaptive_avg_pool2d!
+    #data = output['global_embedding']
+    
     data = modelc.model(inputs)
     
-    if data.dim() > 2:
-        data = torch.flatten(data, start_dim=1)
+    data = torch.flatten(data, start_dim=1)
     
     return data.float()
 
