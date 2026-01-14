@@ -9,8 +9,6 @@ def getExtractor(modelc):
         return clipExtractor
     elif (model_type == 'huggingface'):
         return huggingfaceExtractor
-    elif (modelc.name == 'maxvit_t'):
-        return maxvitExtractor
     else:
         return generalExtractor
     
