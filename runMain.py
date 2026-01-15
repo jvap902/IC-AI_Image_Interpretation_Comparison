@@ -72,9 +72,9 @@ if __name__ == "__main__":
     
     dataset = 'timm/mini-imagenet' #ainda tem que continuar com o cifar10 depois
     
-    begin = 2
+    begin = 0
     (src1, model1, weight1) = instances[begin]
-    for (src2, model2, weight2) in instances[9:]:
+    for (src2, model2, weight2) in instances[begin+1:]:
         print(f"    --- Running test: {model1} ({weight1}) x {model2} ({weight2}) ---")
     
         arguments_to_pass = ["--dataset", dataset, "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
