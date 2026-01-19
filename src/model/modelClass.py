@@ -14,7 +14,7 @@ class Model:
         
         self.model, self.data_transforms = getModel(self.source, self.name, weights)
         
-        self.featureExtractor = getExtractor(self.source)
+        self.featureExtractor = getExtractor(self)
         
         self.archType = self.getArchitectureType()
             

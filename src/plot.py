@@ -197,10 +197,10 @@ def paramDataFrameFromCsv(csv_path, param):
         # 1. Identificar todos os modelos únicos para saber o tamanho da matriz
         models = []
         for row in reader:
-            if (row['first_model'], row['fst_weights']) not in models:
-                models.append((row['first_model'], row['fst_weights']))
-            if (row['second_model'], row['snd_weights']) not in models:
-                models.append((row['second_model'], row['snd_weights']))
+            if (row['fst_model_source'], row['first_model'], row['fst_weights']) not in models:
+                models.append((row['fst_model_source'], row['first_model'], row['fst_weights']))
+            if (row['snd_model_source'], row['second_model'], row['snd_weights']) not in models:
+                models.append((row['snd_model_source'], row['second_model'], row['snd_weights']))
         
         n = len(models)
         
@@ -215,9 +215,9 @@ def paramDataFrameFromCsv(csv_path, param):
 
         # 2. Preencher a matriz com os valores do CSV
         for row in reader:
-            m1 = (row['first_model'], row['fst_weights'])
-            m2 = (row['second_model'], row['snd_weights'])
-            val = float(row[param])
+            m1 = (row['fst_model_source'], row['first_model'], row['fst_weights'])
+            m2 = (row['snd_model_source'], row['second_model'], row['snd_weights'])
+            val = np.float32(row[param])
             
             i, j = model_to_idx[m1], model_to_idx[m2]
             matrix[i][j] = val

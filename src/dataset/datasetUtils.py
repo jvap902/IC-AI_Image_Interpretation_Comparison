@@ -4,7 +4,7 @@ import zipfile
 from urllib.request import urlretrieve
 from tqdm.auto import tqdm
 import requests
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, Subset
 import random
 from collections import defaultdict
 
@@ -14,7 +14,20 @@ IMAGENET_A_URL = "https://people.eecs.berkeley.edu/~hendrycks/imagenet-a.tar"
 IMAGENET_A_FILENAME = "imagenet-a.tar"
 IMAGENET_A_EXTRACT_DIR = "imagenet-a"
 
-def downloadUrlDataset(root_dir, url=IMAGENET_A_URL, file_name=IMAGENET_A_FILENAME, extract_dir=IMAGENET_A_EXTRACT_DIR, compression_type='tar'):
+# Imagenet-sketch
+IMAGENET_SKETCH_URL = "https://www.kaggle.com/api/v1/datasets/download/wanghaohan/imagenetsketch"
+IMAGENET_SKETCH_FILENAME = "archive.zip"
+IMAGENET_SKETCH_EXTRACT_DIR = "imagenet-sketch"
+
+def getDownloadInfo(dataset):
+    if dataset == 'imagenet-a':
+        return IMAGENET_A_URL, IMAGENET_A_FILENAME, IMAGENET_A_EXTRACT_DIR, 'tar'
+    elif dataset == 'imagenet-sketch':
+        return IMAGENET_SKETCH_URL, IMAGENET_SKETCH_FILENAME, IMAGENET_SKETCH_EXTRACT_DIR, 'zip'
+    else:
+        raise ValueError("Unsupported dataset")
+
+def downloadUrlDataset(root_dir, url, file_name, extract_dir, compression_type):
     """
     Downloads and extracts the ImageNet-A dataset from the corrected Berkeley URL.
 
@@ -22,7 +35,7 @@ def downloadUrlDataset(root_dir, url=IMAGENET_A_URL, file_name=IMAGENET_A_FILENA
         root_dir (str): The base directory ('data/') where the dataset will be stored.
 
     Returns:
-        str: The path to the extracted ImageNet-A directory, or None if failed.
+        str: The path to the extracted ImageNet-A or imagenet-sketch directory, or None if failed.
     """
     # Ensure the root data directory exists
     os.makedirs(root_dir, exist_ok=True)
@@ -35,7 +48,7 @@ def downloadUrlDataset(root_dir, url=IMAGENET_A_URL, file_name=IMAGENET_A_FILENA
     # We check for a common file structure to avoid re-downloading large files
     # The extracted directory should contain subdirectories (classes).
     if os.path.exists(extract_path) and len(os.listdir(extract_path)) > 1:
-        print(f"ImageNet-A already found and extracted at: {extract_path}")
+        print(f"{file_name} already found and extracted at: {extract_path}")
         return extract_path
 
     # 2. Download the file
@@ -181,10 +194,10 @@ def selectindices(dataset, imagesPerClass, num_classes):
         
     return selected_indices
 
-def getRandomImages(num_classes, images_per_class, dataset, dataset_classes):
+def getRandomImages(num_classes, images_per_class, dataset, dataset_classes : int):
     
     # 1. Pick num_classes classes
-    selected_classes = random.sample(range(len(dataset_classes)), num_classes)
+    selected_classes = random.sample(range(dataset_classes), num_classes)
 
     # 2. Collect indices per class
     class_indices = defaultdict(list)
@@ -210,3 +223,8 @@ def getRandomImages(num_classes, images_per_class, dataset, dataset_classes):
         selected_indices.extend(indices[rand_img_start : rand_img_start + images_per_class])
                 
     return selected_indices
+
+def get_classes(dataset):
+    if isinstance(dataset, Subset):
+        return dataset.dataset.classes
+    return dataset.classes
