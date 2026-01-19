@@ -1,3 +1,4 @@
 from . import datasetUtils
 from . import loadDataset
-__all__ = ["loadDataset", "datasetUtils"]
+from . import datasetClass
+__all__ = ["loadDataset", "datasetUtils", "datasetClass"]

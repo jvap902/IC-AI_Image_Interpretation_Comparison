@@ -56,3 +56,5 @@ swin_v2_t,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilar
 efficientnet_b0,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\efficientnet_b0_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
 efficientnet_b4,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\efficientnet_b4_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
 efficientnet_b7,torchvision,IMAGENET1K_V1,timm/mini-imagenet(0),dataStorage/dissimilarity_arrays\efficientnet_b7_IMAGENET1K_V1_torchvision_timm-mini-imagenet(0).npy
+maxvit_t,torchvision,IMAGENET1K_V1,imagenet-sketch(0),dataStorage/dissimilarity_arrays\maxvit_t_IMAGENET1K_V1_torchvision_imagenet-sketch(0).npy
+efficientnet_b7,torchvision,IMAGENET1K_V1,imagenet-sketch(0),dataStorage/dissimilarity_arrays\efficientnet_b7_IMAGENET1K_V1_torchvision_imagenet-sketch(0).npy

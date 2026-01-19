@@ -1,12 +1,12 @@
 import os
 import tarfile
 import zipfile
-from urllib.request import urlretrieve
 from tqdm.auto import tqdm
 import requests
 from torch.utils.data import Dataset, Subset
 import random
 from collections import defaultdict
+from ..plot import findInCsv
 
 
 # ImageNet-A download details
@@ -44,12 +44,14 @@ def downloadUrlDataset(root_dir, url, file_name, extract_dir, compression_type):
     extract_path = os.path.join(root_dir, extract_dir)
     file_path = os.path.join(root_dir, file_name)
     
+    is_extracted_path = os.path.join(extract_path, 'sketch') if extract_dir == 'imagenet-sketch' else extract_path
+    
     # 1. Check if the dataset is already extracted
     # We check for a common file structure to avoid re-downloading large files
     # The extracted directory should contain subdirectories (classes).
-    if os.path.exists(extract_path) and len(os.listdir(extract_path)) > 1:
-        print(f"{file_name} already found and extracted at: {extract_path}")
-        return extract_path
+    if os.path.exists(is_extracted_path) and len(os.listdir(is_extracted_path)) > 1:
+        print(f"{file_name} already found and extracted at: {is_extracted_path}")
+        return is_extracted_path
 
     # 2. Download the file
     print(f"Downloading dataset from: {url}")
@@ -194,7 +196,12 @@ def selectindices(dataset, imagesPerClass, num_classes):
         
     return selected_indices
 
-def getRandomImages(num_classes, images_per_class, dataset, dataset_classes : int):
+def getRandomImages(dt_info, dataset, dataset_classes : int):
+    
+    print("Selecting indices\n")
+    
+    num_classes = dt_info.num_classes
+    images_per_class = dt_info.images_per_class
     
     # 1. Pick num_classes classes
     selected_classes = random.sample(range(dataset_classes), num_classes)
@@ -221,10 +228,59 @@ def getRandomImages(num_classes, images_per_class, dataset, dataset_classes : in
         indices = class_indices[c]
         rand_img_start = random.randint(0, len(indices)-images_per_class)
         selected_indices.extend(indices[rand_img_start : rand_img_start + images_per_class])
+    
+    print("Indices selected")
                 
     return selected_indices
 
-def get_classes(dataset):
+def getRandomImagesFromClasses(dt_info, dataset, train_or_validation):
+    
+    print("Getting classes from another dataset")
+    
+    available_class_names = dt_info.classes[train_or_validation]
+        
+    available_classes = []
+    
+    for idx, name in enumerate(getClasses(dataset)):
+        if name in available_class_names:
+            available_classes.append(idx)
+                
+    print(f"Selecting indices from {len(available_classes)} specific classes\n")
+
+    # Collect indices per class
+    class_indices = defaultdict(list)
+
+    for idx, item in enumerate(dataset):
+        _, label = item
+        if label in available_classes:
+            class_indices[label].append(idx)   
+            
+    # Check availability - verifica se existe o número de imagens por classe nesta classe
+    #for c in available_classes:
+    #    if len(class_indices[c]) < dt_info.images_per_class:
+    #        raise ValueError(
+    #            f"Class {c} only has {len(class_indices[c])} images, "
+    #            f"requested {dt_info.images_per_class}."
+    #        )
+
+    # Select balanced subset
+    selected_indices = []
+    for c in available_classes:
+        indices = class_indices[c]
+        rand_img_start = random.randint(0, len(indices)-dt_info.images_per_class)
+        selected_indices.extend(indices[rand_img_start : rand_img_start + dt_info.images_per_class]) #sequência aleatória de índices    
+    
+    print("Indices selected")
+                
+    return selected_indices
+
+def imageSelector(dt_info, dataset, dataset_classes : int, train_or_validation):
+    if dt_info.classes['train'][0] == 'all':
+        return getRandomImages(dt_info, dataset, dataset_classes)
+    else:
+        return getRandomImagesFromClasses(dt_info, dataset, train_or_validation)
+
+def getClasses(dataset):
     if isinstance(dataset, Subset):
         return dataset.dataset.classes
     return dataset.classes

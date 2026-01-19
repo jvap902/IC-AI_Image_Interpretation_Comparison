@@ -186,6 +186,12 @@ def getStringIntArray(string):
     
     return ans
 
+def getStringStrArray(string):
+    string = string[1:-1]
+    ans = [str(e[1:-1]) for e in string.split(', ')]
+    
+    return ans
+
 def paramDataFrameFromCsv(csv_path, param):
     
     with open(csv_path, mode='r', newline='', encoding='utf-8') as file:

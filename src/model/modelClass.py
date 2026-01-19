@@ -2,6 +2,7 @@ from .modelCreation import getModel
 from .classUtils import getExtractor, get_attention_layers, get_conv_layers, is_vit_patch_embedding
 import os
 from src.dataset import loadDataset
+from src.dataset.datasetUtils import getClasses
 from src import plot
 from torch.utils.data import DataLoader
 
@@ -21,10 +22,10 @@ class Model:
     def extract(self, inputs):
         return self.featureExtractor(self, inputs)
     
-    def getDataset(self, total_images, num_classes, dataset, subset_num=0, output_dir="./dataStorage", data_dir="./data"): #por enquanto apenas carregando datasets do Huggingface
+    def getDataset(self, dt_info, output_dir="./dataStorage", data_dir="./data"): #por enquanto apenas carregando datasets do Huggingface
         
-        dt_name = dataset.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
-        file_name = f"{dt_name}_subset_i{total_images}_c{num_classes}({subset_num}).pt"
+        dt_name = dt_info.name.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
+        file_name = f"{dt_name}_subset_i{dt_info.num_images}_c{dt_info.num_classes}({dt_info.subset}).pt"
         indices_file = os.path.join(output_dir, 'selectedIndices.csv')
         
         if os.path.exists(indices_file):
@@ -35,11 +36,13 @@ class Model:
                 train_indices = plot.getStringIntArray(indices[0]['train_indices'])
                 val_indices = plot.getStringIntArray(indices[0]['validation_indices'])
                 
-                self.train_dataset, self.val_dataset = loadDataset.loadIndicesFromDataset(dataset, train_indices, val_indices, data_dir, self)
+                self.train_dataset, self.val_dataset = loadDataset.loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir, self)
                 
             else:
-                self.train_dataset, self.val_dataset = loadDataset.createNewDataset(dataset, total_images, num_classes, output_dir, subset_num, data_dir, self)
-                
+                self.train_dataset, self.val_dataset = loadDataset.createNewDataset(dt_info, output_dir, data_dir, self)
+            
+            print(f"\nLoaded {len(getClasses(self.train_dataset))} train classes and {len(getClasses(self.val_dataset))} validation classes")
+            print(f"Validation dataset has {len(self.val_dataset)} total images")
         
         else:
             raise FileNotFoundError("Arquivo com indices não encontrado")

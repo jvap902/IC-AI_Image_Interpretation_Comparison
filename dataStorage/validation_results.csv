@@ -56,3 +56,5 @@ regnet_y_16gf,torchvision,IMAGENET1K_V1,cifar100(0),0.5625
 regnet_y_16gf,torchvision,IMAGENET1K_V2,cifar100(0),0.6335
 regnet_y_32gf,torchvision,IMAGENET1K_V2,cifar100(0),0.6315
 vit_b_16,torchvision,IMAGENET1K_V1,cifar100(0),0.6825
+maxvit_t,torchvision,IMAGENET1K_V1,imagenet-sketch(0),0.144
+efficientnet_b7,torchvision,IMAGENET1K_V1,imagenet-sketch(0),0.1685

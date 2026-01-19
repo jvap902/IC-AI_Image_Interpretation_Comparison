@@ -3,6 +3,7 @@ import os
 import sys
 import torch
 from src import *
+from src.dataset.datasetClass import DtInfo
 from src.model.modelClass import Model
 import numpy as np
 
@@ -40,6 +41,7 @@ parser.add_argument("--m2_source", type=str, required=False, default="timm", hel
 parser.add_argument("--m1_weights", type=str, required=False, default="DEFAULT", help="Specify weights for torchvision models")
 parser.add_argument("--m2_weights", type=str, required=False, default="DEFAULT", help="Specify weights for torchvision models")
 parser.add_argument("-ed", "--existing_dissimilarity", action='store_true', required=False, default=False, help="Use previously calculated cossine dissimilarity for run")
+parser.add_argument("-sc", "--same_classes", type=str, required=False, default=None, nargs='+', help="Specify [name, subset, num_classes, num_images] of a dataset for its classes to be used, only works for new subsets")
 
 args = parser.parse_args()
 
@@ -64,32 +66,34 @@ if __name__ == "__main__":
     
     num_classes = args.n_classes if args.n_classes else 100
     
+    specific_subset = args.specific_subset if args.specific_subset is not None else 0
+    
     if dataset_name == 'cifar10':
         num_classes = 10
     
     if total_images < num_classes:
         raise ValueError(f"Total images ({total_images}) must be at least equal to number of classes ({num_classes}).")
     
+    dt_info = DtInfo(dataset_name, specific_subset, num_classes, total_images, args.same_classes)
+    
     epochs = args.epochs if args.epochs else 10
 
     print(f"\nNumber of images total: {total_images}")
     
-    specific_subset = args.specific_subset if args.specific_subset is not None else 0
-
     fst_dissimilarity_path = os.path.join(output_dir, "first_dissimilarity_array.pt")
     snd_dissimilarity_path = os.path.join(output_dir, "second_dissimilarity_array.pt")
     dissimilarity_csv_path = os.path.join(output_dir, "cosineDissimilarity.csv")
     np_folder = output_dir+"/dissimilarity_arrays"
     dt_name_w_subset = dataset_name+f"({specific_subset})"
 
-    fst_modelc.getDataset(total_images, num_classes, dataset_name, specific_subset, output_dir)
-    snd_modelc.getDataset(total_images, num_classes, dataset_name, specific_subset, output_dir)
+    fst_modelc.getDataset(dt_info, output_dir)
+    snd_modelc.getDataset(dt_info, output_dir)
     
     batch_size = 64
     fst_modelc.getLoaders(batch_size)
     snd_modelc.getLoaders(batch_size)
     
-    class_names = datasetUtils.get_classes(fst_modelc.train_dataset)
+    class_names = datasetUtils.getClasses(fst_modelc.train_dataset)
     num_classes = len(class_names)
 
     # --- teste se modelos estão funcionando de acordo ---
