@@ -70,7 +70,10 @@ def cosineDissimilarity(ptPath, csv_path, dissimilarity_path, modelc: Model, dt_
 
     print(f"Saving similarity array to {dissimilarity_path} to free up system memory.")
     np.save(dissimilarity_path, np_dissimilarity)
-    plot.writeCsvLine(csv_path, [modelc.name, modelc.source, modelc.weights, dt_name_w_subset, dissimilarity_path])
+    
+    if len(plot.findInCsv(csv_path, ['model', 'model_source', 'model_weights', 'dataset'], [modelc.name, modelc.source, modelc.weights, dt_name_w_subset])) == 0:
+        plot.writeCsvLine(csv_path, [modelc.name, modelc.source, modelc.weights, dt_name_w_subset, dissimilarity_path])
+    
     # Delete the large tensor from RAM immediately after saving
     del dissimilarity_array_tensor
     del np_dissimilarity

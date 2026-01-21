@@ -12,3 +12,5 @@ total_images,num_classes,fst_model_source,first_model,fst_weights,snd_model_sour
 
 2000,10,torchvision,maxvit_t,IMAGENET1K_V1,torchvision,efficientnet_b7,IMAGENET1K_V1,0.924,0.8745,0.24713287285011135,0.37865296,cifar10(0)
 2000,10,torchvision,vit_b_16,IMAGENET1K_V1,torchvision,efficientnet_b7,IMAGENET1K_V1,0.9215,0.8745,0.621510348450425,0.67956674,cifar10(0)
+2000,10,torchvision,vit_b_16,IMAGENET1K_V1,torchvision,vit_h_14,IMAGENET1K_SWAG_E2E_V1,0.9215,0.959,0.5671731198588666,0.72129726,cifar10(0)
+2000,10,torchvision,vit_b_16,IMAGENET1K_V1,torchvision,vit_b_16,IMAGENET1K_SWAG_E2E_V1,0.9215,0.9165,0.6421028405821472,0.7649325,cifar10(0)
