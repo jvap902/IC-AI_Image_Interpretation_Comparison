@@ -80,10 +80,8 @@ if __name__ == "__main__":
 
     print(f"\nNumber of images total: {total_images}")
     
-    fst_dissimilarity_path = os.path.join(output_dir, "first_dissimilarity_array.pt")
-    snd_dissimilarity_path = os.path.join(output_dir, "second_dissimilarity_array.pt")
     dissimilarity_csv_path = os.path.join(output_dir, "cosineDissimilarity.csv")
-    np_folder = output_dir+"/dissimilarity_arrays"
+    dissimilarity_folder = output_dir+"/dissimilarity_arrays"
     dt_name_w_subset = dataset_name+f"({specific_subset})"
 
     fst_modelc.getDataset(dt_info, output_dir)
@@ -127,10 +125,9 @@ if __name__ == "__main__":
     fst_diss_calculated = len(similarityAnalysis.isDissimilarityCalculated(dt_name_w_subset, dissimilarity_csv_path, fst_modelc)) > 0
     snd_diss_calculated = len(similarityAnalysis.isDissimilarityCalculated(dt_name_w_subset, dissimilarity_csv_path, snd_modelc)) > 0
         
-    dissimilarity_calculated = fst_diss_calculated and snd_diss_calculated
+    dissimilarity_calculated = fst_diss_calculated and snd_diss_calculated    
     
-    
-    if ((not args.existing_dissimilarity) or not dissimilarity_calculated):
+    if (args.existing_dissimilarity == False) or (not dissimilarity_calculated):
     
         first_output_path = os.path.join(output_dir, "first_global_embedding.pt")
         second_output_path = os.path.join(output_dir, "second_global_embedding.pt")
@@ -139,14 +136,14 @@ if __name__ == "__main__":
 
         with torch.no_grad():
             
-            if not fst_diss_calculated:            
+            if (not fst_diss_calculated) or (args.existing_dissimilarity == False):            
                 print(f"\n--- Extracting Features for {first_model_name} ---")
                 # This function iterates over all batches in val_loader and returns ONE large tensor
                 first_features, _ = featureExtraction.getFeatureTensors(fst_modelc.val_loader, fst_modelc)
                 torch.save(first_features, first_output_path)
                 print(f"\nSaved first embedding tensor (Shape: {first_features.shape}) to: {first_output_path}")
             
-            if not snd_diss_calculated:
+            if (not snd_diss_calculated) or (args.existing_dissimilarity == False):
                 print(f"\n--- Extracting Features for {second_model_name} ---")
                 second_features, _ = featureExtraction.getFeatureTensors(snd_modelc.val_loader, snd_modelc)
                 torch.save(second_features, second_output_path)
@@ -154,9 +151,9 @@ if __name__ == "__main__":
 
     # --- Montando matriz ---
 
-    similarityAnalysis.getCosineDissimilarity(output_dir+"/first_global_embedding.pt", save_path=fst_dissimilarity_path, dissimilarity_csv=dissimilarity_csv_path, np_folder=np_folder, modelc=fst_modelc, dataset=dt_name_w_subset, previous_dissimilarity=args.existing_dissimilarity)
+    fst_dissimilarity_path = similarityAnalysis.getCosineDissimilarity(output_dir+"/first_global_embedding.pt", dissimilarity_csv=dissimilarity_csv_path, dissimilarity_folder=dissimilarity_folder, modelc=fst_modelc, dt_info=dt_info, existing_dissimilarity=args.existing_dissimilarity)
     
-    similarityAnalysis.getCosineDissimilarity(output_dir+"/second_global_embedding.pt", save_path=snd_dissimilarity_path, dissimilarity_csv=dissimilarity_csv_path, np_folder=np_folder, modelc=snd_modelc, dataset=dt_name_w_subset, previous_dissimilarity=args.existing_dissimilarity)
+    snd_dissimilarity_path = similarityAnalysis.getCosineDissimilarity(output_dir+"/second_global_embedding.pt", dissimilarity_csv=dissimilarity_csv_path, dissimilarity_folder=dissimilarity_folder, modelc=snd_modelc, dt_info=dt_info, existing_dissimilarity=args.existing_dissimilarity)
 
     print("\nCalculating Pearson's correlation\n")
     pearson, p_value = similarityAnalysis.calculateCorrelations(fst_dissimilarity_path, snd_dissimilarity_path, correlation_type='pearson')

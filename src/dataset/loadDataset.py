@@ -23,10 +23,7 @@ def loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir, modelc
     else:
         train_dataset, val_dataset = loadHuggingfaceDataset(dataset, train_indices, val_indices, modelc)
     
-    classes_file = './dataStorage/datasetClasses.csv'
-    ans = plot.findInCsv(classes_file, ['dataset', 'subset', 'num_classes', 'num_images'], [dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images])
-    if len(ans) == 0:
-        plot.writeCsvLine(classes_file, [dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images, datasetUtils.getClasses(train_dataset), datasetUtils.getClasses(val_dataset)])
+    datasetUtils.writeDatasetClasses(dt_info)
 
     return train_dataset, val_dataset
 
@@ -45,10 +42,7 @@ def createNewDataset(dt_info, output_dir, data_dir, modelc):
     else:
         train_dataset, val_dataset = newHuggingfaceDataset(dt_info, output_dir, modelc)
     
-    classes_file = './dataStorage/datasetClasses.csv'
-    ans = plot.findInCsv(classes_file, ['dataset', 'subset', 'num_classes', 'num_images'], [dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images])
-    if len(ans) == 0:
-        plot.writeCsvLine(classes_file, [dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images, datasetUtils.getClasses(train_dataset), datasetUtils.getClasses(val_dataset)])
+    datasetUtils.writeDatasetClasses(dt_info)
 
     return train_dataset, val_dataset
     

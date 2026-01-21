@@ -6,7 +6,7 @@ import requests
 from torch.utils.data import Dataset, Subset
 import random
 from collections import defaultdict
-from ..plot import findInCsv
+from ..plot import findInCsv, writeCsvLine
 
 
 # ImageNet-A download details
@@ -256,12 +256,12 @@ def getRandomImagesFromClasses(dt_info, dataset, train_or_validation):
             class_indices[label].append(idx)   
             
     # Check availability - verifica se existe o número de imagens por classe nesta classe
-    #for c in available_classes:
-    #    if len(class_indices[c]) < dt_info.images_per_class:
-    #        raise ValueError(
-    #            f"Class {c} only has {len(class_indices[c])} images, "
-    #            f"requested {dt_info.images_per_class}."
-    #        )
+    for c in available_classes:
+        if len(class_indices[c]) < dt_info.images_per_class:
+            raise ValueError(
+                f"Class {c} only has {len(class_indices[c])} images, "
+                f"requested {dt_info.images_per_class}."
+            )
 
     # Select balanced subset
     selected_indices = []
@@ -284,3 +284,9 @@ def getClasses(dataset):
     if isinstance(dataset, Subset):
         return dataset.dataset.classes
     return dataset.classes
+
+def writeDatasetClasses(dt_info):
+    classes_file = './dataStorage/datasetClasses.csv'
+    ans = findInCsv(classes_file, ['dataset', 'subset', 'num_classes', 'num_images'], [dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images])
+    if len(ans) == 0:
+        writeCsvLine(classes_file, [dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images, dt_info.classes['train'], dt_info.classes['validation']])

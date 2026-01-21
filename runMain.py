@@ -35,8 +35,8 @@ if __name__ == "__main__":
         #('open_clip', 'ViT-B-32-256', 'DEFAULT'),
         #('open_clip', 'ViT-B-16', 'DEFAULT'),
         #('open_clip', 'ViT-L-14', 'DEFAULT'),
-        #('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
-        #('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT'),
+        ('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
+        ('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT'),
         ('torchvision', 'resnet18', 'IMAGENET1K_V1'),
         ('torchvision', 'resnet50', 'IMAGENET1K_V1'),
         ('torchvision', 'resnet152', 'IMAGENET1K_V1'),
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     run_main_with_subprocess(arguments_to_pass)
     '''
     
-    dataset = 'timm/mini-imagenet' #ainda tem que continuar com o cifar10 depois
+    dataset = 'imagenet-sketch'
     
     begin = 0
     (src1, model1, weight1) = instances[begin]
@@ -78,7 +78,7 @@ if __name__ == "__main__":
         print(f"    --- Running test: {model1} ({weight1}) x {model2} ({weight2}) ---")
     
         arguments_to_pass = ["--dataset", dataset, "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
-                             "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed"]
+                             "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "-sc", "timm/mini-imagenet", "0", "100", "2000"]
         run_main_with_subprocess(arguments_to_pass)
 
 

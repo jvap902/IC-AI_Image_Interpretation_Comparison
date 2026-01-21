@@ -13,8 +13,7 @@ class DtInfo:
             self.classes['train'], self.classes['validation'] = ['all'], ['all']
         else:
             self.classes['train'], self.classes['validation'] = self.getAvailableClasses(same_classes)
-                    
-        
+                                                
     def getAvailableClasses(self, same_classes, dataStorage_dir='./dataStorage'):
         from ..model.modelClass import Model
                 
