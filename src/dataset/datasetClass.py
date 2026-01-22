@@ -6,6 +6,7 @@ class DtInfo:
     def __init__(self, dataset_name, subset, num_classes, num_images, same_classes):
         self.num_classes, self.num_images, self.name, self.subset = num_classes, num_images, dataset_name, subset
         self.images_per_class = self.num_images // self.num_classes
+        self.name_w_subset = self.name.replace('/','-') + f"({self.subset})"
         
         self.classes = {}
                 

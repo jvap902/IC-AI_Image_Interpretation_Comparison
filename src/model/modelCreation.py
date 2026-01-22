@@ -41,7 +41,7 @@ def loadTorchvisionModel(model_name, weights="DEFAULT"):
     
     model = m(weights=weights_obj).to(device)
     
-    model = stripModelHead(model, model_name)
+    #model = stripModelHead(model, model_name)
     
     model.eval()
     

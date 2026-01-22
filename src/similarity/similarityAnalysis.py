@@ -122,20 +122,17 @@ def calculateCorrelations(path_a, path_b, correlation_type='spearman', chunked=F
     
 def getCosineDissimilarity(ptPath, dissimilarity_csv, dissimilarity_folder, modelc: Model, dt_info : DtInfo, existing_dissimilarity=False):
     
-    dt_name = dt_info.name.replace('/', '-')
-    dt_subset = dt_info.subset
-    dt_name_w_subset = dt_name+f"({dt_subset})"
     m_name = modelc.name.replace('/','-')
     m_weights = modelc.weights.replace('/','-')
     s_name = modelc.source.replace('/','-')
     
-    ans = isDissimilarityCalculated(dt_name_w_subset, dissimilarity_csv, modelc)
+    ans = isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv, modelc)
     
     if existing_dissimilarity and (len(ans) > 0):
         return ans[0]['path']
     else:
-        dissimilarity_path = os.path.join(dissimilarity_folder, f"{m_name}_{m_weights}_{s_name}_{dt_name_w_subset}.npy")
-        cosineDissimilarity(ptPath, dissimilarity_csv, dissimilarity_path, modelc, dt_name_w_subset)
+        dissimilarity_path = os.path.join(dissimilarity_folder, f"{m_name}_{m_weights}_{s_name}_{dt_info.name_w_subset}.npy")
+        cosineDissimilarity(ptPath, dissimilarity_csv, dissimilarity_path, modelc, dt_info.name_w_subset)
         return dissimilarity_path
 
 def isDissimilarityCalculated(dt_name_w_subset, dissimilarity_csv, modelc):

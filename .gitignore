@@ -5,3 +5,4 @@ data/
 dataStorage/*.pt
 token.txt
 /venv
+/ztempData
