@@ -1,1 +1,5 @@
 model_name,model_weights,model_source,dataset(subset),std_output_path,embedding_path
+vit_b_16,IMAGENET1K_V1,torchvision,cifar10(0),./dataStorage/model_output/std_output/vit_b_16_IMAGENET1K_V1_torchvision_cifar10(0).pt,./dataStorage/model_output/embedding/vit_b_16_IMAGENET1K_V1_torchvision_cifar10(0).pt
+efficientnet_b7,IMAGENET1K_V1,torchvision,cifar10(0),./dataStorage/model_output/std_output/efficientnet_b7_IMAGENET1K_V1_torchvision_cifar10(0).pt,./dataStorage/model_output/embedding/efficientnet_b7_IMAGENET1K_V1_torchvision_cifar10(0).pt
+efficientnet_b4,IMAGENET1K_V1,torchvision,cifar10(0),./dataStorage/model_output/std_output/efficientnet_b4_IMAGENET1K_V1_torchvision_cifar10(0).pt,./dataStorage/model_output/embedding/efficientnet_b4_IMAGENET1K_V1_torchvision_cifar10(0).pt
+ViT-B/16,DEFAULT,clip,cifar10(0),./dataStorage/model_output/std_output/ViT-B-16_DEFAULT_clip_cifar10(0).pt,./dataStorage/model_output/embedding/ViT-B-16_DEFAULT_clip_cifar10(0).pt

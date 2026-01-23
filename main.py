@@ -42,7 +42,7 @@ parser.add_argument("--m1_weights", type=str, required=False, default="DEFAULT",
 parser.add_argument("--m2_weights", type=str, required=False, default="DEFAULT", help="Specify weights for torchvision models")
 parser.add_argument("-ed", "--existing_dissimilarity", action='store_true', required=False, default=False, help="Use previously calculated cossine dissimilarity for run")
 parser.add_argument("-sc", "--same_classes", type=str, required=False, default=None, nargs='+', help="Specify [name, subset, num_classes, num_images] of a dataset for its classes to be used, only works for new subsets")
-parser.add_argument("-out", "--output_file", type=str, required=False, default="runData.csv", help="Specify path to file the run information will be written")
+parser.add_argument("-out", "--output_file", type=str, required=False, default="./dataStorage/runData.csv", help="Specify path to file the run information will be written")
 
 args = parser.parse_args()
 
@@ -122,38 +122,34 @@ if __name__ == "__main__":
         print(f"\n{second_model_name} Validation Accuracy: {snd_acc:.4f}")
         
     
-    fst_diss_calculated = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, fst_modelc)) > 0
-    snd_diss_calculated = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, snd_modelc)) > 0
-        
-    dissimilarity_calculated = fst_diss_calculated and snd_diss_calculated    
+    get_fst_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, fst_modelc)) == 0 or args.existing_dissimilarity == False
+    get_snd_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, snd_modelc)) == 0 or args.existing_dissimilarity == False    
     
-    if (args.existing_dissimilarity == False) or (not dissimilarity_calculated):
+    fst_embedding_path = dataCollection.getSavePath(fst_modelc, dt_info, True)
+    snd_embedding_path = dataCollection.getSavePath(snd_modelc, dt_info, True)
     
-        first_output_path = os.path.join(output_dir, "first_global_embedding.pt")
-        second_output_path = os.path.join(output_dir, "second_global_embedding.pt")
-        
-        # --- Feature Extraction ---
+    # --- Feature Extraction ---
 
-        with torch.no_grad():
-            
-            if (not fst_diss_calculated) or (args.existing_dissimilarity == False):            
-                print(f"\n--- Extracting Features for {first_model_name} ---")
-                # This function iterates over all batches in val_loader and returns ONE large tensor
-                first_features, _ = featureExtraction.getFeatureTensors(fst_modelc.val_loader, fst_modelc)
-                torch.save(first_features, first_output_path)
-                print(f"\nSaved first embedding tensor (Shape: {first_features.shape}) to: {first_output_path}")
-            
-            if (not snd_diss_calculated) or (args.existing_dissimilarity == False):
-                print(f"\n--- Extracting Features for {second_model_name} ---")
-                second_features, _ = featureExtraction.getFeatureTensors(snd_modelc.val_loader, snd_modelc)
-                torch.save(second_features, second_output_path)
-                print(f"Saved second embedding tensor (Shape: {second_features.shape}) to: {second_output_path}")
+    with torch.no_grad():
+        
+        if get_fst_embedding:            
+            print(f"\n--- Extracting Features for {first_model_name} ---")
+            # This function iterates over all batches in val_loader and returns ONE large tensor
+            first_features, _ = featureExtraction.getFeatureTensors(fst_modelc.val_loader, fst_modelc)
+            torch.save(first_features, fst_embedding_path)
+            print(f"\nSaved first embedding tensor (Shape: {first_features.shape}) to: {fst_embedding_path}")
+        
+        if get_snd_embedding:
+            print(f"\n--- Extracting Features for {second_model_name} ---")
+            second_features, _ = featureExtraction.getFeatureTensors(snd_modelc.val_loader, snd_modelc)
+            torch.save(second_features, snd_embedding_path)
+            print(f"Saved second embedding tensor (Shape: {second_features.shape}) to: {snd_embedding_path}")
 
     # --- Montando matriz ---
 
-    fst_dissimilarity_path = similarityAnalysis.getCosineDissimilarity(output_dir+"/first_global_embedding.pt", dissimilarity_csv=dissimilarity_csv_path, dissimilarity_folder=dissimilarity_folder, modelc=fst_modelc, dt_info=dt_info, existing_dissimilarity=args.existing_dissimilarity)
+    fst_dissimilarity_path = similarityAnalysis.getCosineDissimilarity(fst_embedding_path, dissimilarity_csv=dissimilarity_csv_path, dissimilarity_folder=dissimilarity_folder, modelc=fst_modelc, dt_info=dt_info, existing_dissimilarity=args.existing_dissimilarity)
     
-    snd_dissimilarity_path = similarityAnalysis.getCosineDissimilarity(output_dir+"/second_global_embedding.pt", dissimilarity_csv=dissimilarity_csv_path, dissimilarity_folder=dissimilarity_folder, modelc=snd_modelc, dt_info=dt_info, existing_dissimilarity=args.existing_dissimilarity)
+    snd_dissimilarity_path = similarityAnalysis.getCosineDissimilarity(snd_embedding_path, dissimilarity_csv=dissimilarity_csv_path, dissimilarity_folder=dissimilarity_folder, modelc=snd_modelc, dt_info=dt_info, existing_dissimilarity=args.existing_dissimilarity)
 
     print("\nCalculating Pearson's correlation\n")
     pearson, p_value = similarityAnalysis.calculateCorrelations(fst_dissimilarity_path, snd_dissimilarity_path, correlation_type='pearson')
@@ -167,3 +163,6 @@ if __name__ == "__main__":
     runData = [str(total_images), str(num_classes), fst_modelc.source, fst_modelc.name, args.m1_weights, snd_modelc.source, snd_modelc.name, args.m2_weights, str(fst_acc), str(snd_acc), str(spearman), str(pearson), dt_info.name_w_subset]
 
     plot.writeCsvLine(args.output_file, runData)
+    
+    dataCollection.gatherAdditionalData(fst_modelc, dt_info, has_embedding=get_fst_embedding)
+    dataCollection.gatherAdditionalData(snd_modelc, dt_info, has_embedding=get_snd_embedding)
