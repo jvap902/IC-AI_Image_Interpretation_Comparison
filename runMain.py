@@ -86,7 +86,7 @@ if __name__ == "__main__":
     
     begin = 0
     (src1, model1, weight1) = instances[begin]
-    for (src2, model2, weight2) in instances[5:]:
+    for (src2, model2, weight2) in instances[18:]:
         for dataset in datasets:
             dt_name = dataset.replace('/', '-')
             
