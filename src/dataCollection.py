@@ -6,6 +6,7 @@ from .model.modelClass import Model
 from .dataset.datasetClass import DtInfo
 from .dataset.datasetUtils import getClasses
 import clip
+import open_clip
 
 modelOutputCsv_path = './dataStorage/model_output/modelOutput.csv'
 
@@ -21,7 +22,14 @@ def getSavePath(modelc, dt_info, embedding : bool):
 def stdOutputExtractor(modelc : Model, inputs):
     match modelc.source:
         case 'open_clip':
-            return torch.tensor(modelc.model(inputs, text))
+            tokenizer = open_clip.get_tokenizer(modelc.name)
+            text = tokenizer((getClasses(modelc.val_dataset))).to(device)
+            
+            logits = modelc.model(inputs, text)
+            
+            logits_img = logits[0]
+            
+            return torch.tensor(logits_img)
         
         case 'clip':
             text = clip.tokenize(getClasses(modelc.val_dataset)).to(device)
@@ -31,7 +39,25 @@ def stdOutputExtractor(modelc : Model, inputs):
         
         case 'huggingface':
             if 'dinov3' in modelc.name:
-                raise NotImplemented
+                if isinstance(inputs, dict) or (hasattr(inputs, 'data') and 'pixel_values' in inputs):
+                    # Already processed by a DataLoader/Processor
+                    # Extract pixel_values and ensure they are on the correct device
+                    pixel_values = inputs['pixel_values']
+                    if isinstance(pixel_values, torch.Tensor):
+                        inp = {'pixel_values': pixel_values.to(device)}
+                    else:
+                        # If it's a list or numpy array inside the dict, convert to tensor
+                        inp = modelc.data_transforms(images=pixel_values, return_tensors="pt").to(device)
+                else:
+                    # Inputs are raw PIL images or Tensors that haven't been through the processor yet
+                    inp = modelc.data_transforms(images=inputs, return_tensors="pt").to(device)
+
+                with torch.inference_mode():
+                    outputs = modelc.model(**inp)
+                
+                data = outputs[-1]
+                
+                return torch.tensor(data)
             else:
                 raise ValueError("Unsupported model")
             

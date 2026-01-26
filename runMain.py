@@ -72,21 +72,22 @@ if __name__ == "__main__":
     
     datasets = ['timm/mini-imagenet', 'imagenet-sketch', 'cifar10', 'cifar100']
     
-    #begin = 0
-    #(src1, model1, weight1) = instances[begin]
-    #(src2, model2, weight2) = instances[4]
-    #for dataset in datasets:
-    #    dt_name = dataset.replace('/', '-')
-    #    
-    #    print(f"    --- Running {dataset} test: {model1} ({weight1}) x {model2} ({weight2}) ---")
-    #
-    #    arguments_to_pass = ["--dataset", dataset, "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
-    #                        "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "-out", f"./ztempData/{dt_name}Data.csv"]
-    #    run_main_with_subprocess(arguments_to_pass)
-    
-    begin = 0
+    begin = 2
+    snd_start = 6
     (src1, model1, weight1) = instances[begin]
-    for (src2, model2, weight2) in instances[18:]:
+    (src2, model2, weight2) = instances[snd_start]
+    for dataset in datasets[2:]:
+        dt_name = dataset.replace('/', '-')
+        
+        print(f"    --- Running {dataset} test: {model1} ({weight1}) x {model2} ({weight2}) ---")
+    
+        arguments_to_pass = ["--dataset", dataset, "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
+                            "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "-out", f"./ztempData/{dt_name}Data.csv"]
+        run_main_with_subprocess(arguments_to_pass)
+    
+    #begin = 0
+    (src1, model1, weight1) = instances[begin]
+    for (src2, model2, weight2) in instances[snd_start+1:]:
         for dataset in datasets:
             dt_name = dataset.replace('/', '-')
             
@@ -97,7 +98,7 @@ if __name__ == "__main__":
             run_main_with_subprocess(arguments_to_pass)
 
 
-    begin = 0
+    begin = begin+1
     for idx, (src1, model1, weight1) in enumerate(instances[begin:7]):
         for (src2, model2, weight2) in instances[idx+begin+1:]:
             for dataset in datasets:
