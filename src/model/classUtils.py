@@ -1,4 +1,4 @@
-from ..extraction.extractionUtils import clipExtractor, generalExtractor, huggingfaceExtractor, maxvitExtractor
+from ..extraction.extractionUtils import clipExtractor, generalExtractor, huggingfaceExtractor, dinoExtractor
 import torch.nn as nn
 
 def getExtractor(modelc):
@@ -7,6 +7,8 @@ def getExtractor(modelc):
     
     if (model_type == 'clip' or model_type == 'open_clip'):
         return clipExtractor
+    elif ("dinov3" in modelc.name):
+        return dinoExtractor
     elif (model_type == 'huggingface'):
         return huggingfaceExtractor
     else:

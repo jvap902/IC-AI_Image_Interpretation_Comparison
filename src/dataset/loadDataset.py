@@ -1,4 +1,4 @@
-import torch
+from pathlib import Path
 import torchvision
 from torch.utils.data import Subset, random_split
 import os
@@ -6,32 +6,45 @@ from . import datasetUtils
 from datasets import load_dataset
 from huggingface_hub import login
 from .. import plot
+import random
 
-def loadIndicesFromDataset(dataset, train_indices, val_indices, data_dir, modelc):
+def loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir, modelc):
+    
+    dataset = dt_info.name
     
     print(f"\nLoading previously selected {dataset} indices\n")
     
     if(dataset == 'imagenet-a' or dataset == 'imagenet-sketch'):
-        return loadUrlDownloadedDataset(data_dir, train_indices, val_indices, dataset, modelc)
-    if dataset == 'cifar100':
-        return loadCifar100Dataset(data_dir, train_indices, val_indices, modelc)
-    if dataset == 'cifar10':
-        return loadCifar10Dataset(data_dir, train_indices, val_indices, modelc)
+        train_dataset, val_dataset = loadUrlDownloadedDataset(data_dir, train_indices, val_indices, dataset, modelc)
+    elif dataset == 'cifar100':
+        train_dataset, val_dataset = loadCifar100Dataset(data_dir, train_indices, val_indices, modelc)
+    elif dataset == 'cifar10':
+        train_dataset, val_dataset = loadCifar10Dataset(data_dir, train_indices, val_indices, modelc)
     else:
-        return loadHuggingfaceDataset(dataset, train_indices, val_indices, modelc)
+        train_dataset, val_dataset = loadHuggingfaceDataset(dataset, train_indices, val_indices, modelc)
+    
+    datasetUtils.writeDatasetClasses(dt_info)
 
-def createNewDataset(dataset, total_images, num_classes, output_dir, subset_num, data_dir, modelc):
+    return train_dataset, val_dataset
+
+def createNewDataset(dt_info, output_dir, data_dir, modelc):
+    
+    dataset = dt_info.name
     
     print(f"\nCreating new set of indices for {dataset}\n")
     
     if (dataset == 'imagenet-a' or dataset == 'imagenet-sketch'):
-        return newUrlDownloadedDataset(data_dir, total_images, num_classes, output_dir, subset_num, dataset, modelc)
-    if dataset == 'cifar100':
-        return newCifar100Dataset(data_dir, total_images, num_classes, output_dir, subset_num, modelc)
-    if dataset == 'cifar10':
-        return newCifar10Dataset(data_dir, total_images, num_classes, output_dir, subset_num, modelc)
+        train_dataset, val_dataset = newUrlDownloadedDataset(dt_info, data_dir, output_dir, modelc)
+    elif dataset == 'cifar100':
+        train_dataset, val_dataset = newCifar100Dataset(dt_info, data_dir, output_dir, modelc)
+    elif dataset == 'cifar10':
+        train_dataset, val_dataset = newCifar10Dataset(dt_info, data_dir, output_dir, modelc)
     else:
-        return newHuggingfaceDataset(dataset, total_images, num_classes, output_dir, subset_num, modelc)
+        train_dataset, val_dataset = newHuggingfaceDataset(dt_info, output_dir, modelc)
+    
+    datasetUtils.writeDatasetClasses(dt_info)
+
+    return train_dataset, val_dataset
     
 def loadCifar10Dataset(data_dir, train_indices, val_indices, modelc):
     train_dataset = torchvision.datasets.CIFAR10(root=data_dir, train=True, download=True, transform=modelc.data_transforms)
@@ -44,18 +57,18 @@ def loadCifar10Dataset(data_dir, train_indices, val_indices, modelc):
     
     return train_subset, val_subset
     
-def newCifar10Dataset(data_dir, total_images, num_classes, output_dir, subset_num, modelc):
+def newCifar10Dataset(dt_info, data_dir, output_dir, modelc):
+    
+    dataset, subset_num, num_classes, total_images = dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images
     
     if num_classes > 10:
         num_classes = 10
     
     train_dataset = torchvision.datasets.CIFAR10(root=data_dir, train=True, download=True, transform=modelc.data_transforms)
     val_dataset = torchvision.datasets.CIFAR10(root=data_dir, train=False, download=True, transform=modelc.data_transforms)
-
-    images_per_class = total_images // num_classes
-
-    train_indices = datasetUtils.getRandomImages(num_classes, images_per_class, train_dataset, len(train_dataset.classes))
-    val_indices = datasetUtils.getRandomImages(num_classes, images_per_class, val_dataset, len(val_dataset.classes))
+    
+    train_indices = datasetUtils.imageSelector(dt_info, train_dataset, len(train_dataset.classes), 'train')
+    val_indices = datasetUtils.imageSelector(dt_info, val_dataset, len(val_dataset.classes), 'validation')
 
     subset_train_dataset = Subset(train_dataset, train_indices)
     subset_val_dataset = Subset(val_dataset, val_indices)
@@ -79,15 +92,15 @@ def loadCifar100Dataset(data_dir, train_indices, val_indices, modelc):
     
     return train_subset, val_subset
     
-def newCifar100Dataset(data_dir, total_images, num_classes, output_dir, subset_num, modelc):
+def newCifar100Dataset(dt_info, data_dir, output_dir, modelc,):
+    
+    dataset, subset_num, num_classes, total_images = dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images
 
     train_dataset = torchvision.datasets.CIFAR100(root=data_dir, train=True, download=True, transform=modelc.data_transforms)
     val_dataset = torchvision.datasets.CIFAR100(root=data_dir, train=False, download=True, transform=modelc.data_transforms)
 
-    images_per_class = total_images // num_classes
-
-    train_indices = datasetUtils.getRandomImages(num_classes, images_per_class, train_dataset, len(train_dataset.classes))
-    val_indices = datasetUtils.getRandomImages(num_classes, images_per_class, val_dataset, len(val_dataset.classes))
+    train_indices = datasetUtils.imageSelector(dt_info, train_dataset, len(train_dataset.classes), 'train')
+    val_indices = datasetUtils.imageSelector(dt_info, val_dataset, len(val_dataset.classes), 'validation')
 
     subset_train_dataset = Subset(train_dataset, train_indices)
     subset_val_dataset = Subset(val_dataset, val_indices)
@@ -100,29 +113,32 @@ def newCifar100Dataset(data_dir, total_images, num_classes, output_dir, subset_n
 
     return subset_train_dataset, subset_val_dataset
 
-def newUrlDownloadedDataset(root, total_images, num_classes, output_dir, subset_num, dataset, modelc):
+def newUrlDownloadedDataset(dt_info, data_dir, output_dir, modelc):
+    dataset, subset_num, num_classes, total_images = dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images
+    
     url, file_name, extract_dir, compression_type = datasetUtils.getDownloadInfo(dataset)
     
     # 1. Download and extract the data
     # This calls the function from src/dataset_utils.py to handle the download
-    data_dir = datasetUtils.downloadUrlDataset(root_dir=root, url=url, file_name=file_name, extract_dir=extract_dir, compression_type=compression_type)
-    if data_dir is None:
+    folder_path = datasetUtils.downloadUrlDataset(root_dir=data_dir, url=url, file_name=file_name, extract_dir=extract_dir, compression_type=compression_type)
+    print(folder_path)
+    if folder_path is None:
         raise FileNotFoundError(f"Failed to download or extract {dataset}.")
-
+    
     # 2. Load data using ImageFolder (which expects class subdirectories)
-    full_dataset = torchvision.datasets.ImageFolder(root=data_dir, transform=modelc.data_transforms)
+    full_dataset = torchvision.datasets.ImageFolder(root=folder_path, transform=modelc.data_transforms)
     
     if not full_dataset.classes:
-        raise ValueError(f"Could not find any classes (subdirectories) in {data_dir}. Check the directory structure.")
+        raise ValueError(f"Could not find any classes (subdirectories) in {folder_path}. Check the directory structure.")
+        
+    val_indices = datasetUtils.imageSelector(dt_info, full_dataset, len(full_dataset.classes), 'validation')
     
-    images_per_class = total_images // num_classes
+    # o resto dos índices pode ser utilizado para treinar a cabeça de validação
+
+    possible_train_indices = list(range(len(full_dataset)))
+    possible_train_indices = [item for item in possible_train_indices if item not in set(val_indices)]
     
-    val_indices = datasetUtils.getRandomImages(num_classes, images_per_class, full_dataset, len(full_dataset.classes))
-    
-    train_indices = [ # o resto fica para treinamento da cabeça de validação
-        i for i in range(len(full_dataset))
-        if i not in val_indices
-    ]
+    train_indices = random.sample(possible_train_indices, k=2000)
 
     train_dataset = Subset(full_dataset, train_indices)
     val_dataset = Subset(full_dataset, list(val_indices))
@@ -165,11 +181,11 @@ def loadUrlDownloadedDataset(root, train_indices, val_indices, dataset, modelc):
     
     return train_dataset, val_dataset
 
-def newHuggingfaceDataset(dataset_link, total_images, num_classes, output_dir, subset_num, modelc):
+def newHuggingfaceDataset(dt_info, output_dir, modelc):
     print("\n--- Loading dataset via Hugging Face ---")
     
-    images_per_class = total_images // num_classes
-    
+    dataset_link, subset_num, num_classes, total_images = dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images
+        
     try:
         
         hf_token = datasetUtils.loadToken('token.txt')
@@ -184,15 +200,15 @@ def newHuggingfaceDataset(dataset_link, total_images, num_classes, output_dir, s
              
     print(f"Loaded HF Dataset of size: {len(hf_train) + len(hf_validation)}")
     
-    print(f"\nCreating subset with {images_per_class} images per class for {num_classes} classes.")
+    print(f"\nCreating subset with {dt_info.images_per_class} images per class for {num_classes} classes.")
         
-    train_indices = datasetUtils.getRandomImages(num_classes, images_per_class, hf_train, hf_train.features['label'].num_classes)
-    val_indices = datasetUtils.getRandomImages(num_classes, images_per_class, hf_validation, hf_train.features['label'].num_classes)
+    train_indices = datasetUtils.imageSelector(dt_info, hf_train, hf_train.features['label'].num_classes, 'train')
+    val_indices = datasetUtils.imageSelector(dt_info, hf_validation, hf_train.features['label'].num_classes, 'validation')
 
     hf_train = hf_train.select(train_indices)
     hf_validation = hf_validation.select(val_indices)
 
-    print(f"Loaded {num_classes} classes * {images_per_class} images per class")
+    print(f"Loaded {num_classes} classes * {dt_info.images_per_class} images per class")
 
     # 5. Wrap in PyTorch Dataset
     train_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=modelc.data_transforms)

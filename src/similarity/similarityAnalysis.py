@@ -6,6 +6,7 @@ from scipy.stats import pearsonr, spearmanr
 from . import similarityUtils
 from src import memoryManagement, plot
 from ..model.modelClass import Model
+from ..dataset.datasetClass import DtInfo
 import os
 
 # Constants for memory calculation (assuming torch.float32)
@@ -15,7 +16,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 total_memory_gb = torch.cuda.get_device_properties(0).total_memory if torch.cuda.is_available() else 0
 
-def cosineDissimilarity(ptPath, save_path, csv_path, np_path, modelc: Model, dataset_name): #retorna vetor de dissimilaridades de cosseno
+def cosineDissimilarity(ptPath, csv_path, dissimilarity_path, modelc: Model, dt_name_w_subset): #retorna vetor de dissimilaridades de cosseno
     
     print(f"Loding feature tensor for cosine dissimilarity \n")
     
@@ -66,17 +67,17 @@ def cosineDissimilarity(ptPath, save_path, csv_path, np_path, modelc: Model, dat
     dissimilarity_array_tensor = torch.cat(dissimilarity_parts_cpu)
     np_dissimilarity = dissimilarity_array_tensor.cpu().numpy()
     
-    if save_path:
-        print(f"Saving similarity array to {save_path} to free up system memory.")
-        torch.save(np_dissimilarity, save_path)
-        np.save(np_path, np_dissimilarity)
-        plot.writeCsvLine(csv_path, [modelc.name, modelc.source, modelc.weights, dataset_name, np_path])
-        # Delete the large tensor from RAM immediately after saving
-        del dissimilarity_array_tensor
-        del np_dissimilarity
-        return save_path
+
+    print(f"Saving similarity array to {dissimilarity_path} to free up system memory.")
+    np.save(dissimilarity_path, np_dissimilarity)
     
-    return np.array(dissimilarity_array_tensor)
+    if len(plot.findInCsv(csv_path, ['model', 'model_source', 'model_weights', 'dataset'], [modelc.name, modelc.source, modelc.weights, dt_name_w_subset])) == 0:
+        plot.writeCsvLine(csv_path, [modelc.name, modelc.source, modelc.weights, dt_name_w_subset, dissimilarity_path])
+    
+    # Delete the large tensor from RAM immediately after saving
+    del dissimilarity_array_tensor
+    del np_dissimilarity
+    return dissimilarity_path
 
 def calculateCorrelations(path_a, path_b, correlation_type='spearman', chunked=False):
     print("\nLoading similarity arrays from disk for correlation analysis...\n")
@@ -88,8 +89,8 @@ def calculateCorrelations(path_a, path_b, correlation_type='spearman', chunked=F
         
         print("\nLoading similarity arrays from disk...\n")
         
-        a = torch.load(path_a, weights_only=False)
-        b = torch.load(path_b, weights_only=False)
+        a = np.load(path_a)
+        b = np.load(path_b)
         
         if a.shape != b.shape:
             raise ValueError("Arrays must match in size.")
@@ -119,27 +120,25 @@ def calculateCorrelations(path_a, path_b, correlation_type='spearman', chunked=F
         print(f"ERROR: {e}")
         raise
     
-def getCosineDissimilarity(ptPath, save_path, dissimilarity_csv, np_folder, modelc: Model, dataset, previous_dissimilarity=False):
+def getCosineDissimilarity(ptPath, dissimilarity_csv, dissimilarity_folder, modelc: Model, dt_info : DtInfo, existing_dissimilarity=False):
     
-    dt_name = dataset.replace('/', '-')
     m_name = modelc.name.replace('/','-')
     m_weights = modelc.weights.replace('/','-')
     s_name = modelc.source.replace('/','-')
     
-    ans = isDissimilarityCalculated(dataset, dissimilarity_csv, modelc)
+    ans = isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv, modelc)
     
-    if previous_dissimilarity and (len(ans) > 0):
-        print(f"Loading previously calculated cosine similarity")
-        dissimilarity_np = np.load(ans[0]['path'])
-        torch.save(dissimilarity_np, save_path)
+    if existing_dissimilarity and (len(ans) > 0):
+        return ans[0]['path']
     else:
-        np_path = os.path.join(np_folder, f"{m_name}_{m_weights}_{s_name}_{dt_name}.npy")
-        cosineDissimilarity(ptPath, save_path, dissimilarity_csv, np_path, modelc, dataset)
+        dissimilarity_path = os.path.join(dissimilarity_folder, f"{m_name}_{m_weights}_{s_name}_{dt_info.name_w_subset}.npy")
+        cosineDissimilarity(ptPath, dissimilarity_csv, dissimilarity_path, modelc, dt_info.name_w_subset)
+        return dissimilarity_path
 
-def isDissimilarityCalculated(dataset, dissimilarity_csv, modelc):
+def isDissimilarityCalculated(dt_name_w_subset, dissimilarity_csv, modelc):
     
     params = ['model', 'model_source', 'model_weights', 'dataset']
-    values = [modelc.name, modelc.source, modelc.weights, dataset]
+    values = [modelc.name, modelc.source, modelc.weights, dt_name_w_subset]
     
     ans = plot.findInCsv(dissimilarity_csv, params, values)
     

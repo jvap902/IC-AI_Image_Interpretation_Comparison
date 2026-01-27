@@ -6,5 +6,6 @@ from .similarity import similarityAnalysis
 from .model import modelCreation
 from . import plot
 from . import memoryManagement
+from . import dataCollection
 
-__all__ = ["extractionTraining", "featureExtraction", "modelCreation", "plot", "loadDataset", "similarityAnalysis", "datasetUtils", "memoryManagement"]
+__all__ = ["extractionTraining", "featureExtraction", "modelCreation", "plot", "loadDataset", "similarityAnalysis", "datasetUtils", "memoryManagement", "dataCollection"]

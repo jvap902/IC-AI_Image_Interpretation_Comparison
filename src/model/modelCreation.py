@@ -41,7 +41,7 @@ def loadTorchvisionModel(model_name, weights="DEFAULT"):
     
     model = m(weights=weights_obj).to(device)
     
-    model = stripModelHead(model, model_name)
+    #model = stripModelHead(model, model_name)
     
     model.eval()
     
@@ -64,12 +64,11 @@ def loadHuggingfaceModel(model_name):
         
     login(token=hf_token, add_to_git_credential=False)
     
-    model = AutoModel.from_pretrained(model_name, device_map="auto", token=hf_token)
+    model = AutoModel.from_pretrained(model_name, device_map="auto")
+    data_transforms = AutoImageProcessor.from_pretrained(model_name)
     
     model.to(device)
     model.eval()
-    
-    data_transforms = AutoImageProcessor.from_pretrained(model_name)
     
     return model, data_transforms
 

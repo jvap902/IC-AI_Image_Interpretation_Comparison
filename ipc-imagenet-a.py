@@ -21,7 +21,6 @@ def count_files_in_folder(folder_path):
     return count
 
 # --- Example Usage ---
-# Replace 'your/folder/path' with the actual path to your folder
 directory_to_scan = './data/imagenet-a' # Counts files in the current working directory
 classes = get_immediate_subdirectories_pathlib(directory_to_scan)
 

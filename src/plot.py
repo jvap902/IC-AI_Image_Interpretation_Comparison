@@ -186,6 +186,16 @@ def getStringIntArray(string):
     
     return ans
 
+def getStringStrArray(string):    
+    if string[0] == '"' and string[1] == '"': #tira aspas externas
+        string = string[1:-1]
+        
+    string = string[1:-1] #tira parênteses
+    
+    ans = [e[1:-1] for e in string.split(', ')] #transforma em array
+        
+    return ans
+
 def paramDataFrameFromCsv(csv_path, param):
     
     with open(csv_path, mode='r', newline='', encoding='utf-8') as file:
@@ -232,8 +242,11 @@ def heatMap(csv_path, correlation_type):
     data = paramDataFrameFromCsv(csv_path, correlation_type)
     
     print(data.shape)
+    plt.figure(figsize=(data.shape[1] * 0.8, data.shape[0] * 0.4))
     
-    seaborn.heatmap(data)
+    seaborn.heatmap(data, vmin=-0.5, vmax=1.0)
+    
+    plt.tight_layout()
     plt.show()
 
 if __name__ == '__main__':
