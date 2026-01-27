@@ -242,7 +242,7 @@ def heatMap(csv_path, correlation_type):
     data = paramDataFrameFromCsv(csv_path, correlation_type)
     
     print(data.shape)
-    plt.figure(figsize=(data.shape[1] * 1.0, data.shape[0] * 0.5))
+    plt.figure(figsize=(data.shape[1] * 0.8, data.shape[0] * 0.4))
     
     seaborn.heatmap(data, vmin=-0.5, vmax=1.0)
     

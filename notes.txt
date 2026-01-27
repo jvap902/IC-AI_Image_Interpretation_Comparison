@@ -12,14 +12,9 @@ ideia de otimização:
 
 Tarefas:
     Revisar StripModelHead principalmente para maxvit_t
-    "Anotar" saída padrão do modelo em algum lugar
     Rodar em algum outro dataset clássico (podemos pensar em qual)
     Com os resultados disso fazer uma avaliação dos heatmaps: diferenças entre datasets, padrões que aparecem entre modelos e etc.
     Tabela de acc
-    Revisar parte de feature extraction dos modelos que ainda não foram incluidos nos testes
-        Dino conferido, faltam testes
-        OpenClip não visto
-        Clip não visto
         
     Documentar tudo isso e o que foi feito até agora pra gente realizar uma discussão
     
