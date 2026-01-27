@@ -5,4 +5,3 @@ data/
 dataStorage/*.pt
 token.txt
 /venv
-avaliacao-resultados.txt

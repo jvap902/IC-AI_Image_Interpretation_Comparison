@@ -1,0 +1,28 @@
+geral
+    diferença entre pearson e spearman muito grande no timm/mini-imagenet e pequena nos outros datasets, mas todos tem correlações de spearman com valores menores que pearson
+    em geral "estruturas" se mantém, mas alguns modelos tem correlações mais baixas em certos datasets
+    modelos dinov3 se mostram com correlações mais baixas que as redondezas nos datasets cifar, mas não mostram esse destaque nos dataset imagenet
+    as correlações representadas no centro dos heatmaps tendem a ter correlações mais altas: regnet e vit em todos mostram uma correlação mais alta
+    principalmente nos datasets cifar, modelos resnet também mostram alta correlação com regnet e vit
+    modelos de diferentes fontes mesmo com filosofias semelhantes apresentam medidas de correlação mais baixas
+
+timm/mini-imagenet
+    correlação de spearman bem mais baixa que de pearson, mas alta em modelos com arquiteturas semelhantes
+    "estruturas" se mantém nas duas medidas de correlação, como esperado
+    efficientnet_b4 ainda mais baixo, mesmo passando pelos mesmos processos dos outros efficientnet
+    maxvit_t e modelos convnext também aparecem com correlações mais baixas
+
+imagenet-sketch
+    maxvit_t, convnext_base são modelos com correlações ainda mais baixas que os outros
+    estranha a diferença entre as medidas de correlação entre convnext_base e convnext_tiny
+    efficientnet_b4 também tem correlações mais baixas
+
+cifar10 
+    "estruturas" anteriores aparecem muito menos nesse dataset
+    ambos modelos dinov3 tem correlções muito mais baixas que nos outros datasets
+    os outliers de antes também se destacam menos
+
+cifar100
+    correlações em geral mais baixas que cifar10
+    mostra mais a diferença entre os modelos clip e os outros
+    outliers aparecem mais que no cifar10, mas ainda mais escondidos que nos imagenet
