@@ -120,7 +120,7 @@ def gatherAdditionalData(modelc : Model, dt_info : DtInfo, has_embedding=False):
     
     data = [modelc.name, modelc.weights, modelc.source, dt_info.name_w_subset]
     
-    ans = findInCsv(modelOutputCsv_path, ['model_name','model_weights','model_source','dataset(subset)'], data)
+    ans = findInCsv(modelOutputCsv_path, ['model','model_weights','model_source','dataset(subset)'], data)
     
     if len(ans) == 0:
         getModelStdOutput(modelc, dt_info)

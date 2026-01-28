@@ -1,4 +1,4 @@
-from src import plot
+from src import plot, fileSystem
 import numpy as np
 import torch
 
@@ -9,7 +9,9 @@ from torchvision.models import maxvit_t, resnet18, vit_b_16, convnext_tiny, effi
 #train_nodes, eval_nodes = get_graph_node_names(model)
 #print(eval_nodes[-100:]) # View all node names
 
-dataset = 'cifar10'
+dataset = 'imagenet-sketch'
 
-plot.heatMap(f'./dataStorage/{dataset}Data.csv', 'pearson')
-plot.heatMap(f'./dataStorage/{dataset}Data.csv', 'spearman')
+#plot.heatMap(f'./dataStorage/results/{dataset}Data.csv', 'pearson')
+#plot.heatMap(f'./dataStorage/results/{dataset}Data.csv', 'spearman')
+
+fileSystem.createFile('AAA.csv', 'was,ich,liebe\n')

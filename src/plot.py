@@ -99,7 +99,6 @@ def writeCsvLine(file_path, data):
 
         csvwriter.writerow(data)
 
-
 def read_csv_to_array(filepath):
     data = []
     with open(filepath, 'r', newline='') as csvfile:
@@ -155,7 +154,6 @@ def correlationGraphic(filepath, xlabel, ylabel, subplot_fields=[]):
     
     except Exception as e:
         print(f"An unexpected error occurred in correlationGraphic: {e}")
-
 
 def findInCsv(file_path, params, values):
     if(len(params) != len(values)):
@@ -237,7 +235,6 @@ def paramDataFrameFromCsv(csv_path, param):
 
     return dataFrame
             
-
 def heatMap(csv_path, correlation_type):
     data = paramDataFrameFromCsv(csv_path, correlation_type)
     

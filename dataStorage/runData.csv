@@ -1,3 +1,0 @@
-total_images,num_classes,fst_model_source,first_model,fst_weights,snd_model_source,second_model,snd_weights,first_model_accuracy,second_model_accuracy,spearman,pearson,dataset
-
-2000,100,torchvision,regnet_y_16gf,IMAGENET1K_SWAG_E2E_V1,torchvision,resnet18,IMAGENET1K_V1,0.4295,0.2475,0.6069557169849734,0.6030278,fgvc-aircraft(0)
