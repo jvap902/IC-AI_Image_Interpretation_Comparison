@@ -19,11 +19,18 @@ IMAGENET_SKETCH_URL = "https://www.kaggle.com/api/v1/datasets/download/wanghaoha
 IMAGENET_SKETCH_FILENAME = "archive.zip"
 IMAGENET_SKETCH_EXTRACT_DIR = "imagenet-sketch"
 
+#FGVC-Aircraft
+AIRCRAFT_URL = "https://www.robots.ox.ac.uk/~vgg/data/fgvc-aircraft/archives/fgvc-aircraft-2013b.tar.gz"
+AIRCRAFT_FILENAME = "fgvc-aircraft-2013b.tar.gz"
+AIRCRAFT_EXTRACT_DIR = "fgvc-aircraft-2013b"
+
 def getDownloadInfo(dataset):
     if dataset == 'imagenet-a':
         return IMAGENET_A_URL, IMAGENET_A_FILENAME, IMAGENET_A_EXTRACT_DIR, 'tar'
     elif dataset == 'imagenet-sketch':
         return IMAGENET_SKETCH_URL, IMAGENET_SKETCH_FILENAME, IMAGENET_SKETCH_EXTRACT_DIR, 'zip'
+    elif dataset == 'fgvc-aircraft':
+        return AIRCRAFT_URL, AIRCRAFT_FILENAME, AIRCRAFT_EXTRACT_DIR, 'tar'
     else:
         raise ValueError("Unsupported dataset")
 
@@ -121,47 +128,6 @@ def extractTarFile(root, file_name, extract_path, tar_filepath):
     except OSError as e:
         print(f"OS error during file cleanup: {e}")
         return extract_path # Return path even if cleanup failed
-    
-# --- Helper Class to Convert HuggingFace Dataset to PyTorch Dataset ---
-class HuggingFaceImageNetDataset(Dataset):
-    
-    # Assuming the Hugging Face dataset is passed in hf_dataset
-    def __init__(self, hf_dataset, transform):
-        self.hf_dataset = hf_dataset
-        self.transform = transform
-        # Assume classes are set up here
-        if hasattr(hf_dataset, 'features') and 'label' in hf_dataset.features:
-            # Attempt to infer classes from HF dataset
-            self.classes = hf_dataset.features['label'].names
-        else:
-            self.classes = [f"Class {i}" for i in range(100)] # Placeholder
-            
-    def __len__(self):
-        return len(self.hf_dataset)
-    
-    def __getitem__(self, index):
-        # 1. Retrieve the item from the Hugging Face dataset
-        item = self.hf_dataset[index]
-        image = item['image'] # Assuming the key is 'image'
-        label = item['label']
-        
-        # 2. >>> CRITICAL FIX: Explicitly enforce 3 channels (RGB) at the source
-        # This converts grayscale 'L' or RGBA to 3-channel 'RGB' directly on the PIL image.
-        # This bypasses any potential worker serialization issues in transforms.Compose.
-        try:
-            image = image.convert('RGB')
-        except Exception as e:
-            # Log an error if the conversion fails for a specific image, but continue
-            print(f"Warning: Failed to convert image at index {index} to RGB. Error: {e}")
-            # If conversion fails, we let the transform run, hoping it recovers (unlikely)
-            
-        # 3. Apply the rest of the transformation pipeline
-        # This includes Resize, CenterCrop, ToTensor, and Normalize.
-        if self.transform:
-            # This is your original failing line, now called on a guaranteed RGB image
-            image = self.transform(image) 
-            
-        return image, label
     
 def loadToken(file_path):
     try:

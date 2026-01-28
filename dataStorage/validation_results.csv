@@ -119,3 +119,5 @@ vit_b_16,torchvision,IMAGENET1K_V1,timm-mini-imagenet(0),0.9855
 vit_b_16,torchvision,IMAGENET1K_SWAG_E2E_V1,timm-mini-imagenet(0),0.9795
 vit_l_16,torchvision,IMAGENET1K_V1,timm-mini-imagenet(0),0.9925
 ViT-B-16,open_clip,DEFAULT,timm-mini-imagenet(0),0.9185
+regnet_y_16gf,torchvision,IMAGENET1K_SWAG_E2E_V1,fgvc-aircraft(0),0.4295
+resnet18,torchvision,IMAGENET1K_V1,fgvc-aircraft(0),0.2475

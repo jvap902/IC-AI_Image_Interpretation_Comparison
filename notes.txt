@@ -17,7 +17,5 @@ Tarefas:
     Tabela de acc
         
     Documentar tudo isso e o que foi feito até agora pra gente realizar uma discussão
-    
-    incluir modelos que professor pediu nos testes - próximo:  ViT-B/32 (DEFAULT) x vit_h_14 (IMAGENET1K_SWAG_E2E_V1) --
-    
+        
 segunda parte do runDataOld é o mais atual mas ainda com o bug dos pesos
