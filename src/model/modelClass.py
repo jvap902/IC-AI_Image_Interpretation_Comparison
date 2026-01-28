@@ -26,7 +26,7 @@ class Model:
         
         dt_name = dt_info.name.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
         file_name = f"{dt_name}_subset_i{dt_info.num_images}_c{dt_info.num_classes}({dt_info.subset}).pt"
-        indices_file = os.path.join(output_dir, 'selectedIndicesaesdrtfgy.csv')
+        indices_file = os.path.join(output_dir, 'selectedIndices.csv')
         
         if os.path.exists(indices_file):
             
