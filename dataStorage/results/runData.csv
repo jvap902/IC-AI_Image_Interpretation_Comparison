@@ -5,3 +5,6 @@ total_images,num_classes,fst_model_source,first_model,fst_weights,snd_model_sour
 2000,100,torchvision,regnet_y_16gf,IMAGENET1K_SWAG_E2E_V1,torchvision,resnet18,IMAGENET1K_V1,0.4295,0.2475,0.6069557169849734,0.6030278,fgvc-aircraft(0)
 2000,100,torchvision,regnet_y_16gf,IMAGENET1K_SWAG_E2E_V1,torchvision,resnet18,IMAGENET1K_V1,0.4295,0.2475,0.6069557169849734,0.6030278,fgvc-aircraft(0)
 2000,100,torchvision,regnet_y_16gf,IMAGENET1K_SWAG_E2E_V1,torchvision,resnet18,IMAGENET1K_V1,0.4295,0.2475,0.6069557169849734,0.6030278,fgvc-aircraft(0)
+2000,10,torchvision,maxvit_t,IMAGENET1K_V1,torchvision,resnet18,IMAGENET1K_V1,0.924,0.738,0.2619898962045408,0.33102328,cifar10(0)
+2000,10,torchvision,maxvit_t,IMAGENET1K_V1,torchvision,resnet18,IMAGENET1K_V1,0.924,0.738,0.2619898962045408,0.33102328,cifar10(0)
+2000,10,torchvision,maxvit_t,IMAGENET1K_V1,torchvision,resnet18,IMAGENET1K_V1,0.924,0.738,0.2619898962045408,0.33102328,cifar10(0)
