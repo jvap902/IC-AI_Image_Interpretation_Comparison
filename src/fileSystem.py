@@ -49,3 +49,6 @@ def createFile(file_path, content):
         print("Arquivo não existente, criando novo")
         with open(file_path, mode="a", newline='', encoding='utf-8') as f:
             f.write(content)
+            
+if __name__ == '__main__':
+    pass

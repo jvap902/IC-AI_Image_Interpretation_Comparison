@@ -13,8 +13,7 @@ ideia de otimização:
     Voltar com arquivos de dissimilaridade de cosseno, quando ativo faz validação do modelo e pula toda parte de extração.
 
 Tarefas:
-    fazer arquivos se criarem caso não existam
-    Revisar StripModelHead principalmente para maxvit_t
+    Revisar StripModelHead principalmente para maxvit_t -> ir modelo a modelo, ver onde fica avgpool e depois disso definir tudo como identidade
     Rodar em algum outro dataset clássico (podemos pensar em qual)
     Com os resultados disso fazer uma avaliação dos heatmaps: diferenças entre datasets, padrões que aparecem entre modelos e etc.
     Tabela de acc

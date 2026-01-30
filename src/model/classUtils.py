@@ -37,12 +37,13 @@ def is_vit_patch_embedding(conv: nn.Conv2d):
         and conv.kernel_size[0] >= 8
     )
 
-def stripModelHead(model, model_name):
+def stripModelHead(modelc):
     """
     Identifies and replaces the classification head of a model with nn.Identity.
     Standardizes the backbone to return pooled feature maps.
     """
-    name = model_name.lower()
+    name = modelc.name.lower()
+    model = modelc.model
 
     # EfficientNet (b0-b7)
     if "efficientnet" in name:
@@ -58,7 +59,8 @@ def stripModelHead(model, model_name):
         model.head = nn.Identity()
     # MaxViT
     elif "maxvit" in name:
-        model.classifier = nn.Identity()
+        for i in range(1, 4):
+            model.classifier[-i] = nn.Identity()
     # MobileNet
     elif "mobilenet" in name:
         model.classifier = nn.Identity()

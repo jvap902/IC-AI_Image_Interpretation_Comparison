@@ -30,12 +30,11 @@ parser.add_argument("-out", "--output_file", type=str, required=False, default="
 
 args = parser.parse_args()
 
-fileSystem.makeFileSystem(args.output_file)
-
-output_dir = 'dataStorage'
-
 
 if __name__ == "__main__":
+    
+    fileSystem.makeFileSystem(args.output_file)
+    output_dir = 'dataStorage'
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"\nDevice set to: {device}")
