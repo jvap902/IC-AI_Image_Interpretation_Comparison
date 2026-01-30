@@ -6,18 +6,18 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 
 já tem dados dos modelos dino no cifar10, mas os modelos ainda estão sob revisão
 
+resultados de fgvc-aircraft são utilizando "variant" split, inicialmente se utilizaria o "family", mas este não tem as 100 classes (apenas 70)
+
 ideia de otimização:
     Fazer isso apenas depois que tiver uma run inteira sem alterar os arquivos -> forma de validação, uma run com cada conjunto de dados sem, depois que troca pode usar
     Voltar com arquivos de dissimilaridade de cosseno, quando ativo faz validação do modelo e pula toda parte de extração.
 
 Tarefas:
-    Revisar StripModelHead principalmente para maxvit_t
+    Revisar StripModelHead principalmente para maxvit_t -> ir modelo a modelo, ver onde fica avgpool e depois disso definir tudo como identidade
     Rodar em algum outro dataset clássico (podemos pensar em qual)
     Com os resultados disso fazer uma avaliação dos heatmaps: diferenças entre datasets, padrões que aparecem entre modelos e etc.
     Tabela de acc
         
     Documentar tudo isso e o que foi feito até agora pra gente realizar uma discussão
-    
-    incluir modelos que professor pediu nos testes - próximo:  ViT-B/32 (DEFAULT) x vit_h_14 (IMAGENET1K_SWAG_E2E_V1) --
-    
+        
 segunda parte do runDataOld é o mais atual mas ainda com o bug dos pesos

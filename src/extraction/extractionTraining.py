@@ -4,7 +4,7 @@ import time
 from tqdm.auto import tqdm
 import torch
 
-def train_model(model, train_loader, val_loader, criterion, optimizer, device, num_epochs=10, freeze_backbone=False):
+def train_model(model, train_loader, val_loader, criterion, optimizer, device, num_epochs=10, freeze_backbone=True):
     """A simple function to train and validate a PyTorch model."""
     start_time = time.time()
     
@@ -96,4 +96,4 @@ def extractionTraining(device, model, train_loader, val_loader):
     # --- Execute Training ---
     # Example: Run full fine-tuning for 5 epochs
     num_epochs = 5
-    model, history = train_model(model, train_loader, val_loader, criterion, optimizer, device, num_epochs=num_epochs, freeze_backbone=False)
+    model, history = train_model(model, train_loader, val_loader, criterion, optimizer, device, num_epochs=num_epochs, freeze_backbone=True)

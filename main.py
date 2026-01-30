@@ -10,27 +10,11 @@ import numpy as np
 # If 'src' is one level up, add the parent directory to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# --- Configuration ---
-output_dir = "dataStorage"
-os.makedirs(output_dir, exist_ok=True) # Ensure dataStorage folder exists
-
-data_dir = "data"
-os.makedirs(data_dir, exist_ok=True)
-
-cache_dir = "datasetCache"
-os.makedirs(cache_dir, exist_ok=True)
-# ---------------------
-
-# data_transforms = {
-#     'train': transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])]),
-#     'val': transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])]),
-# }
-
 parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--size", type=int, required=False, help="Specify number of images to be used from the dataset")
-parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify the model to be used as first model (within timm library)")
-parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify the model to be used as second model (within timm library)")
-parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar100, imagenet-a, imagenet-sketch or a link for huggingface dataset)")
+parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify the model to be used as first model")
+parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify the model to be used as second model")
+parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar100, imagenet-a, imagenet-sketch, fgvc-aircraft or a link for huggingface dataset)")
 parser.add_argument("-e", "--epochs", type=int, required=False, help="Specify the number of epochs to train the head for validation")
 parser.add_argument("-nv", "--no_validation", action='store_false', help="Turns off model validation step")
 parser.add_argument("--chunked", action='store_true', help="Enables spearman calculation in chunks to save memory")
@@ -42,11 +26,15 @@ parser.add_argument("--m1_weights", type=str, required=False, default="DEFAULT",
 parser.add_argument("--m2_weights", type=str, required=False, default="DEFAULT", help="Specify weights for torchvision models")
 parser.add_argument("-ed", "--existing_dissimilarity", action='store_true', required=False, default=False, help="Use previously calculated cossine dissimilarity for run")
 parser.add_argument("-sc", "--same_classes", type=str, required=False, default=None, nargs='+', help="Specify [name, subset, num_classes, num_images] of a dataset for its classes to be used, only works for new subsets")
-parser.add_argument("-out", "--output_file", type=str, required=False, default="./dataStorage/runData.csv", help="Specify path to file the run information will be written")
+parser.add_argument("-out", "--output_file", type=str, required=False, default="./dataStorage/results/runData.csv", help="Specify path to file the run information will be written")
 
 args = parser.parse_args()
 
+
 if __name__ == "__main__":
+    
+    fileSystem.makeFileSystem(args.output_file)
+    output_dir = 'dataStorage'
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"\nDevice set to: {device}")

@@ -2,7 +2,7 @@ from pathlib import Path
 import torchvision
 from torch.utils.data import Subset, random_split
 import os
-from . import datasetUtils
+from . import auxDatasetClasses, datasetUtils
 from datasets import load_dataset
 from huggingface_hub import login
 from .. import plot
@@ -16,6 +16,8 @@ def loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir, modelc
     
     if(dataset == 'imagenet-a' or dataset == 'imagenet-sketch'):
         train_dataset, val_dataset = loadUrlDownloadedDataset(data_dir, train_indices, val_indices, dataset, modelc)
+    elif dataset == 'fgvc-aircraft':
+        train_dataset, val_dataset = loadAircraftDataset(data_dir, train_indices, val_indices, dataset, modelc)
     elif dataset == 'cifar100':
         train_dataset, val_dataset = loadCifar100Dataset(data_dir, train_indices, val_indices, modelc)
     elif dataset == 'cifar10':
@@ -35,6 +37,8 @@ def createNewDataset(dt_info, output_dir, data_dir, modelc):
     
     if (dataset == 'imagenet-a' or dataset == 'imagenet-sketch'):
         train_dataset, val_dataset = newUrlDownloadedDataset(dt_info, data_dir, output_dir, modelc)
+    elif dataset == 'fgvc-aircraft':
+        train_dataset, val_dataset = newAircraftDataset(dt_info, data_dir, output_dir, modelc)
     elif dataset == 'cifar100':
         train_dataset, val_dataset = newCifar100Dataset(dt_info, data_dir, output_dir, modelc)
     elif dataset == 'cifar10':
@@ -45,6 +49,55 @@ def createNewDataset(dt_info, output_dir, data_dir, modelc):
     datasetUtils.writeDatasetClasses(dt_info)
 
     return train_dataset, val_dataset
+
+def loadAircraftDataset(data_dir, train_indices, val_indices, dataset, modelc):
+    print(f"\n--- Loading {dataset} Subset ---")
+    
+    url, file_name, extract_dir, compression_type = datasetUtils.getDownloadInfo(dataset)
+    
+    # 1. Download and extract the data
+    # This calls the function from src/dataset_utils.py to handle the download
+    dataset_dir = datasetUtils.downloadUrlDataset(root_dir=data_dir, url=url, file_name=file_name, extract_dir=extract_dir, compression_type=compression_type)
+    if dataset_dir is None:
+        raise FileNotFoundError(f"Failed to download or extract {dataset}.")
+    
+    train_dataset = auxDatasetClasses.AircraftDataset(dataset_dir, split='train', transform=modelc.data_transforms, variant='variant')
+    val_dataset = auxDatasetClasses.AircraftDataset(dataset_dir, split='val', transform=modelc.data_transforms, variant='variant')
+    
+    train_subset = Subset(train_dataset, train_indices)
+    val_subset = Subset(val_dataset, val_indices)
+    
+    print(f"{dataset} dataset loaded with pre-existing indices")
+    
+    return train_subset, val_subset
+    
+def newAircraftDataset(dt_info, data_dir, output_dir, modelc):
+    print(f"\n--- Creating {dt_info.name} Subset ---")
+    
+    url, file_name, extract_dir, compression_type = datasetUtils.getDownloadInfo(dt_info.name)
+    
+    # 1. Download and extract the data
+    # This calls the function from src/dataset_utils.py to handle the download
+    dataset_dir = datasetUtils.downloadUrlDataset(root_dir=data_dir, url=url, file_name=file_name, extract_dir=extract_dir, compression_type=compression_type)
+    if dataset_dir is None:
+        raise FileNotFoundError(f"Failed to download or extract {dt_info.name}.")
+    
+    train_dataset = auxDatasetClasses.AircraftDataset(dataset_dir, split='train', transform=modelc.data_transforms, variant='variant')
+    val_dataset = auxDatasetClasses.AircraftDataset(dataset_dir, split='val', transform=modelc.data_transforms, variant='variant')
+    
+    train_indices = datasetUtils.imageSelector(dt_info, train_dataset, len(train_dataset.classes), 'train')
+    val_indices = datasetUtils.imageSelector(dt_info, val_dataset, len(val_dataset.classes), 'validation')
+    
+    train_subset = Subset(train_dataset, train_indices)
+    val_subset = Subset(val_dataset, val_indices)
+    
+    print(f"Total images selected: {len(train_subset)}")
+    
+    file_name = f"{dt_info.name}_subset_i{dt_info.num_images}_c{dt_info.num_classes}({dt_info.subset}).pt"
+    
+    plot.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
+    
+    return train_subset, val_subset
     
 def loadCifar10Dataset(data_dir, train_indices, val_indices, modelc):
     train_dataset = torchvision.datasets.CIFAR10(root=data_dir, train=True, download=True, transform=modelc.data_transforms)
@@ -211,8 +264,8 @@ def newHuggingfaceDataset(dt_info, output_dir, modelc):
     print(f"Loaded {num_classes} classes * {dt_info.images_per_class} images per class")
 
     # 5. Wrap in PyTorch Dataset
-    train_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=modelc.data_transforms)
-    val_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_validation, transform=modelc.data_transforms)
+    train_dataset = auxDatasetClasses.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=modelc.data_transforms)
+    val_dataset = auxDatasetClasses.HuggingFaceImageNetDataset(hf_dataset=hf_validation, transform=modelc.data_transforms)
 
     print(f"Train: {len(train_dataset)} | Val: {len(val_dataset)}")
     
@@ -242,30 +295,9 @@ def loadHuggingfaceDataset(dataset_link, train_indices, val_indices, modelc):
     hf_validation = hf_validation.select(val_indices)
 
     # 5. Wrap in PyTorch Dataset
-    train_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=modelc.data_transforms)
-    val_dataset = datasetUtils.HuggingFaceImageNetDataset(hf_dataset=hf_validation, transform=modelc.data_transforms)
+    train_dataset = auxDatasetClasses.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=modelc.data_transforms)
+    val_dataset = auxDatasetClasses.HuggingFaceImageNetDataset(hf_dataset=hf_validation, transform=modelc.data_transforms)
 
     print(f"\nLoaded dataset with previously selected indices")
 
     return train_dataset, val_dataset
-
-# ----- funções antigas que estão em desuso ou foram retrabalhadas em outras -----
-def loadCifar10Subset(root, total_images, data_transforms):
-    # Assuming you have already defined and downloaded your dataset:
-    # train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=data_transforms['train'])
-    dataset = torchvision.datasets.CIFAR10(root=root, train=True, download=True, transform=data_transforms) # Use train set for example
-    val_dataset = torchvision.datasets.CIFAR10(root=root, train=False, download=True, transform=data_transforms)
-    
-    imagesPerClass = total_images // 10
-
-    # 1. Initialize storage for selected indices
-    selected_indices = datasetUtils.selectindices(dataset, imagesPerClass, 10)
-    
-    # 4. Create the new subset dataset
-    # This new dataset contains exactly 100 non-random images from each class.
-    subset_train_dataset = Subset(dataset, selected_indices)
-
-    print(f"Total images selected: {len(subset_train_dataset)}")
-
-    return subset_train_dataset, dataset, val_dataset, selected_indices
-    # Expected output: Total images selected: 1000

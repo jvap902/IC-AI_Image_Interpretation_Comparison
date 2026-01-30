@@ -40,9 +40,7 @@ def loadTorchvisionModel(model_name, weights="DEFAULT"):
                 f"Available: {[w.name for w in weights_enum]}")
     
     model = m(weights=weights_obj).to(device)
-    
-    #model = stripModelHead(model, model_name)
-    
+        
     model.eval()
     
     data_transforms = weights_obj.transforms() if weights_obj is not None else None   #assumindo que ambos modelos utilizam as mesmas transformações
