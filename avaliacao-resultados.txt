@@ -26,3 +26,6 @@ cifar100
     correlações em geral mais baixas que cifar10
     mostra mais a diferença entre os modelos clip e os outros
     outliers aparecem mais que no cifar10, mas ainda mais escondidos que nos imagenet
+
+fgvc-aircraft
+    todas correlações muito mais altas que o normal, possivelmente por todas imagens serem meio parecidas

@@ -1,5 +1,5 @@
 from .modelCreation import getModel
-from .classUtils import getExtractor, get_attention_layers, get_conv_layers, is_vit_patch_embedding
+from .classUtils import getExtractor, get_attention_layers, get_conv_layers, is_vit_patch_embedding, stripModelHead
 import os
 from src.dataset import loadDataset
 from src.dataset.datasetUtils import getClasses
@@ -15,10 +15,10 @@ class Model:
         
         self.model, self.data_transforms = getModel(self.source, self.name, weights)
         
-        self.featureExtractor = getExtractor(self)
+        self.model = stripModelHead(self)
         
-        self.archType = self.getArchitectureType()
-            
+        self.featureExtractor = getExtractor(self)
+                    
     def extract(self, inputs):
         return self.featureExtractor(self, inputs)
     
@@ -52,6 +52,10 @@ class Model:
         self.train_loader = DataLoader(self.train_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
         self.val_loader = DataLoader(self.val_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
     
+
+
+
+# --- Deprecated ---
     def getArchitectureType(self): #ideia bem inicial, provalvemente será necessário um método mais complicado para isso
         
         if self.source == "timm":

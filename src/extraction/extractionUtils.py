@@ -61,7 +61,7 @@ def huggingfaceExtractor(modelc, inputs):
     return data.float()
 
 def dinoExtractor(modelc, inputs):
-
+    
     if isinstance(inputs, dict) or (hasattr(inputs, 'data') and 'pixel_values' in inputs):
         # Already processed by a DataLoader/Processor
         # Extract pixel_values and ensure they are on the correct device

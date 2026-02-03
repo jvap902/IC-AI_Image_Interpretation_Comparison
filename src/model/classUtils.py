@@ -47,12 +47,12 @@ def stripModelHead(modelc):
         case 'torchvision':
             return stripTorchHead(modelc)
         case 'clip':
-            modelc.model.ln_final = nn.Identity
+            modelc.model.ln_final = nn.Identity()
         case 'open_clip':
-            modelc.model.ln_final = nn.Identity
+            modelc.model.ln_final = nn.Identity()
         case 'huggingface':
             if 'dinov3' in modelc.name:
-                modelc.model.norm = nn.Identity
+                modelc.model.norm = nn.Identity()
             else:
                 raise ValueError("Unsupported model")
         case _:
@@ -78,7 +78,7 @@ def stripTorchHead(modelc):
         
     # Vision Transformers (ViT)
     elif "vit" in name:
-        model.heads = nn.Sequential(nn.Identity)
+        model.heads = nn.Sequential(nn.Identity())
         
     # Swin Transformers
     elif "swin" in name:
