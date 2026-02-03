@@ -17,8 +17,5 @@ Tarefas:
     Tabela de acc
         
     Documentar tudo isso e o que foi feito até agora pra gente realizar uma discussão
-        
-
-talvez verificar extração de modelos clip e dinov3 -> achei layer   (token_embedding): Embedding(49408, 512), atualmente utilizado encode_image | (embeddings): DINOv3ViTEmbeddings((patch_embeddings): Conv2d(3, 1024, kernel_size=(16, 16), stride=(16, 16)))
 
 StripModelHead aplicado na criação do modelo

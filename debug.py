@@ -9,15 +9,15 @@ from transformers import AutoModel, AutoImageProcessor
 import clip
 
 
-#model = regnet_y_32gf()
-#train_nodes, eval_nodes = get_graph_node_names(model)
+model = regnet_y_32gf()
+train_nodes, eval_nodes = get_graph_node_names(model)
 #print(eval_nodes[-30:])
-#
-#print(model.named_children)
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
-model, preprocess = clip.load("ViT-B/32", device=device)
 print(model.named_children)
+
+#device = "cuda" if torch.cuda.is_available() else "cpu"
+#model, preprocess = clip.load("ViT-B/32", device=device)#
+#print(model.named_children)
 
 
 #pretrained_model_name = "facebook/dinov3-vitl16-pretrain-lvd1689m"
