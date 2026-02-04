@@ -14,7 +14,6 @@ ideia de otimização:
 
 Tarefas:
     Revisar validação -> lembrar que mudei o local de salvamento das validações para refazê-las
-    Tabela de acc
         
     Documentar tudo isso e o que foi feito até agora pra gente realizar uma discussão
 

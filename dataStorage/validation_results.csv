@@ -5,8 +5,6 @@ ViT-L/14,clip,DEFAULT,cifar10(0),0.97
 ViT-B-32-256,open_clip,DEFAULT,cifar10(0),0.977
 ViT-B-16,open_clip,DEFAULT,cifar10(0),0.9615
 ViT-L-14,open_clip,DEFAULT,cifar10(0),0.982
-facebook/dinov3-vitb16-pretrain-lvd1689m,huggingface,DEFAULT,cifar10(0),0.595
-facebook/dinov3-vitl16-pretrain-lvd1689m,huggingface,DEFAULT,cifar10(0),0.578
 resnet18,torchvision,IMAGENET1K_V1,cifar10(0),0.81
 resnet50,torchvision,IMAGENET1K_V1,cifar10(0),0.829
 resnet152,torchvision,IMAGENET1K_V1,cifar10(0),0.867
@@ -32,8 +30,6 @@ ViT-L/14,clip,DEFAULT,imagenet-sketch(0),0.188
 ViT-B-32-256,open_clip,DEFAULT,imagenet-sketch(0),0.168
 ViT-B-16,open_clip,DEFAULT,imagenet-sketch(0),0.1545
 ViT-L-14,open_clip,DEFAULT,imagenet-sketch(0),0.209
-facebook/dinov3-vitb16-pretrain-lvd1689m,huggingface,DEFAULT,imagenet-sketch(0),0.1865
-facebook/dinov3-vitl16-pretrain-lvd1689m,huggingface,DEFAULT,imagenet-sketch(0),0.2995
 resnet18,torchvision,IMAGENET1K_V1,imagenet-sketch(0),0.075
 resnet50,torchvision,IMAGENET1K_V1,imagenet-sketch(0),0.092
 resnet152,torchvision,IMAGENET1K_V1,imagenet-sketch(0),0.114
@@ -59,8 +55,6 @@ ViT-L/14,clip,DEFAULT,cifar100(0),0.7925
 ViT-B-32-256,open_clip,DEFAULT,cifar100(0),0.838
 ViT-B-16,open_clip,DEFAULT,cifar100(0),0.785
 ViT-L-14,open_clip,DEFAULT,cifar100(0),0.857
-facebook/dinov3-vitb16-pretrain-lvd1689m,huggingface,DEFAULT,cifar100(0),0.308
-facebook/dinov3-vitl16-pretrain-lvd1689m,huggingface,DEFAULT,cifar100(0),0.332
 resnet18,torchvision,IMAGENET1K_V1,cifar100(0),0.489
 resnet50,torchvision,IMAGENET1K_V1,cifar100(0),0.542
 resnet152,torchvision,IMAGENET1K_V1,cifar100(0),0.6005
@@ -86,8 +80,6 @@ ViT-L/14,clip,DEFAULT,timm-mini-imagenet(0),0.9385
 ViT-B-32-256,open_clip,DEFAULT,timm-mini-imagenet(0),0.917
 ViT-B-16,open_clip,DEFAULT,timm-mini-imagenet(0),0.9175
 ViT-L-14,open_clip,DEFAULT,timm-mini-imagenet(0),0.9385
-facebook/dinov3-vitb16-pretrain-lvd1689m,huggingface,DEFAULT,timm-mini-imagenet(0),0.8475
-facebook/dinov3-vitl16-pretrain-lvd1689m,huggingface,DEFAULT,timm-mini-imagenet(0),0.924
 resnet18,torchvision,IMAGENET1K_V1,timm-mini-imagenet(0),0.8945
 resnet50,torchvision,IMAGENET1K_V1,timm-mini-imagenet(0),0.935
 resnet152,torchvision,IMAGENET1K_V1,timm-mini-imagenet(0),0.9525
@@ -107,3 +99,13 @@ swin_v2_t,torchvision,IMAGENET1K_V1,timm-mini-imagenet(0),0.9735
 efficientnet_b0,torchvision,IMAGENET1K_V1,timm-mini-imagenet(0),0.935
 efficientnet_b4,torchvision,IMAGENET1K_V1,timm-mini-imagenet(0),0.9825
 efficientnet_b7,torchvision,IMAGENET1K_V1,timm-mini-imagenet(0),0.99
+facebook/dinov3-vitb16-pretrain-lvd1689m,huggingface,DEFAULT,timm-mini-imagenet(0),0.884
+facebook/dinov3-vitl16-pretrain-lvd1689m,huggingface,DEFAULT,timm-mini-imagenet(0),0.911
+facebook/dinov3-vitb16-pretrain-lvd1689m,huggingface,DEFAULT,imagenet-sketch(0),0.2055
+facebook/dinov3-vitl16-pretrain-lvd1689m,huggingface,DEFAULT,imagenet-sketch(0),0.2425
+facebook/dinov3-vitb16-pretrain-lvd1689m,huggingface,DEFAULT,cifar10(0),0.959
+facebook/dinov3-vitl16-pretrain-lvd1689m,huggingface,DEFAULT,cifar10(0),0.979
+facebook/dinov3-vitb16-pretrain-lvd1689m,huggingface,DEFAULT,cifar100(0),0.7245
+facebook/dinov3-vitl16-pretrain-lvd1689m,huggingface,DEFAULT,cifar100(0),0.808
+facebook/dinov3-vitb16-pretrain-lvd1689m,huggingface,DEFAULT,fgvc-aircraft(0),0.655
+facebook/dinov3-vitl16-pretrain-lvd1689m,huggingface,DEFAULT,fgvc-aircraft(0),0.6695
