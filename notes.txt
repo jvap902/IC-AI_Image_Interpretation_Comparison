@@ -13,11 +13,8 @@ ideia de otimização:
     Voltar com arquivos de dissimilaridade de cosseno, quando ativo faz validação do modelo e pula toda parte de extração.
 
 Tarefas:
-    Revisar StripModelHead principalmente para maxvit_t -> ir modelo a modelo, ver onde fica avgpool e depois disso definir tudo como identidade
-    Rodar em algum outro dataset clássico (podemos pensar em qual)
-    Com os resultados disso fazer uma avaliação dos heatmaps: diferenças entre datasets, padrões que aparecem entre modelos e etc.
-    Tabela de acc
+    Revisar validação -> lembrar que mudei o local de salvamento das validações para refazê-las
         
     Documentar tudo isso e o que foi feito até agora pra gente realizar uma discussão
-        
-segunda parte do runDataOld é o mais atual mas ainda com o bug dos pesos
+
+StripModelHead aplicado na criação do modelo

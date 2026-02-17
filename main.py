@@ -6,6 +6,7 @@ from src import *
 from src.dataset.datasetClass import DtInfo
 from src.model.modelClass import Model
 import numpy as np
+import torch.nn as nn
 
 # If 'src' is one level up, add the parent directory to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -27,6 +28,7 @@ parser.add_argument("--m2_weights", type=str, required=False, default="DEFAULT",
 parser.add_argument("-ed", "--existing_dissimilarity", action='store_true', required=False, default=False, help="Use previously calculated cossine dissimilarity for run")
 parser.add_argument("-sc", "--same_classes", type=str, required=False, default=None, nargs='+', help="Specify [name, subset, num_classes, num_images] of a dataset for its classes to be used, only works for new subsets")
 parser.add_argument("-out", "--output_file", type=str, required=False, default="./dataStorage/results/runData.csv", help="Specify path to file the run information will be written")
+parser.add_argument("--revalidate", action='store_true', required=False, default=False, help="Force validation step even with previously calculated accuracy")
 
 args = parser.parse_args()
 
@@ -86,7 +88,8 @@ if __name__ == "__main__":
     fst_acc = 0.0
     snd_acc = 0.0
     
-    validation_csv = output_dir+"/validation_results.csv"
+    #validation_csv = output_dir+"/validation_results.csv"
+    validation_csv = './ztempData/validation_results.csv'
     
     fst_val = plot.findInCsv(validation_csv, ["model","model_source","model_weights","dataset"], [fst_modelc.name, fst_modelc.source, fst_modelc.weights, dt_info.name_w_subset])
     
@@ -94,13 +97,13 @@ if __name__ == "__main__":
     
     if (args.no_validation):
         
-        if len(fst_val) == 0:
+        if len(fst_val) == 0 or args.revalidate:
             fst_acc = featureExtraction.train_and_validate_head(fst_modelc, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
             plot.writeCsvLine(validation_csv, [fst_modelc.name, fst_modelc.source, fst_modelc.weights, dt_info.name_w_subset, fst_acc])
         else:
             fst_acc = np.float32(fst_val[0]['accuracy'])
             
-        if len(snd_val) == 0:
+        if len(snd_val) == 0 or args.revalidate:
             snd_acc = featureExtraction.train_and_validate_head(snd_modelc, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
             plot.writeCsvLine(validation_csv, [snd_modelc.name, snd_modelc.source, snd_modelc.weights, dt_info.name_w_subset, snd_acc])
         else:

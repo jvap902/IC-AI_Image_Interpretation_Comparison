@@ -5,6 +5,7 @@ geral
     as correlações representadas no centro dos heatmaps tendem a ter correlações mais altas: regnet e vit em todos mostram uma correlação mais alta
     principalmente nos datasets cifar, modelos resnet também mostram alta correlação com regnet e vit
     modelos de diferentes fontes mesmo com filosofias semelhantes apresentam medidas de correlação mais baixas
+    modelos das mesmas fontes tendem a ter correlações mais altas
 
 timm/mini-imagenet
     correlação de spearman bem mais baixa que de pearson, mas alta em modelos com arquiteturas semelhantes
@@ -19,10 +20,13 @@ imagenet-sketch
 
 cifar10 
     "estruturas" anteriores aparecem muito menos nesse dataset
-    ambos modelos dinov3 tem correlções muito mais baixas que nos outros datasets
     os outliers de antes também se destacam menos
 
 cifar100
     correlações em geral mais baixas que cifar10
     mostra mais a diferença entre os modelos clip e os outros
     outliers aparecem mais que no cifar10, mas ainda mais escondidos que nos imagenet
+
+fgvc-aircraft
+    todas correlações muito mais altas que o normal, possivelmente por todas imagens serem meio parecidas
+    dinov3 tem correlações especialmente menores que o resto.

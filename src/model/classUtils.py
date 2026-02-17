@@ -42,30 +42,51 @@ def stripModelHead(modelc):
     Identifies and replaces the classification head of a model with nn.Identity.
     Standardizes the backbone to return pooled feature maps.
     """
+    
+    match modelc.source:
+        case 'torchvision':
+            return stripTorchHead(modelc)
+        case 'clip':
+            modelc.model.ln_final = nn.Identity()
+        case 'open_clip':
+            modelc.model.ln_final = nn.Identity()
+        case 'huggingface':
+            if 'dinov3' in modelc.name:
+                modelc.model.norm = nn.Identity()
+            else:
+                raise ValueError("Unsupported model")
+        case _:
+            raise NotImplementedError
+
+    return modelc.model
+
+def stripTorchHead(modelc):
     name = modelc.name.lower()
     model = modelc.model
 
     # EfficientNet (b0-b7)
     if "efficientnet" in name:
-        model.classifier = nn.Identity()
+        model.classifier = nn.Sequential(nn.Identity())
+        
     # ResNets and RegNets
     elif "resnet" in name or "regnet" in name:
         model.fc = nn.Identity()
+        
+    # MaxViT
+    elif "maxvit" in name:        
+        model.classifier = nn.Sequential(nn.AdaptiveAvgPool2d(1))
+        
     # Vision Transformers (ViT)
     elif "vit" in name:
-        model.heads = nn.Identity()
+        model.heads = nn.Sequential(nn.Identity())
+        
     # Swin Transformers
     elif "swin" in name:
-        model.head = nn.Identity()
-    # MaxViT
-    elif "maxvit" in name:
-        for i in range(1, 4):
-            model.classifier[-i] = nn.Identity()
-    # MobileNet
-    elif "mobilenet" in name:
-        model.classifier = nn.Identity()
+        model.flatten = nn.Identity()
+        model.head = nn.Identity() 
+        
     # ConvNeXt
     elif "convnext" in name:
-        model.classifier = nn.Identity()
+        model.classifier = nn.Sequential(nn.Identity())
         
     return model

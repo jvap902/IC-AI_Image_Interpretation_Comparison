@@ -1,6 +1,7 @@
 import subprocess
 import sys
 from src import *
+from time import sleep
 
 def run_main_with_subprocess(args):
     """
@@ -29,14 +30,14 @@ if __name__ == "__main__":
     # excluding the script name itself (sys.argv[0] is 'run_pipeline.py').
     
     instances = [
+        ('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
+        ('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT'),
         ('clip', 'ViT-B/32', 'DEFAULT'),
         ('clip', 'ViT-B/16', 'DEFAULT'),
         ('clip', 'ViT-L/14', 'DEFAULT'),
         ('open_clip', 'ViT-B-32-256', 'DEFAULT'),
         ('open_clip', 'ViT-B-16', 'DEFAULT'),
         ('open_clip', 'ViT-L-14', 'DEFAULT'),
-        ('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
-        ('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT'),
         ('torchvision', 'resnet18', 'IMAGENET1K_V1'),
         ('torchvision', 'resnet50', 'IMAGENET1K_V1'),
         ('torchvision', 'resnet152', 'IMAGENET1K_V1'),
@@ -73,39 +74,41 @@ if __name__ == "__main__":
     datasets = ['timm/mini-imagenet', 'imagenet-sketch', 'cifar10', 'cifar100', 'fgvc-aircraft']
     
     begin = 0
-    snd_start = begin+1
-    #(src1, model1, weight1) = instances[begin]
-    #(src2, model2, weight2) = instances[snd_start]
-    #for dataset in datasets[2:]:
-    #    dt_name = dataset.replace('/', '-')
-    #    
-    #    print(f"    --- Running {dataset} test: {model1} ({weight1}) x {model2} ({weight2}) ---")
-    #
-    #    arguments_to_pass = ["--dataset", dataset, "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
-    #                        "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "-out", f"./ztempData/{dt_name}Data.csv"]
-    #    run_main_with_subprocess(arguments_to_pass)
+    snd_start = 2
+    (src1, model1, weight1) = instances[begin]
+    (src2, model2, weight2) = instances[snd_start]
+    for dataset in datasets[1:]:
+        dt_name = dataset.replace('/', '-')
+        
+        print(f"    --- Running {dataset} test: {model1} ({weight1}) x {model2} ({weight2}) ---")
     
-    #begin = 0
-    #(src1, model1, weight1) = instances[begin]
-    #for (src2, model2, weight2) in instances[snd_start+1:]:
-    #    for dataset in datasets:
-    #        dt_name = dataset.replace('/', '-')
-    #        
-    #        print(f"    --- Running {dataset} test: {model1} ({weight1}) x {model2} ({weight2}) ---")
-    #    
-    #        arguments_to_pass = ["--dataset", dataset, "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
-    #                            "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "-out", f"./dataStorage/results/{dt_name}Data.csv"]
-    #        run_main_with_subprocess(arguments_to_pass)
+        arguments_to_pass = ["--dataset", dataset, "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
+                                    "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "-out", f"./ztempData/{dt_name}Data.csv"]
+        run_main_with_subprocess(arguments_to_pass)
+    
+    begin = 0
+    (src1, model1, weight1) = instances[begin]
+    for (src2, model2, weight2) in instances[snd_start+1:]:
+        for dataset in datasets:
+            dt_name = dataset.replace('/', '-')
+            
+            print(f"    --- Running {dataset} test: {model1} ({weight1}) x {model2} ({weight2}) ---")
+        
+            arguments_to_pass = ["--dataset", dataset, "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
+                                    "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "-out", f"./ztempData/{dt_name}Data.csv"]
+            run_main_with_subprocess(arguments_to_pass)
+            sleep(5.0)
 
 
-    #begin = begin+1
-    for idx, (src1, model1, weight1) in enumerate(instances[begin:]):
+    begin = begin+1
+    for idx, (src1, model1, weight1) in enumerate(instances[begin:2]):
         for (src2, model2, weight2) in instances[idx+begin+1:]:
-            for dataset in datasets[4:]:
+            for dataset in datasets:
                 dt_name = dataset.replace('/', '-')
         
                 print(f"    --- Running {dataset} test: {model1} ({weight1}) x {model2} ({weight2}) ---")
             
                 arguments_to_pass = ["--dataset", dataset, "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
-                                    "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "-out", f"./dataStorage/results/{dt_name}Data.csv"]
+                                    "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "-out", f"./ztempData/{dt_name}Data.csv"]
                 run_main_with_subprocess(arguments_to_pass)
+                sleep(5.0)

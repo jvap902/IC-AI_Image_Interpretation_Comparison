@@ -61,28 +61,29 @@ def huggingfaceExtractor(modelc, inputs):
     return data.float()
 
 def dinoExtractor(modelc, inputs):
-
-    if isinstance(inputs, dict) or (hasattr(inputs, 'data') and 'pixel_values' in inputs):
-        # Already processed by a DataLoader/Processor
-        # Extract pixel_values and ensure they are on the correct device
+    if isinstance(inputs, dict) or hasattr(inputs, 'data'):
         pixel_values = inputs['pixel_values']
-        if isinstance(pixel_values, torch.Tensor):
-            inp = {'pixel_values': pixel_values.to(device)}
-        else:
-            # If it's a list or numpy array inside the dict, convert to tensor
-            inp = modelc.data_transforms(images=pixel_values, return_tensors="pt").to(device)
+    elif isinstance(inputs, (list, tuple)):
+        # Handles cases where the loader returns (image_tensor, label)
+        pixel_values = inputs[0]
     else:
-        # Inputs are raw PIL images or Tensors that haven't been through the processor yet
-        inp = modelc.data_transforms(images=inputs, return_tensors="pt").to(device)
-
-    with torch.inference_mode():
-        outputs = modelc.model(**inp)
+        # Standard tensor input
+        pixel_values = inputs
+            
+    pixel_values = torch.stack(pixel_values)
     
-    data = outputs.pooler_output
+    if pixel_values.dim() == 5 and pixel_values.size(0) == 1:
+        pixel_values = pixel_values.squeeze(0)
+    
+    pixel_values = pixel_values.to(device)
+    
+    with torch.inference_mode():
+        
+        outputs = modelc.model(pixel_values=pixel_values)
+    
+        data = outputs.pooler_output
 
     if data.dim() > 2:
         data = torch.flatten(data, start_dim=1)
-        
-    data = data / data.norm(dim=-1, keepdim=True)
 
     return data.float()
