@@ -1,5 +1,7 @@
 relatório
 
+testar download de datasets huggingface em novos datasets -> depois adaptar carregamento
+
 para ativar venv :
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 .\venv\Scripts\activate

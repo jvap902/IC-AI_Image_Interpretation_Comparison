@@ -7,6 +7,7 @@ from torch.utils.data import Dataset, Subset
 import random
 from collections import defaultdict
 from ..plot import findInCsv, writeCsvLine
+import json
 
 
 # ImageNet-A download details
@@ -162,6 +163,10 @@ def selectindices(dataset, imagesPerClass, num_classes):
         
     return selected_indices
 
+def extract_labels(hf_dataset):
+    # Directly access the 'label' column of the HF dataset
+    return hf_dataset['label']
+
 def getRandomImages(dt_info, dataset, dataset_classes : int):
     
     print("Selecting indices\n")
@@ -174,9 +179,10 @@ def getRandomImages(dt_info, dataset, dataset_classes : int):
 
     # 2. Collect indices per class
     class_indices = defaultdict(list)
+    
+    labels = extract_labels(dataset)
 
-    for idx, item in enumerate(dataset):
-        _, label = item
+    for idx, label in enumerate(labels):
         if label in selected_classes:
             class_indices[label].append(idx)
 
@@ -199,30 +205,49 @@ def getRandomImages(dt_info, dataset, dataset_classes : int):
                 
     return selected_indices
 
-def getRandomImagesFromClasses(dt_info, dataset, train_or_validation):
+def getRandomImagesFromClasses(dt_info, dataset, train_or_validation, huggingface=False):
     
-    print("Getting classes from another dataset")
+    print("Getting specific classes")
     
-    available_class_names = dt_info.classes[train_or_validation]
+    available_class_wnids = dt_info.classes[train_or_validation]
+    
+    class_names = getClasses(dataset)
+            
+    available_class_ids = []
+    
+    
+    if huggingface:
+        name_to_wnid = nameToWnid(dt_info.name)
         
-    available_classes = []
+        for idx, name in enumerate(class_names):
+            clean_name = name.lower().replace('_', ' ').split(',')[0].strip()
+            wnid_of_this_class = name_to_wnid.get(clean_name)
+            
+            if wnid_of_this_class in available_class_wnids:
+                available_class_ids.append(idx)
+    else:
+        for idx, wnid in enumerate(class_names):
+            
+            if wnid in available_class_wnids:
+                available_class_ids.append(idx)
     
-    for idx, name in enumerate(getClasses(dataset)):
-        if name in available_class_names:
-            available_classes.append(idx)
                 
-    print(f"Selecting indices from {len(available_classes)} specific classes\n")
+    print("Number of requested classes:", len(available_class_wnids))
+    print("Number of mapped class IDs:", len(available_class_ids))
+                
+    print(f"Selecting indices from {len(available_class_wnids)} specific classes\n")
+
+    labels = extract_labels(dataset)
 
     # Collect indices per class
     class_indices = defaultdict(list)
 
-    for idx, item in enumerate(dataset):
-        _, label = item
-        if label in available_classes:
-            class_indices[label].append(idx)   
+    for idx, label in enumerate(labels):
+        if label in available_class_ids:
+            class_indices[label].append(idx) 
             
     # Check availability - verifica se existe o número de imagens por classe nesta classe
-    for c in available_classes:
+    for c in available_class_ids:
         if len(class_indices[c]) < dt_info.images_per_class:
             raise ValueError(
                 f"Class {c} only has {len(class_indices[c])} images, "
@@ -231,24 +256,27 @@ def getRandomImagesFromClasses(dt_info, dataset, train_or_validation):
 
     # Select balanced subset
     selected_indices = []
-    for c in available_classes:
+    for c in available_class_ids:
         indices = class_indices[c]
         rand_img_start = random.randint(0, len(indices)-dt_info.images_per_class)
         selected_indices.extend(indices[rand_img_start : rand_img_start + dt_info.images_per_class]) #sequência aleatória de índices    
     
-    print("Indices selected")
+    print(f"Indices selected - {len(selected_indices)}")
                 
     return selected_indices
 
-def imageSelector(dt_info, dataset, dataset_classes : int, train_or_validation):
-    if dt_info.classes['train'][0] == 'all':
+def imageSelector(dt_info, dataset, dataset_classes : int, train_or_validation, huggingface=False):
+    if dt_info.classes[train_or_validation][0] == 'all':
         return getRandomImages(dt_info, dataset, dataset_classes)
     else:
-        return getRandomImagesFromClasses(dt_info, dataset, train_or_validation)
+        return getRandomImagesFromClasses(dt_info, dataset, train_or_validation, huggingface=huggingface)
+
 
 def getClasses(dataset):
-    if isinstance(dataset, Subset):
-        return dataset.dataset.classes
+    if hasattr(dataset, 'features') and 'label' in dataset.features:
+        # This returns the list of WNIDs for ImageNet: ['n01443537', 'n01443538', ...]
+        return dataset.features['label'].names
+    # Fallback for torchvision/other datasets
     return dataset.classes
 
 def writeDatasetClasses(dt_info):
@@ -256,3 +284,23 @@ def writeDatasetClasses(dt_info):
     ans = findInCsv(classes_file, ['dataset', 'subset', 'num_classes', 'num_images'], [dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images])
     if len(ans) == 0:
         writeCsvLine(classes_file, [dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images, dt_info.classes['train'], dt_info.classes['validation']])
+        
+def nameToWnid(dataset_name):
+    if 'imagenet' in dataset_name.lower():
+        with open("./data/imagenet_class_index.json") as f:
+            class_index = json.load(f)
+    
+        # Create Name -> WNID map: {"cloak": "n03033013"}
+        name_to_wnid = {
+            v[1].lower().replace('_', ' ').split(',')[0].strip(): v[0] 
+            for v in class_index.values()
+        }
+
+        return name_to_wnid
+    
+def getStdMapping():
+    with open("./data/imagenet_class_index.json") as f:
+        class_index = json.load(f)
+    # class_index looks like {"0": ["n01443537", "goldfish"]}
+    # We want {"n01443537": 0}
+    return {v[0]: int(k) for k, v in class_index.items()}

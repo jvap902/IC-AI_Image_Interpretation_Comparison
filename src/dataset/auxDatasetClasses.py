@@ -7,47 +7,79 @@ from huggingface_hub import login
 import os
 import numpy as np
 from PIL import Image
+import json
 
 # --- Helper Class to Convert HuggingFace Dataset to PyTorch Dataset ---
+
 class HuggingFaceImageNetDataset(Dataset):
-    
-    # Assuming the Hugging Face dataset is passed in hf_dataset
     def __init__(self, hf_dataset, transform):
         self.hf_dataset = hf_dataset
         self.transform = transform
-        # Assume classes are set up here
+        
+        # Load mappings
+        self._build_mappings()
+        
+        # Get the names from the HF dataset features
         if hasattr(hf_dataset, 'features') and 'label' in hf_dataset.features:
-            # Attempt to infer classes from HF dataset
-            self.classes = hf_dataset.features['label'].names
+            self.hf_classes = hf_dataset.features['label'].names
         else:
-            self.classes = [f"Class {i}" for i in range(100)] # Placeholder
+            self.hf_classes = []
+
+    def _build_mappings(self):
+        # 1. Load the master JSON
+        with open("./data/imagenet_class_index.json", "r") as f:
+            json_data = json.load(f)
+        
+        self.name_to_wnid = {}
+        self.wnid_to_idx = {}
+        
+        self.classes = [None] * 1000
+        for idx_str, (wnid, name) in json_data.items():
+            self.classes[int(idx_str)] = wnid
+        
+        for idx_str, (wnid, raw_name) in json_data.items():
+            official_idx = int(idx_str)
+            self.wnid_to_idx[wnid] = official_idx
             
+            # Map the full name (e.g., "mailbag, postbag")
+            clean_full = raw_name.lower().replace('_', ' ').strip()
+            self.name_to_wnid[clean_full] = wnid
+            
+            # Map every part (e.g., "mailbag" and "postbag" individually)
+            for part in raw_name.split(','):
+                clean_part = part.lower().replace('_', ' ').strip()
+                self.name_to_wnid[clean_part] = wnid
+
     def __len__(self):
         return len(self.hf_dataset)
-    
+
     def __getitem__(self, index):
-        # 1. Retrieve the item from the Hugging Face dataset
         item = self.hf_dataset[index]
-        image = item['image'] # Assuming the key is 'image'
-        label = item['label']
         
-        # 2. >>> CRITICAL FIX: Explicitly enforce 3 channels (RGB) at the source
-        # This converts grayscale 'L' or RGBA to 3-channel 'RGB' directly on the PIL image.
-        # This bypasses any potential worker serialization issues in transforms.Compose.
-        try:
-            image = image.convert('RGB')
-        except Exception as e:
-            # Log an error if the conversion fails for a specific image, but continue
-            print(f"Warning: Failed to convert image at index {index} to RGB. Error: {e}")
-            # If conversion fails, we let the transform run, hoping it recovers (unlikely)
+        # 1. Identify the WNID of the image
+        hf_internal_idx = item['label']
+        hf_name = self.hf_classes[hf_internal_idx]
+        
+        # Clean the name from HF
+        clean_hf_name = hf_name.lower().replace('_', ' ').strip()
+        
+        # Try finding the WNID (Bridge)
+        wnid = self.name_to_wnid.get(clean_hf_name)
+        if not wnid:
+            # Fallback: if HF has "mailbag, postbag" and we only matched "mailbag"
+            wnid = self.name_to_wnid.get(clean_hf_name.split(',')[0].strip())
             
-        # 3. Apply the rest of the transformation pipeline
-        # This includes Resize, CenterCrop, ToTensor, and Normalize.
+        if not wnid:
+            raise KeyError(f"Could not map dataset name '{hf_name}' to a WNID.")
+
+        # 2. Get the official index for the model (0-999)
+        real_label = self.wnid_to_idx[wnid]
+        
+        image = item['image'].convert('RGB')
         if self.transform:
-            # This is your original failing line, now called on a guaranteed RGB image
-            image = self.transform(image) 
+            image = self.transform(image)
             
-        return image, label
+        return image, real_label
 
 # --- FGVC-Aircraft Custom Dataset Class ---
 class AircraftDataset(Dataset):

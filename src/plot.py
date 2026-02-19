@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import csv
 import seaborn
 import pandas as pd
-
+import ast
 
 def plot_history(history):
     """Plots the training and validation history."""
@@ -185,14 +185,8 @@ def getStringIntArray(string):
     return ans
 
 def getStringStrArray(string):    
-    if string[0] == '"' and string[1] == '"': #tira aspas externas
-        string = string[1:-1]
-        
-    string = string[1:-1] #tira parênteses
     
-    ans = [e[1:-1] for e in string.split(', ')] #transforma em array
-        
-    return ans
+    return ast.literal_eval(string)
 
 def paramDataFrameFromCsv(csv_path, param):
     
