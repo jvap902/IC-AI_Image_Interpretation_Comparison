@@ -1,8 +1,9 @@
 geral
-    diferença entre pearson e spearman muito grande no timm/mini-imagenet e pequena nos outros datasets, mas todos tem correlações de spearman com valores menores que pearson
-    em geral "estruturas" se mantém, mas alguns modelos tem correlações mais baixas em certos datasets
+    diferença entre pearson e spearman muito grande no timm/mini-imagenet e ILSVRC/imagenet-1k mas pequena nos outros datasets, mas todos tem correlações de spearman com valores
+    menores que pearson em geral "estruturas" se mantém, mas alguns modelos tem correlações mais baixas em certos datasets
     modelos dinov3 se mostram com correlações mais baixas que as redondezas nos datasets cifar, mas não mostram esse destaque nos dataset imagenet
-    as correlações representadas no centro dos heatmaps tendem a ter correlações mais altas: regnet e vit em todos mostram uma correlação mais alta
+    as correlações representadas no centro dos heatmaps tendem a ter correlações mais altas: regnet e vit em todos mostram uma correlação mais alta -> 
+        parece que regnet é um meio termo nos valores de correlação entre resnet e vit
     principalmente nos datasets cifar, modelos resnet também mostram alta correlação com regnet e vit
     modelos de diferentes fontes mesmo com filosofias semelhantes apresentam medidas de correlação mais baixas
     modelos das mesmas fontes tendem a ter correlações mais altas
@@ -13,7 +14,7 @@ timm/mini-imagenet
     efficientnet_b4 ainda mais baixo, mesmo passando pelos mesmos processos dos outros efficientnet
     maxvit_t e modelos convnext também aparecem com correlações mais baixas
 
-imagenet-sketch
+imagenet-sketch(0)
     maxvit_t, convnext_base são modelos com correlações ainda mais baixas que os outros
     estranha a diferença entre as medidas de correlação entre convnext_base e convnext_tiny
     efficientnet_b4 também tem correlações mais baixas
@@ -30,3 +31,15 @@ cifar100
 fgvc-aircraft
     todas correlações muito mais altas que o normal, possivelmente por todas imagens serem meio parecidas
     dinov3 tem correlações especialmente menores que o resto.
+
+imagenet-sketch(1)
+    maxvit_t e convnext_base têm correlações mais baixas e bem mais explícitas do que no imgenet-1k
+    basicamente igual ao outro imagenet-sketch (como esperado)
+
+ILSVRC/imagenet-1k
+    entre modelos torchvision estranhamente baixa as correlações maxvit_t, convnext's e efficientnet_b4 e efficientnet_b7, principalmente com modelos regnet e resnet
+    diferença entre efficientnets e clips mais clara
+    leve destaque de correlação mais baixa para (regnet_y_16gf, IMAGENET1K_V1)
+    spearman de forma geral muito baixa.
+    mostra uma diferença muito clara entre modelos resnet e vit mesmo todos do torchvision
+    números negativos mais baixos que o visto até o momento, até -0.5!
