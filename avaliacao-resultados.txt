@@ -8,10 +8,12 @@ geral
     modelos de diferentes fontes mesmo com filosofias semelhantes apresentam medidas de correlação mais baixas
     modelos das mesmas fontes tendem a ter correlações mais altas
 
+    sketch(1) e cifar100 mostram mais linhas como padrão, imagenet-1k mostra mais blocos
+
 timm/mini-imagenet
     correlação de spearman bem mais baixa que de pearson, mas alta em modelos com arquiteturas semelhantes
     "estruturas" se mantém nas duas medidas de correlação, como esperado
-    efficientnet_b4 ainda mais baixo, mesmo passando pelos mesmos processos dos outros efficientnet
+    efficientnet_b4 ainda mais baixo, mesmo passando pelos mesmos processos dos outros efficientnet -> aqui mais baixo com resnet, melhor com vit e melhor ainda com maxvit e convnext
     maxvit_t e modelos convnext também aparecem com correlações mais baixas
 
 imagenet-sketch(0)
@@ -32,10 +34,14 @@ fgvc-aircraft
     todas correlações muito mais altas que o normal, possivelmente por todas imagens serem meio parecidas
     dinov3 tem correlações especialmente menores que o resto.
     dinov3 vai um pouco melhor com vit_h, e resnet, mas regnet que eu achei ser mais um meio termo não tem nada demais
+    efficientnet_b4 se deu melhor com resnet do que com os outros torchvision
+    efficientnet_b0 tem destaque com correlações menores
 
 imagenet-sketch(1)
     maxvit_t e convnext_base têm correlações mais baixas e bem mais explícitas do que no imgenet-1k
     basicamente igual ao outro imagenet-sketch (como esperado)
+    efficientnet_b4 se deu melhor com maxvit e convnext
+    vit_h tem correlações menores (mesmo comparando com outros vit) com os outros torchvision que aparecem até o momento
 
 ILSVRC/imagenet-1k
     entre modelos torchvision estranhamente baixa as correlações maxvit_t, convnext's e efficientnet_b4 e efficientnet_b7, principalmente com modelos regnet e resnet
@@ -44,3 +50,17 @@ ILSVRC/imagenet-1k
     spearman de forma geral muito baixa.
     mostra uma diferença muito clara entre modelos resnet e vit mesmo todos do torchvision
     números negativos mais baixos que o visto até o momento, até -0.5!
+    maxvit e convnext especialmente baixos quando comparados aos outros datasets, exceto com modelos clip e open_clip
+
+
+conclusões:
+    efficientnet_b4 menor de forma geral
+    
+    modelos torchvision com "mesma arquitetura" em geral tem maior correlação - esperado
+        efficientnet não é bem assim
+    
+    resnet e regnet até que se assemelham, vit e regnet até que se assemelham, resnet e vit não se assemelham muito
+
+    maxvit e convnext entre si são correlações mais altas que entre eles e o resto, convnext_tiny um pouco menos pior na maior parte dos casos
+
+    regnet_y_16gf SWAG aparece com uma correlação maior de forma geral em relação a redondeza
