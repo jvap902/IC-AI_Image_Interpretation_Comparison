@@ -31,6 +31,7 @@ cifar100
 fgvc-aircraft
     todas correlações muito mais altas que o normal, possivelmente por todas imagens serem meio parecidas
     dinov3 tem correlações especialmente menores que o resto.
+    dinov3 vai um pouco melhor com vit_h, e resnet, mas regnet que eu achei ser mais um meio termo não tem nada demais
 
 imagenet-sketch(1)
     maxvit_t e convnext_base têm correlações mais baixas e bem mais explícitas do que no imgenet-1k

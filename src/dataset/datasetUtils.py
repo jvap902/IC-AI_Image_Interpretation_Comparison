@@ -277,6 +277,8 @@ def getClasses(dataset):
         # This returns the list of WNIDs for ImageNet: ['n01443537', 'n01443538', ...]
         return dataset.features['label'].names
     # Fallback for torchvision/other datasets
+    elif isinstance(dataset, Subset):
+        return dataset.dataset.classes
     return dataset.classes
 
 def writeDatasetClasses(dt_info):

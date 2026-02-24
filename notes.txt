@@ -23,8 +23,20 @@ StripModelHead aplicado na criação do modelo
 
 
 
-
 O que mencionar no artigo:
+
+
+Explicação geral
+
+Pipeline:
+Extrair embeddings (eval mode, preprocess correto)
+P1: Similaridade entre embeddings → Cosine
+P2: RDM = 1 - cosine
+P3: RSA entre modelos → Spearman (principal)
+Gerar matriz Model × Model por dataset
+Análises comparativas
+
+Explicar os dataset e modelos e justificar a escolha
 
 Metodologia
     Pipeline principal:
