@@ -1,9 +1,6 @@
 geral
-    diferença entre pearson e spearman muito grande no timm/mini-imagenet e ILSVRC/imagenet-1k mas pequena nos outros datasets, mas todos tem correlações de spearman com valores
-    menores que pearson em geral "estruturas" se mantém, mas alguns modelos tem correlações mais baixas em certos datasets
-    modelos dinov3 se mostram com correlações mais baixas que as redondezas nos datasets cifar, mas não mostram esse destaque nos dataset imagenet
-    as correlações representadas no centro dos heatmaps tendem a ter correlações mais altas: regnet e vit em todos mostram uma correlação mais alta -> 
-        parece que regnet é um meio termo nos valores de correlação entre resnet e vit
+    diferença entre pearson e spearman muito grande no timm/mini-imagenet e ILSVRC/imagenet-1k mas pequena nos outros datasets, mas todos tem correlações de spearman com valores menores que pearson em geral "estruturas" se mantém, mas alguns modelos tem correlações mais baixas em certos datasets
+    as correlações representadas no centro dos heatmaps tendem a ter correlações mais altas
     principalmente nos datasets cifar, modelos resnet também mostram alta correlação com regnet e vit
     modelos de diferentes fontes mesmo com filosofias semelhantes apresentam medidas de correlação mais baixas
     modelos das mesmas fontes tendem a ter correlações mais altas
@@ -49,18 +46,15 @@ ILSVRC/imagenet-1k
     leve destaque de correlação mais baixa para (regnet_y_16gf, IMAGENET1K_V1)
     spearman de forma geral muito baixa.
     mostra uma diferença muito clara entre modelos resnet e vit mesmo todos do torchvision
-    números negativos mais baixos que o visto até o momento, até -0.5!
     maxvit e convnext especialmente baixos quando comparados aos outros datasets, exceto com modelos clip e open_clip
+    convnext_tiny aparece com correlações muito mais baixas quando comparado com os outro heatmaps
 
 
 conclusões:
     efficientnet_b4 menor de forma geral
-    
-    modelos torchvision com "mesma arquitetura" em geral tem maior correlação - esperado
-        efficientnet não é bem assim
-    
-    resnet e regnet até que se assemelham, vit e regnet até que se assemelham, resnet e vit não se assemelham muito
-
-    maxvit e convnext entre si são correlações mais altas que entre eles e o resto, convnext_tiny um pouco menos pior na maior parte dos casos
-
-    regnet_y_16gf SWAG aparece com uma correlação maior de forma geral em relação a redondeza
+    imagenet-1k mostra correlações mais baixas -> possivelmente ilustra mais cenários, com possível maior variabilidade de imagens?
+    modelos torchvision com "mesma arquitetura" em geral tem maior correlação, como esperado. Mas efficientnet não segue tão a risca esse padrão
+    (resnet, regnet) e (regnet, vit) tem correlações relativamente altas, mas (resnet, vit) não muito
+    maxvit e convnext entre si tem correlações mais altas que entre eles e o resto, convnext_tiny consegue maiores correlações que convnext_base
+    regnet_y_16gf SWAG aparece com uma correlação maior fora do centro comparado aos outros modelos
+    estruturas de forma geral se mantém, contudo em datasets como cifar100 é possível ver "linhas" separando e no imagenet-1k blocos são mais visíveis

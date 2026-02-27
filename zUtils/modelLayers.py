@@ -37,6 +37,9 @@ def openClipChildren(model_name):
     model.to(device)
     model.eval()
     
+    total_params = sum(p.numel() for p in model.parameters())
+    print(f"{model_name}: {total_params:,}")
+    
     return model.named_children
 
 def dinoChildren(model_name):
@@ -89,12 +92,13 @@ instances = [
 if __name__ == "__main__":
     path = 'modelLayers.txt'
     
-    children = clipChildren('ViT-L/14')
     
-    with open(path, 'a') as file:
-        for instance in instances:
-            children = getChildren(instance)
-            
-            file.write(f"\n --- Model: {instance[1]}, source: {instance[0]} --- \n")
-
-            file.write(f"{children} \n")
+    children = openClipChildren('ViT-L-14')
+    
+    #with open(path, 'a') as file:
+    #    for instance in instances:
+    #        children = getChildren(instance)
+    #        
+    #        file.write(f"\n --- Model: {instance[1]}, source: {instance[0]} --- \n")
+    #
+    #        file.write(f"{children} \n")
