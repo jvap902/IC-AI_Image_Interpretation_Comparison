@@ -2,7 +2,7 @@ import csv
 import numpy as np
 from src.plot import findInCsv
 
-datasets = [('timm/mini-imagenet', 0), ('imagenet-sketch', 0), ('imagenet-sketch', 1), ('cifar10', 0), ('cifar100', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
+datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)] #apenas datasets utilizados no artigo
 
 def getAverages(data):
     
@@ -85,30 +85,75 @@ def getMinMaxModelAvg(data):
     
     return (min_p, min_s), (max_p, max_s)
 
+def buildFromBeginning(txt):
+    for (dataset, subset) in datasets:
+        dt_name = dataset.replace('/','-')
+        csv_name = (f"./dataStorage/results/{dt_name}Data.csv")
+        
+        data = findInCsv(csv_name, ['dataset'], [f'{dt_name}({subset})'])
+        
+        pearson_average, spearman_average = getAverages(data)
+        
+        p_min, s_min, p_max, s_max = getMinMaxStr(data)
+        
+        min_avg, max_avg = getMinMaxModelAvg(data)
+                    
+        txt.write(f"--- Results for {dataset}({subset}) ---\n")
+        txt.write(f"Pearson average: {pearson_average}\n")
+        txt.write(f"Spearman average: {spearman_average}\n")
+        txt.write(f"Pearson min value: {p_min} | Spearman min value: {s_min}\n")
+        txt.write(f"Pearson max value: {p_max} | Spearman max value: {s_max}\n")
+        txt.write(f"Pearson min model avg: {min_avg[0][1]} -> {min_avg[0][0]} | Spearman min model avg: {min_avg[1][1]} -> {min_avg[1][0]}\n")
+        txt.write(f"Pearson max model avg: {max_avg[0][1]} -> {max_avg[0][0]} | Spearman max model avg: {max_avg[1][1]} -> {max_avg[1][0]}\n")
+        
+        txt.write("\n")
+
+        ModelModelAvg(txt)
+
+def dataAsDict():
+    info = dict()
+
+    for (dataset, subset) in datasets:
+        dt_name = dataset.replace('/','-')
+        csv_name = (f"./dataStorage/results/{dt_name}Data.csv")
+            
+        data = findInCsv(csv_name, ['dataset'], [f'{dt_name}({subset})'])
+
+        info[f'{dt_name}({subset})'] = dict()
+
+        for row in data:
+            first_model = row['first_model']
+            second_model = row['second_model']
+            pearson = np.float32(row['pearson'])
+            spearman = np.float32(row['spearman'])
+
+            info[f'{dt_name}({subset})'][frozenset({first_model, second_model})] = (pearson, spearman)
+
+    return info
+
+def ModelModelAvg(txt):
+
+    info = dataAsDict()
+
+    model_model = dict()
+
+    for (dataset, subset) in datasets:
+        dt_name = dataset.replace('/','-')
+
+        for key, value in info[f'{dt_name}({subset})'].items():
+            if key in model_model:
+                model_model[key] = (np.append(model_model[key][0], value[0]), np.append(model_model[key][1], value[1]))
+            else:
+                model_model[key] = (np.array([value[0]]), np.array([value[1]]))
+
+
+    txt.write("\n\n")
+    for key, value in model_model.items():
+        txt.write(f"{key} -> Pearson: {value[0].mean()} +- {np.std(value[0])}\n -> Spearman: {value[1].mean()} +- {np.std(value[1])}\n\n")
+
 
 if __name__ == "__main__":
     
     with open("dataAnalysis.txt", "a", encoding="utf-8") as txt:
         
-        for (dataset, subset) in datasets:
-            dt_name = dataset.replace('/','-')
-            csv_name = (f"./dataStorage/results/{dt_name}Data.csv")
-            
-            data = findInCsv(csv_name, ['dataset'], [f'{dt_name}({subset})'])
-            
-            pearson_average, spearman_average = getAverages(data)
-            
-            p_min, s_min, p_max, s_max = getMinMaxStr(data)
-            
-            min_avg, max_avg = getMinMaxModelAvg(data)
-                        
-            txt.write(f"--- Results for {dataset}({subset}) ---\n")
-            txt.write(f"Pearson average: {pearson_average}\n")
-            txt.write(f"Spearman average: {spearman_average}\n")
-            txt.write(f"Pearson min value: {p_min} | Spearman min value: {s_min}\n")
-            txt.write(f"Pearson max value: {p_max} | Spearman max value: {s_max}\n")
-            txt.write(f"Pearson min model avg: {min_avg[0][1]} -> {min_avg[0][0]} | Spearman min model avg: {min_avg[1][1]} -> {min_avg[1][0]}\n")
-            txt.write(f"Pearson max model avg: {max_avg[0][1]} -> {max_avg[0][0]} | Spearman max model avg: {max_avg[1][1]} -> {max_avg[1][0]}\n")
-            
-            txt.write("\n")
-    
+        ModelModelAvg(txt)
