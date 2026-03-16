@@ -27,15 +27,15 @@ def stdOutputExtractor(modelc : Model, inputs):
             
             logits = modelc.model(inputs, text)
             
-            logits_img = logits[0]
-            
-            return torch.tensor(logits_img)
+            return torch.tensor(logits[0])
         
         case 'clip':
             text = clip.tokenize(getClasses(modelc.val_dataset)).to(device)
             logits_img, logits_txt = modelc.model(inputs, text)
             
-            return torch.tensor(logits_img)
+            logits_img = torch.tensor(logits_img)
+            
+            return logits_img
         
         case 'huggingface':
             if 'dinov3' in modelc.name:
@@ -55,9 +55,9 @@ def stdOutputExtractor(modelc : Model, inputs):
                 with torch.inference_mode():
                     outputs = modelc.model(**inp)
                 
-                data = outputs[-1]
+                data = torch.tensor(outputs[-1])
                 
-                return torch.tensor(data)
+                return data
             else:
                 raise ValueError("Unsupported model")
             
@@ -77,17 +77,22 @@ def getStdOutputTensors(modelc : Model, loader):
     data_list = []
     labels_list = []
     
+    modelc.model.eval()
+    
     with torch.no_grad():
         for inputs, labels in tqdm(loader, desc="Extracting Data"):
-            inputs = inputs.to(device)
+            inputs = inputs.to(device, non_blocking=True)
             if modelc.model:
                 modelc.model.eval()
                 data = stdOutput(modelc, inputs) # Extract features using the backbone
             else:
                 data = inputs.cpu() # Extract raw inputs
-                
+                            
+            data = data.detach().cpu()
+            labels = labels.detach().cpu()
+
             data_list.append(data)
-            labels_list.append(labels.cpu())
+            labels_list.append(labels)
             
     return torch.cat(data_list), torch.cat(labels_list)
 
@@ -98,6 +103,8 @@ def getModelStdOutput(modelc : Model, dt_info):
     
     torch.save(stdOutput, getSavePath(modelc, dt_info, False))    
     
+    del stdOutput
+    
 def getModelEmbeddings(modelc : Model, dt_info):
     
     print(f"\nSaving {modelc.name} embeddings")
@@ -105,6 +112,8 @@ def getModelEmbeddings(modelc : Model, dt_info):
     data = getFeatureTensors(modelc.val_loader, modelc)
     
     torch.save(data, getSavePath(modelc, dt_info, True))
+    
+    del data
     
 def writeModelOutputLine(modelc : Model, dt_info):
     std_output_path = getSavePath(modelc, dt_info, False)

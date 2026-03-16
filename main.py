@@ -21,14 +21,15 @@ parser.add_argument("-nv", "--no_validation", action='store_false', help="Turns 
 parser.add_argument("--chunked", action='store_true', help="Enables spearman calculation in chunks to save memory")
 parser.add_argument("--n_classes", type=int, required=False, help="Specify number of classes in the dataset (only for non cifar datasets)")
 parser.add_argument("--specific_subset", type=int, required=False, help="Specify a specific subset number to load from cache")
-parser.add_argument("--m1_source", type=str, required=False, default="timm", help="Specify from where the first model to be loaded come from, default is timm lib")
-parser.add_argument("--m2_source", type=str, required=False, default="timm", help="Specify from where the second model to be loaded come from, default is timm lib")
+parser.add_argument("--m1_source", type=str, required=False, default="torchvision", help="Specify from where the first model to be loaded come from, default is timm lib")
+parser.add_argument("--m2_source", type=str, required=False, default="torchvision", help="Specify from where the second model to be loaded come from, default is timm lib")
 parser.add_argument("--m1_weights", type=str, required=False, default="DEFAULT", help="Specify weights for torchvision models")
 parser.add_argument("--m2_weights", type=str, required=False, default="DEFAULT", help="Specify weights for torchvision models")
 parser.add_argument("-ed", "--existing_dissimilarity", action='store_true', required=False, default=False, help="Use previously calculated cossine dissimilarity for run")
 parser.add_argument("-sc", "--same_classes", type=str, required=False, default=None, nargs='+', help="Specify [name, subset, num_classes, num_images] of a dataset for its classes to be used, only works for new subsets")
 parser.add_argument("-out", "--output_file", type=str, required=False, default="./dataStorage/results/runData.csv", help="Specify path to file the run information will be written")
 parser.add_argument("--revalidate", action='store_true', required=False, default=False, help="Force validation step even with previously calculated accuracy")
+parser.add_argument("-ndsc", "--new_dt_specific_classes", action='store_true', required=False, default=False, help="Specify arbitrary classes in a classes.csv file, only works for new subsets")
 
 args = parser.parse_args()
 
@@ -43,8 +44,8 @@ if __name__ == "__main__":
 
     # --- Model Creation ---
 
-    first_model_name = args.model1 if args.model1 else 'resnet50.a1_in1k'
-    second_model_name = args.model2 if args.model2 else 'efficientnet_b0.ra_in1k'
+    first_model_name = args.model1 if args.model1 else 'resnet18'
+    second_model_name = args.model2 if args.model2 else 'resnet50'
     
     fst_modelc = Model(first_model_name, args.m1_source, args.m1_weights)
     snd_modelc = Model(second_model_name, args.m2_source, args.m2_weights)
@@ -65,7 +66,10 @@ if __name__ == "__main__":
     if total_images < num_classes:
         raise ValueError(f"Total images ({total_images}) must be at least equal to number of classes ({num_classes}).")
     
-    dt_info = DtInfo(dataset_name, specific_subset, num_classes, total_images, args.same_classes)
+    if (args.same_classes != None and args.new_dt_specific_classes):
+        raise ValueError(f"Can't specify two different set of classes")
+    
+    dt_info = DtInfo(dataset_name, specific_subset, num_classes, total_images, args.same_classes, args.new_dt_specific_classes)
     
     epochs = args.epochs if args.epochs else 10
 

@@ -1,0 +1,56 @@
+--- Results for timm/mini-imagenet(0) ---
+Pearson average: 0.3084268569946289
+Spearman average: 0.16341926157474518
+Pearson min value: facebook/dinov3-vitb16-pretrain-lvd1689m, efficientnet_b4 -> -0.15068146586418152 | Spearman min value: facebook/dinov3-vitb16-pretrain-lvd1689m, efficientnet_b4 -> -0.22456277906894684
+Pearson max value: ViT-B/32, ViT-B/16 -> 0.8659049868583679 | Spearman max value: ViT-B/32, ViT-B/16 -> 0.8362695574760437
+Pearson min model avg: efficientnet_b4 -> 0.0515890009701252 | Spearman min model avg: efficientnet_b4 -> 0.009347675368189812
+Pearson max model avg: vit_h_14 -> 0.3982793390750885 | Spearman max model avg: ViT-B-16 -> 0.2512539029121399
+
+--- Results for imagenet-sketch(0) ---
+Pearson average: 0.4388224184513092
+Spearman average: 0.4078042209148407
+Pearson min value: facebook/dinov3-vitb16-pretrain-lvd1689m, maxvit_t -> -0.02040483057498932 | Spearman min value: regnet_y_32gf, maxvit_t -> -0.12899647653102875
+Pearson max value: regnet_y_16gf, regnet_y_32gf -> 0.8834861516952515 | Spearman max value: regnet_y_16gf, regnet_y_32gf -> 0.879079282283783
+Pearson min model avg: maxvit_t -> 0.1264416128396988 | Spearman min model avg: maxvit_t -> 0.056485552340745926
+Pearson max model avg: swin_v2_t -> 0.5523842573165894 | Spearman max model avg: swin_v2_t -> 0.5221276879310608
+
+--- Results for imagenet-sketch(1) ---
+Pearson average: 0.4325021505355835
+Spearman average: 0.40946900844573975
+Pearson min value: regnet_y_16gf, maxvit_t -> 0.011478036642074585 | Spearman min value: facebook/dinov3-vitb16-pretrain-lvd1689m, maxvit_t -> -0.05236656963825226
+Pearson max value: regnet_y_16gf, regnet_y_32gf -> 0.8835150003433228 | Spearman max value: regnet_y_16gf, regnet_y_32gf -> 0.8830951452255249
+Pearson min model avg: maxvit_t -> 0.15838350355625153 | Spearman min model avg: maxvit_t -> 0.10001908242702484
+Pearson max model avg: swin_t -> 0.5511408448219299 | Spearman max model avg: swin_t -> 0.5300009250640869
+
+--- Results for cifar10(0) ---
+Pearson average: 0.5015625953674316
+Spearman average: 0.43592286109924316
+Pearson min value: ViT-B/16, efficientnet_b4 -> 0.1375434398651123 | Spearman min value: ViT-B/32, efficientnet_b4 -> 0.07200446724891663
+Pearson max value: swin_t, swin_v2_t -> 0.8617478609085083 | Spearman max value: ViT-B-32-256, ViT-B-16 -> 0.8402957916259766
+Pearson min model avg: ViT-L/14 -> 0.3216732144355774 | Spearman min model avg: facebook/dinov3-vitl16-pretrain-lvd1689m -> 0.2964111864566803
+Pearson max model avg: swin_v2_t -> 0.6040162444114685 | Spearman max model avg: swin_v2_t -> 0.5366511344909668
+
+--- Results for cifar100(0) ---
+Pearson average: 0.41756245493888855
+Spearman average: 0.37206101417541504
+Pearson min value: facebook/dinov3-vitl16-pretrain-lvd1689m, convnext_base -> 0.07528506219387054 | Spearman min value: facebook/dinov3-vitl16-pretrain-lvd1689m, convnext_base -> 0.015397641807794571
+Pearson max value: regnet_y_16gf, regnet_y_32gf -> 0.8350082039833069 | Spearman max value: regnet_y_16gf, regnet_y_32gf -> 0.809497058391571
+Pearson min model avg: ViT-L/14 -> 0.21586529910564423 | Spearman min model avg: ViT-L/14 -> 0.19949398934841156
+Pearson max model avg: swin_v2_t -> 0.5321252942085266 | Spearman max model avg: swin_v2_t -> 0.479695588350296
+
+--- Results for fgvc-aircraft(0) ---
+Pearson average: 0.6750617623329163
+Spearman average: 0.6659069657325745
+Pearson min value: facebook/dinov3-vitl16-pretrain-lvd1689m, convnext_base -> 0.2736755907535553 | Spearman min value: facebook/dinov3-vitl16-pretrain-lvd1689m, regnet_y_16gf -> 0.2592660188674927
+Pearson max value: regnet_y_16gf, regnet_y_32gf -> 0.9522883296012878 | Spearman max value: convnext_tiny, convnext_base -> 0.9266035556793213
+Pearson min model avg: facebook/dinov3-vitl16-pretrain-lvd1689m -> 0.3753991425037384 | Spearman min model avg: facebook/dinov3-vitl16-pretrain-lvd1689m -> 0.35897964239120483
+Pearson max model avg: vit_b_16 -> 0.7566260099411011 | Spearman max model avg: convnext_base -> 0.7437452673912048
+
+--- Results for ILSVRC/imagenet-1k(0) ---
+Pearson average: 0.35798418521881104
+Spearman average: 0.17119915783405304
+Pearson min value: regnet_y_16gf, efficientnet_b4 -> -0.30574893951416016 | Spearman min value: regnet_y_16gf, efficientnet_b4 -> -0.5011600852012634
+Pearson max value: regnet_y_16gf, regnet_y_32gf -> 0.936872124671936 | Spearman max value: ViT-B/32, ViT-B/16 -> 0.8415985107421875
+Pearson min model avg: efficientnet_b4 -> 0.14892546832561493 | Spearman min model avg: facebook/dinov3-vitl16-pretrain-lvd1689m -> 0.06871508061885834
+Pearson max model avg: swin_v2_t -> 0.4871510863304138 | Spearman max model avg: ViT-B-32-256 -> 0.27413734793663025
+

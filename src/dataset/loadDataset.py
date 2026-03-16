@@ -3,7 +3,7 @@ import torchvision
 from torch.utils.data import Subset, random_split
 import os
 from . import auxDatasetClasses, datasetUtils
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk
 from huggingface_hub import login
 from .. import plot
 import random
@@ -23,7 +23,7 @@ def loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir, modelc
     elif dataset == 'cifar10':
         train_dataset, val_dataset = loadCifar10Dataset(data_dir, train_indices, val_indices, modelc)
     else:
-        train_dataset, val_dataset = loadHuggingfaceDataset(dataset, train_indices, val_indices, modelc)
+        train_dataset, val_dataset = loadHuggingfaceDataset(dt_info, train_indices, val_indices, modelc)
     
     datasetUtils.writeDatasetClasses(dt_info)
 
@@ -245,56 +245,116 @@ def newHuggingfaceDataset(dt_info, output_dir, modelc):
         
         login(token=hf_token, add_to_git_credential=False)
         
-        hf_train = load_dataset(dataset_link, split='train', streaming=False)
-        hf_validation = load_dataset(dataset_link, split='validation', streaming=False)
+        dir_name = dt_info.name.replace('/','-')
+        
+        # se dataset completo está baixado
+        if(Path(f'./data/{dir_name}').is_dir()):
+            
+            print("Loading already downloaded dataset")
+            
+            hf_train = load_from_disk(f'./data/{dir_name}/train')
+            hf_validation = load_from_disk(f'./data/{dir_name}/validation')
+        
+        #caso seja necessário baixar
+        else:
+            print("Downloading huggingface dataset")
+            
+            hf_train = load_dataset(dataset_link, split='train', streaming=False)
+            hf_validation = load_dataset(dataset_link, split='validation', streaming=False)
         
     except Exception as e:
-         raise RuntimeError(f"Failed to load Hugging Face ImageNet subset: {e}")
-             
+         raise RuntimeError(f"Failed to load Hugging Face Dataset: {e}")
+    
+    
     print(f"Loaded HF Dataset of size: {len(hf_train) + len(hf_validation)}")
     
     print(f"\nCreating subset with {dt_info.images_per_class} images per class for {num_classes} classes.")
+    
         
-    train_indices = datasetUtils.imageSelector(dt_info, hf_train, hf_train.features['label'].num_classes, 'train')
-    val_indices = datasetUtils.imageSelector(dt_info, hf_validation, hf_train.features['label'].num_classes, 'validation')
-
+    train_indices = datasetUtils.imageSelector(dt_info, hf_train, hf_train.features['label'].num_classes, 'train', huggingface=True)
+    val_indices = datasetUtils.imageSelector(dt_info, hf_validation, hf_train.features['label'].num_classes, 'validation', huggingface=True)
+    
+    print(len(train_indices))
+    print(len(val_indices))
+    
     hf_train = hf_train.select(train_indices)
     hf_validation = hf_validation.select(val_indices)
+    
+    #salva apenas subset
+    hf_train.save_to_disk(f'./data/{dt_info.name_w_subset}/train')
+    hf_validation.save_to_disk(f'./data/{dt_info.name_w_subset}/validation')  
 
     print(f"Loaded {num_classes} classes * {dt_info.images_per_class} images per class")
-
+    
     # 5. Wrap in PyTorch Dataset
     train_dataset = auxDatasetClasses.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=modelc.data_transforms)
     val_dataset = auxDatasetClasses.HuggingFaceImageNetDataset(hf_dataset=hf_validation, transform=modelc.data_transforms)
-
+        
+    print(len(val_dataset.classes))
+    
+    a = []
+    for e in val_dataset.classes:
+        if e != None:
+            a.append(e)
+    
+    print(len(set(a)))
+        
     print(f"Train: {len(train_dataset)} | Val: {len(val_dataset)}")
     
     dt_name = dataset_link.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
     file_name = f"{dt_name}_subset_i{total_images}_c{num_classes}({subset_num}).pt"
     
     plot.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
+    
+    # Debugging check
+    img, label = train_dataset[0]
+    print(f"DEBUG: First image label index: {label}")
 
     return train_dataset, val_dataset
 
-def loadHuggingfaceDataset(dataset_link, train_indices, val_indices, modelc):
+def loadHuggingfaceDataset(dt_info, train_indices, val_indices, modelc):
     print("\n--- Loading Huggingface dataset with pre-selected indices ---")
     
-    try:
-        
+    dataset_link = dt_info.name
+    
+    try:   
         hf_token = datasetUtils.loadToken('token.txt')
         
         login(token=hf_token, add_to_git_credential=False)
         
-        hf_train = load_dataset(dataset_link, split='train', streaming=False)
-        hf_validation = load_dataset(dataset_link, split='validation', streaming=False)
+        if(Path(f'./data/{dt_info.name_w_subset}').is_dir()):
+            
+            print("Loading already selected and downloaded subset")
+            
+            hf_train = load_from_disk(f'./data/{dt_info.name_w_subset}/train')
+            hf_validation = load_from_disk(f'./data/{dt_info.name_w_subset}/validation')
+            
+        else:
+            
+            dir_name = dt_info.name.replace('/','-')
         
+            # se dataset completo está baixado
+            if(Path(f'./data/{dir_name}').is_dir()):
+            
+                print("Loading already downloaded dataset")
+                
+                hf_train = load_from_disk(f'./data/{dir_name}/train')
+                hf_validation = load_from_disk(f'./data/{dir_name}/validation')
+                
+            else:
+                
+                hf_train = load_dataset(dataset_link, split='train', streaming=False)
+                hf_validation = load_dataset(dataset_link, split='validation', streaming=False)
+                
+            hf_train = hf_train.select(train_indices)
+            hf_validation = hf_validation.select(val_indices)
+            
+            
     except Exception as e:
          raise RuntimeError(f"Failed to load Hugging Face ImageNet subset: {e}")
-             
-    hf_train = hf_train.select(train_indices)
-    hf_validation = hf_validation.select(val_indices)
 
     # 5. Wrap in PyTorch Dataset
+    
     train_dataset = auxDatasetClasses.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=modelc.data_transforms)
     val_dataset = auxDatasetClasses.HuggingFaceImageNetDataset(hf_dataset=hf_validation, transform=modelc.data_transforms)
 
