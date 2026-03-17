@@ -25,8 +25,6 @@ total_images,num_classes,fst_model_source,first_model,fst_weights,snd_model_sour
 2000,1000,huggingface,facebook/dinov3-vitb16-pretrain-lvd1689m,DEFAULT,torchvision,efficientnet_b0,IMAGENET1K_V1,0.217,0.1075,0.416211789066092,0.43981928,imagenet-sketch(1)
 2000,1000,huggingface,facebook/dinov3-vitb16-pretrain-lvd1689m,DEFAULT,torchvision,efficientnet_b4,IMAGENET1K_V1,0.217,0.1775,-0.028026111738003644,0.033450298,imagenet-sketch(1)
 2000,1000,huggingface,facebook/dinov3-vitb16-pretrain-lvd1689m,DEFAULT,torchvision,efficientnet_b7,IMAGENET1K_V1,0.217,0.1605,0.3938845241487644,0.42390165,imagenet-sketch(1)
-2000,1000,huggingface,facebook/dinov3-vitl16-pretrain-lvd1689m,DEFAULT,huggingface,facebook/dinov3-vitb16-pretrain-lvd1689m,DEFAULT,0.305,0.217,0.6496749014152557,0.71645826,imagenet-sketch(1)
-2000,1000,huggingface,facebook/dinov3-vitl16-pretrain-lvd1689m,DEFAULT,huggingface,facebook/dinov3-vitl16-pretrain-lvd1689m,DEFAULT,0.305,0.305,1.0,0.9999972,imagenet-sketch(1)
 2000,1000,huggingface,facebook/dinov3-vitl16-pretrain-lvd1689m,DEFAULT,clip,ViT-B/32,DEFAULT,0.305,0.1385,0.31730976524092064,0.35754701,imagenet-sketch(1)
 2000,1000,huggingface,facebook/dinov3-vitl16-pretrain-lvd1689m,DEFAULT,clip,ViT-B/16,DEFAULT,0.305,0.169,0.3241613124586727,0.37454945,imagenet-sketch(1)
 2000,1000,huggingface,facebook/dinov3-vitl16-pretrain-lvd1689m,DEFAULT,clip,ViT-L/14,DEFAULT,0.305,0.2335,0.2656651939243755,0.32210743,imagenet-sketch(1)

@@ -130,15 +130,15 @@ def sketchClasses():
     
     return classes
 
+if __name__ == "__main__":
 
+    directory_to_scan = './data/sketch' # Counts files in the current working directory
+    #classes = get_immediate_subdirectories_pathlib(directory_to_scan)
+    #classes = sketchClasses()
 
-directory_to_scan = './data/sketch' # Counts files in the current working directory
-#classes = get_immediate_subdirectories_pathlib(directory_to_scan)
-#classes = sketchClasses()
+    classes = [("n02790996", "weights")]
 
-classes = [("n02790996", "weights")]
-
-for (c, name) in classes:
-    sub_folder = directory_to_scan + f'/{c}'
-    file_count = count_files_in_folder(sub_folder)
-    writeCsvLine('./ipc-sketch.csv', [c, file_count])
+    for (c, name) in classes:
+        sub_folder = directory_to_scan + f'/{c}'
+        file_count = count_files_in_folder(sub_folder)
+        writeCsvLine('./ipc-sketch.csv', [c, file_count])
