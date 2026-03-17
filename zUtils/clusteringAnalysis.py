@@ -37,8 +37,7 @@ instances = [
         ('torchvision', 'efficientnet_b7', 'IMAGENET1K_V1')   
     ]
 
-def pltDendogram(df):
-    
+def distMatirxModelNames(df):
     #dist = d(i,j) = (1-Corr(i,j))/2
     dist_matrix = np.empty([27, 27])
     
@@ -53,25 +52,25 @@ def pltDendogram(df):
     model_names = list(model_names)
     
     model_names = [getModelTrainStr(model[0], model[1], model[2]) for model in model_names]
+    
+    return dist_matrix, model_names
 
+def pltDendogram(dist_matrix, model_names, dataset):
     condensed_dist = squareform(dist_matrix)
     
-    # 3. Perform Hierarchical Clustering
-    # 'ward' minimizes variance, 'complete' finds the maximum distance between clusters
     Z = linkage(condensed_dist, method='complete')
     
-    # 4. Plotting
-    plt.figure(figsize=(12, 7))
+    plt.figure(figsize=(15, 9))
     dendrogram(
         Z,
         labels=model_names,
         leaf_rotation=45,
-        leaf_font_size=12,
+        leaf_font_size=10,
         color_threshold=None # Can be set to a float to color clusters at a specific depth
     )
     
-    plt.title("Dendograma", fontsize=16)
-    plt.ylabel("Distance (1 - Pearson Correlation)/2")
+    plt.title(dataset, fontsize=16)
+    plt.ylabel("Distance = (1 - Pearson Correlation)/2")
     plt.xlabel("Models")
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.tight_layout()
@@ -85,11 +84,14 @@ if __name__ == "__main__":
 
         dt = dataset.replace('/', '-')
 
-        csv_path = f'./ztempData/{dt}Data.csv'
+        csv_path = f'./dataStorage/results/{dt}Data.csv'
+        
+        data = findInCsv(csv_path, ["dataset"], [f"{dt}({subset})"])
 
-        df = paramDataFrameFromCsv(csv_path, 'pearson')
+        df = dataFrameFromData(data, 'pearson')
         
         print(df)
 
-        pltDendogram(df)
+        dist_matrix, model_names = distMatirxModelNames(df)
+        pltDendogram(dist_matrix, model_names, f"{dt}({subset})")
 
