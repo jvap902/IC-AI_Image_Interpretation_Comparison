@@ -1,6 +1,7 @@
 import csv
 import numpy as np
-from src.plot import findInCsv
+from src.plot import *
+from pandas import DataFrame
 
 datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)] #apenas datasets utilizados no artigo
 
@@ -108,7 +109,7 @@ def buildFromBeginning(txt):
         
         txt.write("\n")
 
-        ModelModelAvg(txt)
+        ModelModelAvgStd(txt)
 
 def dataAsDict():
     info = dict()
@@ -131,29 +132,35 @@ def dataAsDict():
 
     return info
 
-def ModelModelAvg(txt):
+def ModelModelAvgStd(txt):
 
-    info = dataAsDict()
+    model_model_arrays = DataFrame()
 
-    model_model = dict()
+    avg_std = DataFrame()
 
     for (dataset, subset) in datasets:
         dt_name = dataset.replace('/','-')
 
-        for key, value in info[f'{dt_name}({subset})'].items():
-            if key in model_model:
-                model_model[key] = (np.append(model_model[key][0], value[0]), np.append(model_model[key][1], value[1]))
-            else:
-                model_model[key] = (np.array([value[0]]), np.array([value[1]]))
+        data = findInCsv(f"./dataStorage/results/{dt_name}Data.csv", ['dataset'], [f'{dt_name}({subset})'])
 
+        df = dataFrameFromData(data, 'pearson')
+
+        for key, value in df.iterrows():
+            if pd.isna(model_model_arrays[key]):
+                model_model_arrays[key] = np.array(value)
+            else:
+                model_model_arrays[key] = np.append[model_model_arrays[key], value]
+            print("ok")
+            print(model_model_arrays)
+            raise
 
     txt.write("\n\n")
-    for key, value in model_model.items():
-        txt.write(f"{key} -> Pearson: {value[0].mean()} +- {np.std(value[0])}\n -> Spearman: {value[1].mean()} +- {np.std(value[1])}\n\n")
+
+    
 
 
 if __name__ == "__main__":
     
     with open("dataAnalysis.txt", "a", encoding="utf-8") as txt:
         
-        ModelModelAvg(txt)
+        ModelModelAvgStd(txt)
