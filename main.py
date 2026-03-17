@@ -38,6 +38,7 @@ if __name__ == "__main__":
     
     fileSystem.makeFileSystem(args.output_file)
     output_dir = 'dataStorage'
+    
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"\nDevice set to: {device}")
@@ -77,6 +78,7 @@ if __name__ == "__main__":
     
     dissimilarity_csv_path = os.path.join(output_dir, "cosineDissimilarity.csv")
     dissimilarity_folder = output_dir+"/dissimilarity_arrays"
+    
 
     fst_modelc.getDataset(dt_info, output_dir)
     snd_modelc.getDataset(dt_info, output_dir)
@@ -116,6 +118,7 @@ if __name__ == "__main__":
         print(f"\n{first_model_name} Validation Accuracy: {fst_acc:.4f}")
         print(f"\n{second_model_name} Validation Accuracy: {snd_acc:.4f}")
         
+    fileSystem.updateJson(["output_dir", "dissimilarity_csv_path"], [output_dir, dissimilarity_csv_path])
     
     get_fst_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, fst_modelc)) == 0 or args.existing_dissimilarity == False
     get_snd_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, snd_modelc)) == 0 or args.existing_dissimilarity == False    

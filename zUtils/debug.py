@@ -29,20 +29,5 @@ import clip
 #print(model.named_children)
 
 if __name__ == "__main__":
-    import pandas as pd
-
-    # Create a sample DataFrame
-    df = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})
-    print("Original DataFrame:")
-    print(df)
-
-    # Add a new column 'C' with a list of values
-    # The length of the list must match the length of the DataFrame
-    df['C'] = [7, 8, 9]
-    print("\nDataFrame after direct assignment of list:")
-    print(df)
-
-    # Add a new column 'D' with a single scalar value (broadcasts to all rows)
-    df['D'] = 10
-    print("\nDataFrame after direct assignment of scalar value:")
-    print(df)
+    raise 
+    

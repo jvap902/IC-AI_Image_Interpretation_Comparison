@@ -1,4 +1,5 @@
 import os
+import json
 
 def makeFileSystem(outputFile):
     
@@ -49,6 +50,27 @@ def createFile(file_path, content):
         print("Arquivo não existente, criando novo")
         with open(file_path, mode="a", newline='', encoding='utf-8') as f:
             f.write(content)
-            
+
+def updateJson(fields, values, json_path='src/info.json'):
+    with open(json_path, "r+") as f:
+        json_data = json.load(f)
+        
+        for idx, field in enumerate(fields):
+            json_data[field] = values[idx]
+        
+        f.seek(0)
+        json.dump(json_data, f, ident=4)
+        f.truncate()
+
+def getJsonInfo(fields=[], json_path='src/info.json'):
+    with open(json_path, "r") as f:
+        json_data = json.load
+    
+    data = []
+    for field in fields:
+        data.append(json_data[field])
+        
+    return data
+
 if __name__ == '__main__':
     pass
