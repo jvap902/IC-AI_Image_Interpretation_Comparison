@@ -2,6 +2,7 @@ import csv
 import numpy as np
 from src.plot import *
 from pandas import DataFrame
+from .codifications import getModelTrainStr
 
 datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)] #apenas datasets utilizados no artigo
 
@@ -134,9 +135,7 @@ def dataAsDict():
 
 def ModelModelAvgStd(txt):
 
-    model_model_arrays = DataFrame()
-
-    avg_std = DataFrame()
+    all_dfs = []
 
     for (dataset, subset) in datasets:
         dt_name = dataset.replace('/','-')
@@ -145,16 +144,29 @@ def ModelModelAvgStd(txt):
 
         df = dataFrameFromData(data, 'pearson')
 
-        for key, value in df.iterrows():
-            if pd.isna(model_model_arrays[key]):
-                model_model_arrays[key] = np.array(value)
-            else:
-                model_model_arrays[key] = np.append[model_model_arrays[key], value]
-            print("ok")
-            print(model_model_arrays)
-            raise
+        all_dfs.append(df.to_numpy())
+            
+    stacked_data = np.stack(all_dfs)
+    
+    grouped_data = [
+        [stacked_data[:, r, c] for c in range(stacked_data.shape[2])]
+        for r in range(stacked_data.shape[1])
+    ]
+    
+    processed_data = [[""] * 27 for _ in range(27)] 
+    
+    for i, row in enumerate(grouped_data):
+        for j, col in enumerate(row):
+            processed_data[i][j] = f"{np.round(np.array(col).mean(), 5)} +- {np.round(np.std(col), 5)}"
+        
+    labels = [getModelTrainStr(src, m, t) for src, m, t in df.columns]
+    
+    master_df = pd.DataFrame(processed_data, index=labels, columns=labels)
+        
+    print(master_df)
 
     txt.write("\n\n")
+    txt.write(master_df.to_string())
 
     
 

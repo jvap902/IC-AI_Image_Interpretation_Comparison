@@ -12,21 +12,18 @@ def getModelNumber():
     'resnet50': 10,
     'resnet152': 11,
     'regnet_y_16gf': 12,
-    'regnet_y_16gf': 13,
-    'regnet_y_16gf': 14,
-    'regnet_y_32gf': 15,
-    'vit_b_16': 16,
-    'vit_b_16': 17,
-    'vit_l_16': 18,
-    'vit_h_14': 19,
-    'maxvit_t': 20,
-    'convnext_tiny': 21,
-    'convnext_base': 22,
-    'swin_t': 23,
-    'swin_v2_t': 24,
-    'efficientnet_b0': 25,
-    'efficientnet_b4': 26,
-    'efficientnet_b7': 27
+    'regnet_y_32gf': 13,
+    'vit_b_16': 14,
+    'vit_l_16': 15,
+    'vit_h_14': 16,
+    'maxvit_t': 17,
+    'convnext_tiny': 18,
+    'convnext_base': 19,
+    'swin_t': 20,
+    'swin_v2_t': 21,
+    'efficientnet_b0': 22,
+    'efficientnet_b4': 23,
+    'efficientnet_b7': 24
     }
     
     return model_number
