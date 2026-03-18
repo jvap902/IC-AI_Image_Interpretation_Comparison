@@ -11,6 +11,8 @@ import torch.nn as nn
 # If 'src' is one level up, add the parent directory to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+available_methods = ["rsa", "cka"]
+
 parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--size", type=int, required=False, help="Specify number of images to be used from the dataset")
 parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify the model to be used as first model")
@@ -30,7 +32,7 @@ parser.add_argument("-sc", "--same_classes", type=str, required=False, default=N
 parser.add_argument("-out", "--output_file", type=str, required=False, default="./dataStorage/results/runData.csv", help="Specify path to file the run information will be written")
 parser.add_argument("--revalidate", action='store_true', required=False, default=False, help="Force validation step even with previously calculated accuracy")
 parser.add_argument("-ndsc", "--new_dt_specific_classes", action='store_true', required=False, default=False, help="Specify arbitrary classes in a classes.csv file, only works for new subsets")
-parser.add_argument("-met", "--method", type=str, required=False, default="rsa", help="Specify the method to be used, rsa or cka are the available ones for now")
+parser.add_argument("-met", "--method", type=str, required=False, default="rsa", help=f"Specify the method to be used, the available methods are: {available_methods}")
 
 args = parser.parse_args()
 
@@ -133,4 +135,6 @@ if __name__ == "__main__":
         case "rsa":
             rsa.rsa(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args)
         case "cka":
-            raise NotImplementedError("CKA method not implemented yet")
+            cka.cka(fst_modelc, snd_modelc)
+        case _:
+            raise ValueError(f"Method {args.method} not recognized. The available methods are: {available_methods}")

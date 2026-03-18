@@ -29,5 +29,6 @@ import clip
 #print(model.named_children)
 
 if __name__ == "__main__":
-    raise 
+    model = resnet18()
+    print(model.named_modules())
     

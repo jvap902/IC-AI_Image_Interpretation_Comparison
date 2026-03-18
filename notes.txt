@@ -1,25 +1,16 @@
 relatório
 
-testar download de datasets huggingface em novos datasets -> depois adaptar carregamento
-
 para ativar venv :
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 .\venv\Scripts\activate
 
-já tem dados dos modelos dino no cifar10, mas os modelos ainda estão sob revisão
-
-resultados de fgvc-aircraft são utilizando "variant" split, inicialmente se utilizaria o "family", mas este não tem as 100 classes (apenas 70)
 
 ideia de otimização:
     Fazer isso apenas depois que tiver uma run inteira sem alterar os arquivos -> forma de validação, uma run com cada conjunto de dados sem, depois que troca pode usar
     Voltar com arquivos de dissimilaridade de cosseno, quando ativo faz validação do modelo e pula toda parte de extração.
 
 Tarefas:
-    Revisar validação -> lembrar que mudei o local de salvamento das validações para refazê-las
-        
-    Documentar tudo isso e o que foi feito até agora pra gente realizar uma discussão
-
-StripModelHead aplicado na criação do modelo
+    CKA com cache de features
 
 
 
