@@ -25,8 +25,8 @@ parser.add_argument("--n_classes", type=int, required=False, help="Specify numbe
 parser.add_argument("-ss", "--specific_subset", type=int, required=False, help="Specify a specific subset number to load from cache")
 parser.add_argument("--m1_source", type=str, required=False, default="torchvision", help="Specify from where the first model to be loaded come from, default is pytorch")
 parser.add_argument("--m2_source", type=str, required=False, default="torchvision", help="Specify from where the second model to be loaded come from, default is pytorch")
-parser.add_argument("--m1_weights", type=str, required=False, default="DEFAULT", help="Specify weights for torchvision models")
-parser.add_argument("--m2_weights", type=str, required=False, default="DEFAULT", help="Specify weights for torchvision models")
+parser.add_argument("-m1_w", "--m1_weights", type=str, required=False, default="DEFAULT", help="Specify weights for torchvision models")
+parser.add_argument("-m2_w", "--m2_weights", type=str, required=False, default="DEFAULT", help="Specify weights for torchvision models")
 parser.add_argument("-ed", "--existing_dissimilarity", action='store_true', required=False, default=False, help="Use previously calculated cossine dissimilarity for run")
 parser.add_argument("-sc", "--same_classes", type=str, required=False, default=None, nargs='+', help="Specify [name, subset, num_classes, num_images] of a dataset for its classes to be used, only works for new subsets")
 parser.add_argument("-out", "--output_file", type=str, required=False, default="./dataStorage/results/runData.csv", help="Specify path to file the run information will be written")
@@ -118,10 +118,6 @@ if __name__ == "__main__":
 
         print(f"\n{first_model_name} Validation Accuracy: {fst_modelc.acc:.4f}")
         print(f"\n{second_model_name} Validation Accuracy: {snd_modelc.acc:.4f}")
-        
-    
-    get_fst_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, fst_modelc)) == 0 or args.existing_dissimilarity == False
-    get_snd_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, snd_modelc)) == 0 or args.existing_dissimilarity == False    
     
     fst_embedding_path = dataCollection.getSavePath(fst_modelc, dt_info, True)
     snd_embedding_path = dataCollection.getSavePath(snd_modelc, dt_info, True)
@@ -135,6 +131,6 @@ if __name__ == "__main__":
         case "rsa":
             rsa.rsa(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args)
         case "cka":
-            cka.cka(fst_modelc, snd_modelc)
+            cka.cka(dt_info, fst_modelc, snd_modelc)
         case _:
             raise ValueError(f"Method {args.method} not recognized. The available methods are: {available_methods}")

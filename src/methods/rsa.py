@@ -1,4 +1,3 @@
-import torch
 from ..extraction.featureExtraction import extractFeatures
 from ..similarity import similarityAnalysis
 from ..fileSystem.fileSystem import *
@@ -14,10 +13,7 @@ def rsa(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args):
     dissimilarity_folder, dissimilarity_csv_path, fst_embedding_path, snd_embedding_path = getRsaPaths()
 
     get_fst_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, fst_modelc)) == 0 or args.existing_dissimilarity == False
-    get_snd_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, snd_modelc)) == 0 or args.existing_dissimilarity == False    
-    
-    fst_embedding_path = getSavePath(fst_modelc, dt_info, True)
-    snd_embedding_path = getSavePath(snd_modelc, dt_info, True)
+    get_snd_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, snd_modelc)) == 0 or args.existing_dissimilarity == False
     
     extractFeatures(get_fst_embedding, get_snd_embedding, fst_embedding_path, snd_embedding_path, fst_modelc, snd_modelc)
 

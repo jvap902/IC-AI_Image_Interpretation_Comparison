@@ -11,6 +11,9 @@ ideia de otimização:
 
 Tarefas:
     CKA com cache de features
+    Introduzir ruído controlado nos datasets e observar efeito
+    Testar a hipótese do motivo de correlações baixas imagenet-1k -> fazer fine-tunning dos modelos para algum dataset (possivelmente CIFAR) e ver se as correlações baixam
+
 
 
 

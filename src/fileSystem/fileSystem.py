@@ -10,9 +10,11 @@ def makeFileSystem(outputFile):
     os.makedirs("data", exist_ok=True)
 
     os.makedirs("datasetCache", exist_ok=True)
-
+    
     ds = "dataStorage"
     os.makedirs(ds, exist_ok=True) # Ensure dataStorage folder exists
+
+    os.makedirs(ds+"ckaFeatures", exist_ok=True)
 
     res = ds+"/results"
     os.makedirs(res, exist_ok=True)
