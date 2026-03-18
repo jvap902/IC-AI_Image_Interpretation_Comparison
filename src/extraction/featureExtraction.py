@@ -9,7 +9,6 @@ from ..model.modelClass import Model
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-
 # --- Utility to get features/labels from a DataLoader ---
 def getFeatureTensors(loader, modelc: Model) -> Tuple[torch.Tensor, torch.Tensor]:
     """
@@ -158,3 +157,22 @@ def train_and_validate_head(modelc: Model, epochs=15, num_classes=10) -> float:
     )
 
     return accuracy
+
+def extractFeatures(get_fst_embedding, get_snd_embedding, fst_embedding_path, snd_embedding_path, fst_modelc, snd_modelc):
+
+    with torch.no_grad():
+        
+        if get_fst_embedding:            
+            print(f"\n--- Extracting Features for {fst_modelc.name} ---")
+            # This function iterates over all batches in val_loader and returns ONE large tensor
+            first_features, _ = getFeatureTensors(fst_modelc.val_loader, fst_modelc)
+            torch.save(first_features, fst_embedding_path)
+            print(f"\nSaved first embedding tensor (Shape: {first_features.shape}) to: {fst_embedding_path}")
+        
+        if get_snd_embedding:
+            print(f"\n--- Extracting Features for {snd_modelc.name} ---")
+            second_features, _ = getFeatureTensors(snd_modelc.val_loader, snd_modelc)
+            torch.save(second_features, snd_embedding_path)
+            print(f"Saved second embedding tensor (Shape: {second_features.shape}) to: {snd_embedding_path}")
+
+    

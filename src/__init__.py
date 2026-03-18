@@ -6,9 +6,10 @@ from .similarity import similarityAnalysis
 from .model import modelCreation
 from .model import modelClass
 from .model import classUtils
+from .fileSystem import fileSystem
+from .methods import rsa
 from . import plot
 from . import memoryManagement
 from . import dataCollection
-from .fileSystem import fileSystem
 
-__all__ = ["extractionTraining", "featureExtraction", "modelCreation", "plot", "loadDataset", "similarityAnalysis", "datasetUtils", "memoryManagement", "dataCollection", "fileSystem", "modelClass", "classUtils"]
+__all__ = ["extractionTraining", "featureExtraction", "modelCreation", "plot", "loadDataset", "similarityAnalysis", "datasetUtils", "memoryManagement", "dataCollection", "fileSystem", "modelClass", "classUtils", "rsa"]

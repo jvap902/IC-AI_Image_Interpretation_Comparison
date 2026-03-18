@@ -1,6 +1,8 @@
 import os
 import json
 
+default_json_path = 'src/fileSystem/info.json'
+
 def makeFileSystem(outputFile):
     
     # --- Folders ---
@@ -40,7 +42,7 @@ def makeFileSystem(outputFile):
     createFile(mo+'/modelOutput.csv', model_params+'(subset),std_output_path,embedding_path\n')
     
     createFile(outputFile, 'total_images,num_classes,fst_model_source,first_model,fst_weights,snd_model_source,second_model,snd_weights,first_model_accuracy,second_model_accuracy,spearman,pearson,dataset\n')
-    
+
     
 def createFile(file_path, content):
     
@@ -51,7 +53,7 @@ def createFile(file_path, content):
         with open(file_path, mode="a", newline='', encoding='utf-8') as f:
             f.write(content)
 
-def updateJson(fields, values, json_path='src/info.json'):
+def updateJson(fields, values, json_path=default_json_path):
     with open(json_path, "r+") as f:
         json_data = json.load(f)
         
@@ -59,14 +61,18 @@ def updateJson(fields, values, json_path='src/info.json'):
             json_data[field] = values[idx]
         
         f.seek(0)
-        json.dump(json_data, f, ident=4)
+        json.dump(json_data, f, indent=4)
         f.truncate()
 
-def getJsonInfo(fields=[], json_path='src/info.json'):
+def getJsonInfo(fields=[], json_path=default_json_path):
     with open(json_path, "r") as f:
-        json_data = json.load
+        json_data = json.load(f)
+    
+    if len(fields) == 0:
+        return json_data
     
     data = []
+
     for field in fields:
         data.append(json_data[field])
         
