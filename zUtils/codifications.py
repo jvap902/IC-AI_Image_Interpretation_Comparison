@@ -40,7 +40,7 @@ def getTrainLetter():
     return train_letter
 
 def getModelTrainStr(src, model, train):
-    model_letter = getModelNumber()
+    model_number = getModelNumber()
     train_letter = getTrainLetter()
     
     if 'clip' in src.lower():
@@ -50,7 +50,7 @@ def getModelTrainStr(src, model, train):
     else:
         t = train_letter[train]
         
-    return f"{model_letter[model]}, {t}"
+    return f"{model_number[model]}, {t}"
 
 def getInstances():
     instances = [

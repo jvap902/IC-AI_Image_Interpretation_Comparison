@@ -2,6 +2,7 @@ import subprocess
 import sys
 from src import *
 from time import sleep
+from typing import TypedDict, Tuple
 
 def run_main_with_subprocess(args):
     """
@@ -27,20 +28,88 @@ def run_main_with_subprocess(args):
         # This line stops the entire script immediately
         sys.exit(1)
 
+class startParams(TypedDict):
+    fst_instance: int
+    snd_instance: int
+    dataset: int
+    
+
+def rsa_args(run_data):
+    dataset, subset, src1, model1, weight1, src2, model2, weight2, dt_name = run_data
+    
+    print(f"    --- Running {dataset} RSA: {model1} ({weight1}) x {model2} ({weight2}) ---")
+    
+    
+    sleep(5.0)
+    
+    return ["--dataset", dataset, "--specific_subset", str(subset), "-ndsc", "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, '-met', 'rsa',
+                                    "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "-out", f"./ztempData/{dt_name}Data.csv"]
+    
+def cka_args(run_data):
+    dataset, subset, src1, model1, weight1, src2, model2, weight2, dt_name = run_data
+    
+    print(f"    --- Running {dataset} CKA: {model1} ({weight1}) x {model2} ({weight2}) ---")
+    
+    return ["--dataset", dataset, "--specific_subset", str(subset), "-ndsc", "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
+                                    "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, '-met', 'cka']
+        
+def run(instances, datasets, method, start_params: startParams):
+    
+    begin = start_params['fst_instance']
+    snd_start = start_params['snd_instance']
+    initial_dt = start_params['dataset']
+    
+    (src1, model1, weight1) = instances[begin]
+    (src2, model2, weight2) = instances[snd_start]
+    
+    for (dataset, subset) in datasets[initial_dt:]:
+        dt_name = dataset.replace('/', '-')
+        run_data = [dataset, subset, src1, model1, weight1, src2, model2, weight2, dt_name]
+        
+        arguments = method(run_data)
+        
+        run_main_with_subprocess(arguments)
+        
+    
+    snd_start = snd_start + 1
+    
+    for (src2, model2, weight2) in instances[snd_start:]:
+        for (dataset, subset) in datasets:
+            dt_name = dataset.replace('/', '-')
+            
+            run_data = [dataset, subset, src1, model1, weight1, src2, model2, weight2, dt_name]
+                    
+            arguments = method(run_data)
+            
+            run_main_with_subprocess(arguments)
+
+
+    begin = begin+1
+    for idx, (src1, model1, weight1) in enumerate(instances[begin:]):
+        for (src2, model2, weight2) in instances[idx+begin+1:]:
+            for (dataset, subset) in datasets:
+                dt_name = dataset.replace('/', '-')
+        
+                run_data = [dataset, subset, src1, model1, weight1, src2, model2, weight2, dt_name]
+            
+                arguments = method(run_data)
+                
+                run_main_with_subprocess(arguments)
+
 
 if __name__ == "__main__":
     # Capture all command-line arguments passed to this script, 
     # excluding the script name itself (sys.argv[0] is 'run_pipeline.py').
     
     instances = [
-        ('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
-        ('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT'),
-        ('clip', 'ViT-B/32', 'DEFAULT'),
-        ('clip', 'ViT-B/16', 'DEFAULT'),
-        ('clip', 'ViT-L/14', 'DEFAULT'),
-        ('open_clip', 'ViT-B-32-256', 'DEFAULT'),
-        ('open_clip', 'ViT-B-16', 'DEFAULT'),
-        ('open_clip', 'ViT-L-14', 'DEFAULT'),
+        #('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
+        #('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT'),
+        #('clip', 'ViT-B/32', 'DEFAULT'),
+        #('clip', 'ViT-B/16', 'DEFAULT'),
+        #('clip', 'ViT-L/14', 'DEFAULT'),
+        #('open_clip', 'ViT-B-32-256', 'DEFAULT'),
+        #('open_clip', 'ViT-B-16', 'DEFAULT'),
+        #('open_clip', 'ViT-L-14', 'DEFAULT'),
         ('torchvision', 'resnet18', 'IMAGENET1K_V1'),
         ('torchvision', 'resnet50', 'IMAGENET1K_V1'),
         ('torchvision', 'resnet152', 'IMAGENET1K_V1'),
@@ -63,57 +132,19 @@ if __name__ == "__main__":
         
     ]
     
-    '''
-    (src1, model1, weight1) = instances[13]
-    (src2, model2, weight2) = instances[15]
-    
-    print(f"    --- Running test: {model1} ({weight1}) x {model2} ({weight2}) ---")
-    
-    arguments_to_pass = ["--dataset", "timm/mini-imagenet", "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
-                             "--m2_source", src2, "-m2", model2, "--m2_weights", weight2]
-    run_main_with_subprocess(arguments_to_pass)
-    '''
-    
     datasets = [('timm/mini-imagenet', 0), ('imagenet-sketch', 1), ('cifar10', 0), ('cifar100', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
-    datasets = [datasets[1], datasets[5]]
+    datasets = [datasets[1], datasets[2], datasets[4], datasets[5]]
     
-    #begin = 0
-    #snd_start = 2
-    #(src1, model1, weight1) = instances[begin]
-    #(src2, model2, weight2) = instances[snd_start]
-    #for dataset in datasets[1:]:
-    #    dt_name = dataset.replace('/', '-')
-    #    
-    #    print(f"    --- Running {dataset} test: {model1} ({weight1}) x {model2} ({weight2}) ---")
-    #
-    #    arguments_to_pass = ["--dataset", dataset, "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
-    #                                "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "-out", f"./ztempData/{dt_name}Data.csv"]
-    #    run_main_with_subprocess(arguments_to_pass)
+    method_name = 'cka'
     
-    
-    begin = 15
-    (src1, model1, weight1) = instances[begin]
-    for (src2, model2, weight2) in instances[17:]:
-        for (dataset, subset) in datasets:
-            dt_name = dataset.replace('/', '-')
-            
-            print(f"    --- Running {dataset} test: {model1} ({weight1}) x {model2} ({weight2}) ---")
+    match method_name:
+        case 'rsa':
+            method = rsa_args
+        case 'cka':
+            method = cka_args
+        case _:
+            raise
         
-            arguments_to_pass = ["--dataset", dataset, "--specific_subset", str(subset), "-ndsc", "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
-                                    "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "-out", f"./ztempData/{dt_name}Data.csv"]
-            run_main_with_subprocess(arguments_to_pass)
-            sleep(5.0)
-
-
-    begin = begin+1
-    for idx, (src1, model1, weight1) in enumerate(instances[begin:]):
-        for (src2, model2, weight2) in instances[idx+begin+1:]:
-            for (dataset, subset) in datasets:
-                dt_name = dataset.replace('/', '-')
-        
-                print(f"    --- Running {dataset} test: {model1} ({weight1}) x {model2} ({weight2}) ---")
-            
-                arguments_to_pass = ["--dataset", dataset, "--specific_subset", str(subset), "-ndsc", "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
-                                    "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "-out", f"./ztempData/{dt_name}Data.csv"]
-                run_main_with_subprocess(arguments_to_pass)
-                sleep(5.0)
+    start_params = {'fst_instance': 0, 'snd_instance': 2, 'dataset': 0}
+    
+    run(instances, datasets, method, start_params)
