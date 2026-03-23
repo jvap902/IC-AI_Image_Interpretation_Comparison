@@ -247,8 +247,6 @@ def dataFrameFromData(data, param, diagonal=1.0):
     
     n = len(models)
     
-    print(n)
-    
     # Criar matriz preenchida com zeros (ou 1.0 na diagonal)
     matrix = np.zeros((n, n))
     np.fill_diagonal(matrix, diagonal)

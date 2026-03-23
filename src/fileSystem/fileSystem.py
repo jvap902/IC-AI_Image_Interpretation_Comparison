@@ -1,5 +1,6 @@
 import os
 import json
+from typing import Dict
 
 default_json_path = 'src/fileSystem/info.json'
 

@@ -3,5 +3,5 @@
     "dissimilarity_csv_path": "dataStorage/cosineDissimilarity.csv",
     "dissimilarity_folder": "dataStorage/dissimilarity_arrays",
     "fst_embedding_path": "./dataStorage/model_output/embedding/resnet18_IMAGENET1K_V1_torchvision_cifar10(0).pt",
-    "snd_embedding_path": "./dataStorage/model_output/embedding/resnet152_IMAGENET1K_V1_torchvision_cifar10(0).pt"
+    "snd_embedding_path": "./dataStorage/model_output/embedding/vit_b_16_IMAGENET1K_V1_torchvision_cifar10(0).pt"
 }

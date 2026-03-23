@@ -28,6 +28,36 @@ def getModelNumber():
     
     return model_number
 
+def getNumberModel():
+    number_model = {
+    1: 'facebook/dinov3-vitb16-pretrain-lvd1689m',
+    2: 'facebook/dinov3-vitl16-pretrain-lvd1689m',
+    3: 'ViT-B/32',
+    4: 'ViT-B/16',
+    5: 'ViT-L/14',
+    6: 'ViT-B-32-256',
+    7: 'ViT-B-16',
+    8: 'ViT-L-14',
+    9: 'resnet18',
+    10: 'resnet50',
+    11: 'resnet152',
+    12: 'regnet_y_16gf',
+    13: 'regnet_y_32gf',
+    14: 'vit_b_16',
+    15: 'vit_l_16',
+    16: 'vit_h_14',
+    17: 'maxvit_t',
+    18: 'convnext_tiny',
+    19: 'convnext_base',
+    20: 'swin_t',
+    21: 'swin_v2_t',
+    22: 'efficientnet_b0',
+    23: 'efficientnet_b4',
+    24: 'efficientnet_b7'
+    }
+    
+    return number_model
+
 def getTrainLetter():
     train_letter = {
         "IMAGENET1K_V1": 'a',
@@ -38,6 +68,17 @@ def getTrainLetter():
     }
     
     return train_letter
+
+def getLetterTrain():
+    letter_train = {
+        'a': "IMAGENET1K_V1",
+        'b': "IMAGENET1K_V2",
+        'c': "IMAGENET1K_SWAG_E2E_V1",
+        'd': "CLIP",
+        'e': "DINOV3"
+    }
+    
+    return letter_train
 
 def getModelTrainStr(src, model, train):
     model_number = getModelNumber()
@@ -51,6 +92,29 @@ def getModelTrainStr(src, model, train):
         t = train_letter[train]
         
     return f"{model_number[model]}, {t}"
+
+def codToInstace(number, letter):
+    instances = getInstances()
+    
+    model = getNumberModel(number)
+    train = getLetterTrain(letter)
+    
+    if 'dinov3' in model:
+        inst = ('huggingface', model,  'DEFAULT')
+        return (instances.index(inst), inst)
+    
+    elif train == 'CLIP':
+        if number < 6:
+            inst = ('clip', model, 'DEFAULT')
+        else:
+            inst = ('open_clip', model, 'DEFAULT')
+            
+        return (instances.index(inst), inst)
+    
+    else:
+        inst = ('torchvision', model, train)
+    
+    return (instances.index(inst), inst)
 
 def getInstances():
     instances = [

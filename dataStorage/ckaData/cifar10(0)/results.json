@@ -1,0 +1,92 @@
+{
+    "9-a 10-a": {
+        "model1_name": "9, a",
+        "model2_name": "10, a",
+        "CKA": [
+            [
+                0.7363554239273071
+            ]
+        ],
+        "model1_layers": [
+            "avgpool"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "9-a 11-a": {
+        "model1_name": "9, a",
+        "model2_name": "11, a",
+        "CKA": [
+            [
+                0.6976428627967834
+            ]
+        ],
+        "model1_layers": [
+            "avgpool"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "9-a 12-a": {
+        "model1_name": "9, a",
+        "model2_name": "12, a",
+        "CKA": [
+            [
+                0.6531569957733154
+            ]
+        ],
+        "model1_layers": [
+            "avgpool"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "9-a 12-b": {
+        "model1_name": "9, a",
+        "model2_name": "12, b",
+        "CKA": [
+            [
+                0.5166501998901367
+            ]
+        ],
+        "model1_layers": [
+            "avgpool"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "9-a 12-c": {
+        "model1_name": "9, a",
+        "model2_name": "12, c",
+        "CKA": [
+            [
+                0.5880166292190552
+            ]
+        ],
+        "model1_layers": [
+            "avgpool"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "9-a 13-b": {
+        "model1_name": "9, a",
+        "model2_name": "13, b",
+        "CKA": [
+            [
+                0.5390440225601196
+            ]
+        ],
+        "model1_layers": [
+            "avgpool"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    }
+}

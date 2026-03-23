@@ -4,11 +4,10 @@ from tqdm import tqdm
 from warnings import warn
 import os
 from src.dataAnalysis.codifications import *
-from ..fileSystem.fileSystem import getJsonInfo, updateJson
-import json
-
-import time
+from ..fileSystem.fileSystem import getJsonInfo, updateJson, createFile
 import numpy as np
+import pandas as pd
+from itertools import groupby
 
 def cka(dt_info, fst_modelc, snd_modelc):
     
@@ -26,13 +25,19 @@ def cka(dt_info, fst_modelc, snd_modelc):
     
     cka.compare(dataloader1=fst_modelc.val_loader, dataloader2=snd_modelc.val_loader)
 
-    cka.plot_results(save_path=f"{cka_folder}/images/{cka.m1_name}_{cka.m2_name}.png")
+    #cka.plot_results(save_path=f"{cka_folder}/images/{cka.m1_name}_{cka.m2_name}.png")
     dic = cka.export()
+    
+    print(dic)
     
     dic["CKA"] = dic['CKA'].cpu().numpy().tolist()
     
-    with open(f"{cka_folder}/cka_matrices/results/{cka.m1_name}_{cka.m2_name}.json", 'w') as f:
-        json.dump(dic, f, indent=4)
+    del dic["dataset1_name"]
+    del dic["dataset2_name"]
+    
+    json_path = f"{cka_folder}/results.json"
+    
+    updateJson([f"{cka.m1_name} {cka.m2_name}"], [dic], json_path=json_path)
 
     return
 
@@ -44,6 +49,41 @@ def getModelLayer(model_name):
             return ['classifier.0']
         case _:
             return ['avgpool']
+
+
+def getCkaDF(json_path):
+    data = getJsonInfo(json_path=json_path)
+    instances = getInstances()
+    
+    matrix = np.zeros((len(instances), len(instances)))
+    
+    labels = []
+    for key, value in data.items():
+        
+        models = key.split(' ')
+        
+        labels.append(value["model1_name"])
+        labels.append(value["model2_name"])
+        
+        m1 = models[0].split('-')
+        m2 = models[1].split('-')
+        
+        i, _ = codToInstace(m1[0], m2[0])
+        j, _ = codToInstace(m2[0], m2[1])
+        
+        matrix[i,j] = value["CKA"]
+        matrix[j,i] = value["CKA"]
+        
+    np.fill_diagonal(matrix, 1.0)
+    
+    df = pd.DataFrame(matrix)
+    
+    labels = [label for _, label in groupby(labels)]
+    
+    df.columns = labels
+    df.index = labels
+    
+    return df
 
 #modificando método de comparação para salvar em disco os resultados de um modelo para não ser necessário recalcular para a próxima comparação
 class modifiedCka(CKA):
@@ -59,7 +99,7 @@ class modifiedCka(CKA):
         
         os.makedirs(self.cka_folder, exist_ok=True)
         os.makedirs(f"{self.cka_folder}/cka_matrices", exist_ok=True)
-        os.makedirs(f"{self.cka_folder}/cka_matrices/results", exist_ok=True)
+        createFile(f"{self.cka_folder}/results.json", "{}")
         os.makedirs(f"{self.cka_folder}/images", exist_ok=True)
         
         

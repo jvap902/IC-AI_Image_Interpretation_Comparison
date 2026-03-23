@@ -3,11 +3,11 @@ from typing import List,Tuple
 from .codifications import *
 from seaborn import heatmap
 import matplotlib.pyplot as plt
-from scipy.stats import pearsonr
 import numpy as np
 
 results_folder = "./dataStorage/results"
 datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
+metric = 'pearson'
 
 instances = getInstances()
 
@@ -30,7 +30,7 @@ def getDataFrames(results_folder=results_folder, datasets: List[Tuple[str, int]]
 
         data = findInCsv(csv_path, ['dataset'], [dt_name_w_subset])
 
-        df_dict[dt_name_w_subset] = dataFrameFromData(data, 'pearson')
+        df_dict[dt_name_w_subset] = dataFrameFromData(data, metric)
 
     return df_dict
 
@@ -51,10 +51,10 @@ def datasetCorrelation():
             df1 = df_dict[dt1_name]
             df2 = df_dict[dt2_name]
 
-            correlations = df1.corrwith(df2, method='pearson')
+            correlations = df1.corrwith(df2, method=metric)
 
-            for e in instances:
-                val = correlations[instances[0]]
+            for idx, e in enumerate(instances):
+                val = correlations[instances[idx]]
 
                 dic[e][i][j] = val
                 dic[e][j][i] = val
@@ -71,15 +71,16 @@ def datasetCorrelation():
         df.columns = names
         df.index = names
 
-        print(df)
+        #print(df)
 
         plt.figure(figsize=(10, 8))
         
         heatmap(df, vmin=-0.5, vmax=1.0)
         
+        plt.title(str(e))
         plt.tight_layout()
-        plt.savefig(f"ztempData/datasetCorrelations/{getModelTrainStr(e[0], e[1], e[2]).replace(', ', '-')}.png")
-        plt.show()
+        plt.savefig(f"ztempData/datasetCorrelations/{metric}/{getModelTrainStr(e[0], e[1], e[2]).replace(', ', '-')}.png")
+        #plt.show()
 
 
 if __name__ == "__main__":
