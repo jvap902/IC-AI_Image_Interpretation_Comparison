@@ -38,7 +38,10 @@ def getDataFrames(results_folder=results_folder, datasets: List[Tuple[str, int]]
 def datasetCorrelation():
     df_dict = getDataFrames()
 
-    data = np.zeros((len(datasets), len(datasets)))
+    dic = {}
+    for e in instances:
+        dic[e] = np.zeros((len(datasets), len(datasets)))
+    #data = np.zeros((len(datasets), len(datasets)))
 
     for i in range(len(datasets)):
         for j in range(i):
@@ -50,28 +53,33 @@ def datasetCorrelation():
 
             correlations = df1.corrwith(df2, method='pearson')
 
-            val = correlations[instances[0]]
+            for e in instances:
+                val = correlations[instances[0]]
 
-            data[i][j] = val
-            data[j][i] = val
+                dic[e][i][j] = val
+                dic[e][j][i] = val
 
-    _ = np.fill_diagonal(data, 1.0)
+    for e in instances:
+        _ = np.fill_diagonal(dic[e], 1.0)
 
-    df = pd.DataFrame(data)
+    dfs = {}
+    for e in instances:
+        df = pd.DataFrame(dic[e])
 
-    names = dtNameSubset(datasets)
+        names = dtNameSubset(datasets)
 
-    df.columns = names
-    df.index = names
+        df.columns = names
+        df.index = names
 
-    print(df)
+        print(df)
 
-    plt.figure(figsize=(10, 8))
-    
-    heatmap(df, vmin=-0.5, vmax=1.0)
-    
-    plt.tight_layout()
-    plt.show()
+        plt.figure(figsize=(10, 8))
+        
+        heatmap(df, vmin=-0.5, vmax=1.0)
+        
+        plt.tight_layout()
+        plt.savefig(f"ztempData/datasetCorrelations/{getModelTrainStr(e[0], e[1], e[2]).replace(', ', '-')}.png")
+        plt.show()
 
 
 if __name__ == "__main__":
