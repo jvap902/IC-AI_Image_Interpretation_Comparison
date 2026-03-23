@@ -3,7 +3,7 @@ import torch
 from tqdm import tqdm
 from warnings import warn
 import os
-from zUtils.codifications import *
+from src.dataAnalysis.codifications import *
 from ..fileSystem.fileSystem import getJsonInfo, updateJson
 import json
 
@@ -19,7 +19,7 @@ def cka(dt_info, fst_modelc, snd_modelc):
     
     cka = modifiedCka(fst_modelc.model, snd_modelc.model,
               model1_name=m1_name, model2_name=m2_name,
-              #model1_layers=fst_modelc.model.named_modules, model2_layers=snd_modelc.model.named_modules, a princípio extrai de todos por padrão
+              model1_layers=getModelLayer(fst_modelc.model), model2_layers=getModelLayer(snd_modelc.model), #a princípio extrai de todos por padrão
               device='cuda' if torch.cuda.is_available() else 'cpu')
     
     cka.setNewAtt(m1_name, m2_name, cka_folder)
@@ -36,6 +36,14 @@ def cka(dt_info, fst_modelc, snd_modelc):
 
     return
 
+def getModelLayer(model_name):
+    match model_name:
+        case 'vit_b_16' | 'vit_l_16' | 'vit_h_14':
+            return ['getitem_5']
+        case 'maxvit_t':
+            return ['classifier.0']
+        case _:
+            return ['avgpool']
 
 #modificando método de comparação para salvar em disco os resultados de um modelo para não ser necessário recalcular para a próxima comparação
 class modifiedCka(CKA):
