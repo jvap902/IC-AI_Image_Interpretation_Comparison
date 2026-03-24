@@ -4,10 +4,11 @@ from .codifications import *
 from seaborn import heatmap
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.stats import pearsonr, spearmanr
 
 results_folder = "./dataStorage/results"
 datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
-metric = 'pearson'
+metric = 'spearman'
 
 instances = getInstances()
 
@@ -35,7 +36,7 @@ def getDataFrames(results_folder=results_folder, datasets: List[Tuple[str, int]]
     return df_dict
 
 
-def datasetCorrelation():
+def MtoMDatasetCorrelation():
     df_dict = getDataFrames()
 
     dic = {}
@@ -81,7 +82,48 @@ def datasetCorrelation():
         plt.tight_layout()
         plt.savefig(f"ztempData/datasetCorrelations/{metric}/{getModelTrainStr(e[0], e[1], e[2]).replace(', ', '-')}.png")
         #plt.show()
+        
+def generalDatasetCorrelation():
+    df_dict = getDataFrames()
 
+    data = np.zeros((len(datasets), len(datasets)))
+
+    for i in range(len(datasets)):
+        dt1_name = dtNameSubset(datasets[i])
+        df1 = df_dict[dt1_name]
+        
+        for j in range(i):
+            dt2_name = dtNameSubset(datasets[j])
+            df2 = df_dict[dt2_name]
+            
+            dt1 = df1.to_numpy()[np.triu_indices(n=len(instances), k=1, m=len(instances))]
+            dt2 = df2.to_numpy()[np.triu_indices(n=len(instances), k=1, m=len(instances))]
+
+            p, _ = pearsonr(dt1, dt2)
+            
+            data[i][j] = p
+            data[j][i] = p
+
+    _ = np.fill_diagonal(data, 1.0)
+
+
+    df = pd.DataFrame(data)
+
+    names = dtNameSubset(datasets)
+
+    df.columns = names
+    df.index = names
+
+    #print(df)
+
+    plt.figure(figsize=(10, 8))
+    
+    heatmap(df, vmin=-0.5, vmax=1.0)
+    
+    plt.title(f"Correlação de {metric} entre datasets")
+    plt.tight_layout()
+    plt.savefig(f"ztempData/datasetCorrelations/{metric}.png")
+    plt.show()
 
 if __name__ == "__main__":
-    datasetCorrelation()
+    generalDatasetCorrelation()

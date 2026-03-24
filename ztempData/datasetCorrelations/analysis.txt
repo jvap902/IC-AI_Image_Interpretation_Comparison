@@ -1,0 +1,20 @@
+Spearman:
+    Como de costume mais baixo que pearson
+    
+
+    modelos dino:
+        sketch e cifar10 estranhamente próximos
+
+        1, e -> aircraft bem baixo, estranho que a maior correlação dele seja com o imagenet-1k, pareciam opostos (um com altas correlações e outro com baixas de forma geral)
+        2, e -> aircraft menos diferente dos outros em relação ao modelo anterior, mas as outras correlações caíram
+
+    modelos clip:
+        de forma geral heatmaps bem homogêneos, com correlações relativamente altas
+
+        3, d -> heatmap extremamente homogêneo, correlações bem maiores do que as dos modelos dino
+            aircraft e 1k mais semelhantes que os outros agora?
+        4, d -> cifar10 como mais diferente
+        5, d -> correlações mais altas que 3-d mas não tão homogêneo
+
+    modelos open_clip:
+        

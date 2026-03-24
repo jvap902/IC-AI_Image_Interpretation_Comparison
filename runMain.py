@@ -146,6 +146,6 @@ if __name__ == "__main__":
         case _:
             raise
         
-    start_params = {'fst_instance': 0, 'snd_instance': 1, 'dataset': 0}
+    start_params = {'fst_instance': 0, 'snd_instance': 7, 'dataset': 0}
     
     run(instances, datasets, method, start_params)

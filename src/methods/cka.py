@@ -1,4 +1,5 @@
 from torch_cka import CKA
+from functools import partial
 import torch
 from tqdm import tqdm
 from warnings import warn
@@ -18,7 +19,7 @@ def cka(dt_info, fst_modelc, snd_modelc):
     
     cka = modifiedCka(fst_modelc.model, snd_modelc.model,
               model1_name=m1_name, model2_name=m2_name,
-              model1_layers=getModelLayer(fst_modelc.model), model2_layers=getModelLayer(snd_modelc.model), #a princípio extrai de todos por padrão
+              model1_layers=getModelLayer(fst_modelc.name), model2_layers=getModelLayer(snd_modelc.name), #a princípio extrai de todos por padrão
               device='cuda' if torch.cuda.is_available() else 'cpu')
     
     cka.setNewAtt(m1_name, m2_name, cka_folder)
@@ -27,9 +28,7 @@ def cka(dt_info, fst_modelc, snd_modelc):
 
     #cka.plot_results(save_path=f"{cka_folder}/images/{cka.m1_name}_{cka.m2_name}.png")
     dic = cka.export()
-    
-    print(dic)
-    
+        
     dic["CKA"] = dic['CKA'].cpu().numpy().tolist()
     
     del dic["dataset1_name"]
@@ -44,6 +43,7 @@ def cka(dt_info, fst_modelc, snd_modelc):
 def getModelLayer(model_name):
     match model_name:
         case 'vit_b_16' | 'vit_l_16' | 'vit_h_14':
+            return ['encoder.ln']
             return ['getitem_5']
         case 'maxvit_t':
             return ['classifier.0']
@@ -51,19 +51,19 @@ def getModelLayer(model_name):
             return ['avgpool']
 
 
-def getCkaDF(json_path):
+def jsonCkaToDataFrame(json_path):
     data = getJsonInfo(json_path=json_path)
     instances = getInstances()
     
     matrix = np.zeros((len(instances), len(instances)))
     
     labels = []
-    for key, value in data.items():
+    for key, data_dic in data.items():
         
         models = key.split(' ')
         
-        labels.append(value["model1_name"])
-        labels.append(value["model2_name"])
+        labels.append(data_dic["model1_name"])
+        labels.append(data_dic["model2_name"])
         
         m1 = models[0].split('-')
         m2 = models[1].split('-')
@@ -71,8 +71,8 @@ def getCkaDF(json_path):
         i, _ = codToInstace(m1[0], m2[0])
         j, _ = codToInstace(m2[0], m2[1])
         
-        matrix[i,j] = value["CKA"]
-        matrix[j,i] = value["CKA"]
+        matrix[i,j] = data_dic["CKA"]
+        matrix[j,i] = data_dic["CKA"]
         
     np.fill_diagonal(matrix, 1.0)
     
@@ -113,11 +113,12 @@ class modifiedCka(CKA):
             torch.save(self.hsic_matrix[0, :, 2].cpu(), self.hsic2_path)
     
     def compare(self, dataloader1, dataloader2 = None):
+        
         self.originalComparePart(dataloader1=dataloader1, dataloader2=dataloader2)
 
         num_batches = min(len(dataloader1), len(dataloader1))
 
-        self.getHsicMatrix(dataloader1, dataloader2, num_batches)                    
+        self.getHsicMatrix(dataloader1, dataloader2, num_batches)
 
         self.hsic_matrix = self.hsic_matrix[:, :, 1] / (self.hsic_matrix[:, :, 0].sqrt() *
                                                         self.hsic_matrix[:, :, 2].sqrt())
@@ -162,7 +163,6 @@ class modifiedCka(CKA):
             cached_hsic2 = torch.load(self.hsic2_path, weights_only=True, map_location=torch.device('cpu'))
             self.hsic_matrix[:, :, 2] = cached_hsic2.view(1, -1)
             print(f"\n --- Loaded cached HSIC for {self.m2_name} ---")
-        
 
         with torch.no_grad():
             for (x1, *_), (x2, *_) in tqdm(zip(dataloader1, dataloader2), desc="| Comparing features |", total=num_batches):            
@@ -171,7 +171,7 @@ class modifiedCka(CKA):
                 self.model2_features = {}
                 _ = self.model1(x1.to(self.device))
                 _ = self.model2(x2.to(self.device))
-                
+                                
                 for i, (name1, feat1) in enumerate(self.model1_features.items()):
                     X = feat1.flatten(1)
                     K = X @ X.t()
@@ -180,7 +180,7 @@ class modifiedCka(CKA):
                     if not hsic1: self.hsic_matrix[i, :, 0] += self._HSIC(K, K) / num_batches
                     
                     for j, (name2, feat2) in enumerate(self.model2_features.items()):                    
-                        Y = feat2.flatten(1)
+                        Y = feat2.flatten(1)                        
                         L = Y @ Y.t()
                         L.fill_diagonal_(0)
                         assert K.shape == L.shape, f"Feature shape mistach! {K.shape}, {L.shape}"

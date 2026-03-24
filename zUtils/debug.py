@@ -29,12 +29,7 @@ import clip
 #print(model.named_children)
 
 if __name__ == "__main__":
-    import numpy as np
-
-    # Create a random upper triangular matrix
-    a = np.triu(np.random.rand(3, 3))
-
-    # Add it to its transpose (excluding the diagonal from the transpose)
-    symmetric_B = a + np.triu(a, 1).T
-    print(symmetric_B)
+    model = vit_b_16()
+    
+    print(model.get_graph_node_names)
     
