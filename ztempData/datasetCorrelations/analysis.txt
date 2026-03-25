@@ -1,20 +1,66 @@
 Spearman:
     Como de costume mais baixo que pearson
-    
+    muito frequente sketch-cifar alto, bem alto -> talvez por os dois terem perda de informação (textura/cor e resolução)
+    1k mais baixo muitas vezes
+
+    "sk_cf -> black: 0, purple: 0, pink: 0, red: 2, orange: 0, light_orange: 7, white: 18",
+    "sk_air -> black: 0, purple: 1, pink: 2, red: 6, orange: 7, light_orange: 10, white: 1",
+    "sk_ik -> black: 1, purple: 3, pink: 1, red: 2, orange: 10, light_orange: 10, white: 0",
+    "cf_air -> black: 0, purple: 0, pink: 0, red: 0, orange: 0, light_orange: 0, white: 27",
+    "cf_ik -> black: 0, purple: 0, pink: 1, red: 2, orange: 6, light_orange: 17, white: 1",
+    "air_ik -> black: 0, purple: 0, pink: 1, red: 2, orange: 6, light_orange: 17, white: 1"
 
     modelos dino:
         sketch e cifar10 estranhamente próximos
 
-        1, e -> aircraft bem baixo, estranho que a maior correlação dele seja com o imagenet-1k, pareciam opostos (um com altas correlações e outro com baixas de forma geral)
-        2, e -> aircraft menos diferente dos outros em relação ao modelo anterior, mas as outras correlações caíram
+        vitb16, 1e -> aircraft bem baixo, estranho que a maior correlação dele seja com o imagenet-1k, pareciam opostos (um com altas correlações e outro com baixas de forma geral)
+        vitl16, 2e -> aircraft menos diferente dos outros em relação ao modelo anterior, mas as outras correlações caíram
+
 
     modelos clip:
         de forma geral heatmaps bem homogêneos, com correlações relativamente altas
 
-        3, d -> heatmap extremamente homogêneo, correlações bem maiores do que as dos modelos dino
+        vitb32, 3d -> heatmap extremamente homogêneo, correlações bem maiores do que as dos modelos dino
             aircraft e 1k mais semelhantes que os outros agora?
-        4, d -> cifar10 como mais diferente
-        5, d -> correlações mais altas que 3-d mas não tão homogêneo
+        vitb16, 4d -> cifar10 como mais diferente
+        vitl14, 5d -> correlações mais altas que 3-d mas não tão homogêneo
+
 
     modelos open_clip:
+        de forma geral heatmaps bem homogêneos, com correlações relativamente altas, como os clip
+        cifar e sketch bem semelhantes, tem as menores correlações com 6d
+
+        vitb32, 6d -> correlações altas, menor entre aircraft e 1k
+        vitb16, 7d ->     "         ", menor entre sketch e 1k
+        vitl14, 8d ->     "         ", menor entre sketch e 1k, com grande destaque
+
+
+    modelos pytorch:
         
+        
+        resnet18, 9a -> aircraft e 1k bem baixa, cifar similar com sketch e aircraft, especialmente sketch
+        resnet50, 10a -> quase cópia de 9a, cifar10 e 1k levemente menores
+        resnet152, 11a -> parecido, aircraft-sketch mais baixo, 1k-sketch levemente mais alto
+
+        regnet16, 12a -> aircraft-1k extremamente baixo, aircraft-sketch mais baixo do que com resnets
+        regnet16, 12b -> similar ao anterior, mas todos com sketch mais baixos
+        regnet16, 12c -> mesmo padrão do 12a, mas todas correlações mais baixas
+        regnet32, 13b -> bem similar ao 12b
+
+        vitb16, 14a -> 1k-sketch e 1k-cifar bem baixas, sketch-aircraft não altas
+        vitb16, 14c -> 1k muito baixo com todos, aircraft é com quem mais se aproxima
+        vitl16, 15a -> padrão é o mesmo do anterior, mas não a baixa do 1k não é tão extrema
+        vith14, 16c -> correlações relativamente altas: sketch-1k, aircraft-cifar; exceto essas, todas baixas, a menor de todas é 1k-cifar
+            faz um quadrado sem cantos
+
+        maxvit, 17a -> não são baixas, mesmo padrão do 16c, mas menos baixo
+
+        convt, 18a -> apenas 1k tem correlações baixas, o resto é bem alto inclusive
+        convb, 19a -> quase homogêneo, cifar-sketch são os mais próximos
+
+        swinv1, 20a -> cifar-sketch alto, 1k-sketch muito baixo, 1k-aircraft baixo
+        swinv2, 21a -> mesma coisa um pouco mais escuro, cifar-sketch ainda mais próximos
+
+        b0, 22a -> aircraft-1k baixo, o resto ok. cifar-sketch alto, cifar-1k mais baixo 
+        b4, 23a -> quadrado sem pontas, cifar-sketch baixo, mais baixo de todos é cifar-1k
+        b7, 24a -> cifar-sketch muito próximos, 1k-sketch e 1k-cifar muito diferentes, aircraft meio termo?

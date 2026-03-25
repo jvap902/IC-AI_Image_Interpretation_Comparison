@@ -5,10 +5,11 @@ from seaborn import heatmap
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import pearsonr, spearmanr
+import json
 
 results_folder = "./dataStorage/results"
 datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
-metric = 'spearman'
+metric = 'pearson'
 
 instances = getInstances()
 
@@ -34,6 +35,103 @@ def getDataFrames(results_folder=results_folder, datasets: List[Tuple[str, int]]
         df_dict[dt_name_w_subset] = dataFrameFromData(data, metric)
 
     return df_dict
+
+
+def valueToColor(value):
+    if value > 0.8:
+        return "white"
+    if value > 0.6:
+        return "light_orange"
+    if value > 0.4:
+        return "orange"
+    if value > 0.2:
+        return "red"
+    if value > 0.0:
+        return "pink"
+    if value > -0.2:
+        return "purple"
+    
+    return "black"
+
+def dtNameToAcr(n):
+    match n:
+        case 'imagenet-sketch':
+            return 'sk'
+        case 'cifar10':
+            return 'cf'
+        case 'fgvc-aircraft':
+            return 'air'
+        case 'ILSVRC/imagenet-1k':
+            return 'ik'
+        case _:
+            raise
+
+def dtCorrelationHeatmaps(dic):
+    for e in instances:
+        df = pd.DataFrame(dic[e])
+
+        names = dtNameSubset(datasets)
+
+        df.columns = names
+        df.index = names
+
+        #print(df)
+        plt.figure(figsize=(10, 8))
+            
+        heatmap(df, vmin=-0.5, vmax=1.0)
+        
+        plt.title(str(e))
+        plt.tight_layout()
+        plt.savefig(f"ztempData/datasetCorrelations/{metric}/{getModelTrainStr(e[0], e[1], e[2]).replace(', ', '-')}.png")
+        #plt.show()
+
+
+def dtCorrelationGrouping(dic):
+    
+    #sk = sketch, cf = cifar, ik = imagenet-1k, air = aircraft
+    
+    similar_bhvs = dict() #dicionario de dicionários de listas de modelos com comportamentos semelhantes
+    similar_bhvs["abstract"]=[]
+    similar_bhvs["sk_cf"]=dict()
+    similar_bhvs["sk_air"]=dict()
+    similar_bhvs["sk_ik"]=dict()
+    similar_bhvs["cf_air"]=dict()
+    similar_bhvs["cf_ik"]=dict()
+    similar_bhvs["air_ik"]=dict()
+    
+    for key, value in similar_bhvs.items():
+        if key=="abstract":
+            continue
+        value["black"] = []
+        value["purple"] = []
+        value["pink"] = []
+        value["red"] = []
+        value["orange"] = []
+        value["light_orange"] = []
+        value["white"] = []
+    
+    acronyms = [dtNameToAcr(dt[0]) for dt in datasets]
+    
+    for e in instances:
+        for i, d1 in enumerate(acronyms):
+            for j, d2 in enumerate(acronyms[i+1:]):
+                val = dic[e][i][j+i+1]
+                color = valueToColor(val)
+                similar_bhvs[f"{d1}_{d2}"][color].append((getModelTrainStr(e[0], e[1], e[2]), val))
+                
+    for key, value in similar_bhvs.items():
+        if key=="abstract":
+            continue
+        
+        abst = ', '.join([f"{color}: {len(v)}" for color, v in value.items()])
+        abst = f"{key} -> " + abst
+        
+        similar_bhvs['abstract'].append(abst)
+    
+    with open(f'ztempData/datasetCorrelations/{metric}Data.json', 'w') as f:
+        json.dump(similar_bhvs, f, indent=4)
+        
+    return similar_bhvs
 
 
 def MtoMDatasetCorrelation():
@@ -62,26 +160,11 @@ def MtoMDatasetCorrelation():
 
     for e in instances:
         _ = np.fill_diagonal(dic[e], 1.0)
-
-    dfs = {}
-    for e in instances:
-        df = pd.DataFrame(dic[e])
-
-        names = dtNameSubset(datasets)
-
-        df.columns = names
-        df.index = names
-
-        #print(df)
-
-        plt.figure(figsize=(10, 8))
         
-        heatmap(df, vmin=-0.5, vmax=1.0)
+    #dtCorrelationHeatmaps(dic)
+    
+    similar_bhv = dtCorrelationGrouping(dic)
         
-        plt.title(str(e))
-        plt.tight_layout()
-        plt.savefig(f"ztempData/datasetCorrelations/{metric}/{getModelTrainStr(e[0], e[1], e[2]).replace(', ', '-')}.png")
-        #plt.show()
         
 def generalDatasetCorrelation():
     df_dict = getDataFrames()
@@ -99,10 +182,15 @@ def generalDatasetCorrelation():
             dt1 = df1.to_numpy()[np.triu_indices(n=len(instances), k=1, m=len(instances))]
             dt2 = df2.to_numpy()[np.triu_indices(n=len(instances), k=1, m=len(instances))]
 
-            p, _ = pearsonr(dt1, dt2)
+            if metric == 'pearson':
+                val, _ = pearsonr(dt1, dt2)
+            elif metric == 'spearman':
+                val, _ = spearmanr(dt1, dt2)
+            else:
+                raise
             
-            data[i][j] = p
-            data[j][i] = p
+            data[i][j] = val
+            data[j][i] = val
 
     _ = np.fill_diagonal(data, 1.0)
 
@@ -124,6 +212,9 @@ def generalDatasetCorrelation():
     plt.tight_layout()
     plt.savefig(f"ztempData/datasetCorrelations/{metric}.png")
     plt.show()
+    
+
 
 if __name__ == "__main__":
-    generalDatasetCorrelation()
+    MtoMDatasetCorrelation()
+    #generalDatasetCorrelation()
