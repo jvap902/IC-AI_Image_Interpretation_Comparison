@@ -64,3 +64,29 @@ Spearman:
         b0, 22a -> aircraft-1k baixo, o resto ok. cifar-sketch alto, cifar-1k mais baixo 
         b4, 23a -> quadrado sem pontas, cifar-sketch baixo, mais baixo de todos é cifar-1k
         b7, 24a -> cifar-sketch muito próximos, 1k-sketch e 1k-cifar muito diferentes, aircraft meio termo?
+
+Pearson
+    baixas aircraft-sketch e aircraft-1k está frequente
+
+    modelos clip:
+        de forma geral todas correlações muito altas exceto o 3d, que tem o aircraft com correlações menores
+
+    modelos pytorch
+        resnet152, 11a -> baixa aircraft-1k
+
+        regnets -> baixas aircraft-sketch e aircraft-1k
+            12c -> queda cifar-sketch
+
+        vits -> aircraft-1k e aircraft-sketch menores
+            16c -> também baixa cifar-sketch
+
+        maxvit, 17a -> aircraft-1k e aircraft-sketch mais baixas
+
+        convt, 18a -> 1k de forma geral mais baixo
+        convb, 19a -> apenas aircraft-1k e aircraft-sketch mais baixas
+
+        swins -> menores aircraft-sketch e aircraft-1k
+
+        b0, 22a -> baixas aircraft-sketch e aircraft-1k, aircraft-1k bem mais baixa
+        b4, 23a -> 1k-sketch e cifar-aircraft são os únicos que se assemelham
+        b7, 24a -> apenas cifar-sketch semelhantes
