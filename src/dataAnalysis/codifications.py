@@ -91,7 +91,7 @@ def getModelTrainStr(src, model, train):
     else:
         t = train_letter[train]
         
-    return f"{model_number[model]}, {t}"
+    return f"{model_number[model]}{t}"
 
 def codToInstace(number, letter):
     instances = getInstances()

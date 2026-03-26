@@ -5,11 +5,13 @@ from seaborn import heatmap
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import pearsonr, spearmanr
+from ..fileSystem.fileSystem import updateJson
 import json
 
 results_folder = "./dataStorage/results"
 datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
-metric = 'pearson'
+metric = 'spearman'
+output_folder = "ztempData/datasetCorrelations"
 
 instances = getInstances()
 
@@ -66,6 +68,31 @@ def dtNameToAcr(n):
         case _:
             raise
 
+
+def savePkl(df, pkl_path, field_name, metric=metric, json_path=f"{output_folder}/pklPaths.json"):
+    
+    df.to_pickle(pkl_path)    
+    
+    with open(json_path, "r+") as f:
+        json_data = json.load(f)
+        
+    json_data[metric][field_name] = pkl_path
+    
+    with open(json_path, 'w') as f:
+        json.dump(json_data, f, indent=4)
+        
+
+def loadPkls(field_name, metric=metric, json_path=f"{output_folder}/pklPaths.json"):
+    with open(json_path, 'r+') as f:
+        json_data = json.load(f)
+    
+    pkl_path = json_data[metric][field_name]
+    
+    df = pd.read_pickle(pkl_path)
+    
+    return df    
+
+
 def dtCorrelationHeatmaps(dic):
     for e in instances:
         df = pd.DataFrame(dic[e])
@@ -80,9 +107,15 @@ def dtCorrelationHeatmaps(dic):
             
         heatmap(df, vmin=-0.5, vmax=1.0)
         
+        model_str = getModelTrainStr(e[0], e[1], e[2])
+        
+        pkl_path = f"{output_folder}/pkls/{model_str}.pkl"
+
+        savePkl(df, pkl_path, model_str)
+        
         plt.title(str(e))
         plt.tight_layout()
-        plt.savefig(f"ztempData/datasetCorrelations/{metric}/{getModelTrainStr(e[0], e[1], e[2]).replace(', ', '-')}.png")
+        plt.savefig(f"{output_folder}/{metric}/{model_str}.png")
         #plt.show()
 
 
@@ -128,7 +161,7 @@ def dtCorrelationGrouping(dic):
         
         similar_bhvs['abstract'].append(abst)
     
-    with open(f'ztempData/datasetCorrelations/{metric}Data.json', 'w') as f:
+    with open(f'{output_folder}/{metric}Data.json', 'w') as f:
         json.dump(similar_bhvs, f, indent=4)
         
     return similar_bhvs
@@ -161,9 +194,9 @@ def MtoMDatasetCorrelation():
     for e in instances:
         _ = np.fill_diagonal(dic[e], 1.0)
         
-    #dtCorrelationHeatmaps(dic)
+    dtCorrelationHeatmaps(dic)
     
-    similar_bhv = dtCorrelationGrouping(dic)
+    #similar_bhv = dtCorrelationGrouping(dic)
         
         
 def generalDatasetCorrelation():
@@ -203,7 +236,11 @@ def generalDatasetCorrelation():
     df.index = names
 
     #print(df)
+    
+    pkl_path = f"{output_folder}/pkls/{metric}.pkl"
 
+    savePkl(df, pkl_path, "main")
+    
     plt.figure(figsize=(10, 8))
     
     heatmap(df, vmin=-0.5, vmax=1.0)
@@ -211,10 +248,32 @@ def generalDatasetCorrelation():
     plt.title(f"Correlação de {metric} entre datasets")
     plt.tight_layout()
     plt.savefig(f"ztempData/datasetCorrelations/{metric}.png")
-    plt.show()
+    #plt.show()
+    
+    return df
+
+
+def MRSS(model, json_path=f"{output_folder}/mrss.json"):
+    
+    model_str = getModelTrainStr(model[0], model[1], model[2])
+    
+    
+    # Fazer efetivamente os cálculos
+    
+    new_data = dict()
+    new_data['pearson'] = {'avg': p_avg, 'med': p_med}
+    new_data['spearman'] = {'avg': s_avg, 'med': s_med}
+    
+    with open(json_path, 'r') as f:
+        json_data = json.load(f)
+        
+    json_data[model_str] = new_data
+    
+    with open(json_path, 'w') as f:
+        json.dump(json_data, f, indent=4)
     
 
 
 if __name__ == "__main__":
     MtoMDatasetCorrelation()
-    #generalDatasetCorrelation()
+    generalDatasetCorrelation()
