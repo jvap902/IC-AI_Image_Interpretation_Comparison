@@ -1,3 +1,5 @@
+from typing import List,Tuple
+
 def getModelNumber():
     model_number = {
     'facebook/dinov3-vitb16-pretrain-lvd1689m': 1,
@@ -79,6 +81,14 @@ def getLetterTrain():
     }
     
     return letter_train
+
+def dtNameSubset(dt: Tuple[str, int] | List[Tuple[str, int]]):
+    if isinstance(dt, tuple):
+        name, subset = dt
+        return f"{name.replace('/', '-')}({subset})"
+    
+    # Otherwise, treat it as a list of tuples
+    return [f"{d[0].replace('/', '-')}({d[1]})" for d in dt]
 
 def getModelTrainStr(src, model, train):
     model_number = getModelNumber()
