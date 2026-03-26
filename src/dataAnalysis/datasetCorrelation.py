@@ -245,15 +245,33 @@ def generalDatasetCorrelation(metric):
     return df
 
 
-def MRSS(csv_path=f"{output_folder}/mrss.csv"):
+def modelAccAvg(model_val_df):
     
-    df = pd.DataFrame(columns=["pearson_avg", "pearson_median", "spearman_avg", "spearman_median"])
+    accs = []
+    
+    for dt_name in dtNameSubset(datasets):
+        
+        dt_info = model_val_df[model_val_df["dataset"] == dt_name]
+        
+        accs.append(dt_info["accuracy"].values[0])
+            
+    return np.array(accs).mean()
+
+
+def MRSS(output_csv_path=f"{output_folder}/mrss.csv", validation_csv_path=f"dataStorage/validation_results.csv"):
+    
+    df = pd.DataFrame(columns=["model_source", "model_name", "model_weights", "pearson_avg", "pearson_median", "spearman_avg", "spearman_median", "acc_avg"])
+    
+    validation_df = pd.read_csv(validation_csv_path, index_col=["model","model_source","model_weights"])
     
     for model in instances:
     
         model_str = getModelTrainStr(model[0], model[1], model[2])
         
-        new_data = [] #expects specific order ["pearson_avg", "pearson_median", "spearman_avg", "spearman_median"]
+        #new_data expects specific order ["model_source", "model_name", "model_weights", "pearson_avg", "pearson_median", "spearman_avg", "spearman_median", "acc_avg"]
+        new_data = [model[0], model[1], model[2]] 
+        
+        m_val_df = validation_df.loc[(model[1], model[0], model[2])]
         
         for metric in metrics:
         
@@ -268,14 +286,36 @@ def MRSS(csv_path=f"{output_folder}/mrss.csv"):
             
             new_data.extend([metric_avg, metric_med])
         
-        df.loc[str(model)] = new_data
+        new_data.append(modelAccAvg(m_val_df))
+        
+        df.loc[len(df)] = new_data
+        
+    df.set_index(['model_source', 'model_name', 'model_weights'])
     
+    df.to_csv(output_csv_path, mode='w', header=True, index=False, index_label="modelo")
     
-    df.to_csv(csv_path, mode='a', header=False, index=True, index_label="modelo")
+
+def corrAccMSRR(mrss_csv=f"{output_folder}/mrss.csv"):
+    df = pd.read_csv(mrss_csv)
+    
+    accs = df['acc_avg'].to_numpy()
+    p_avg = df['pearson_avg'].to_numpy()
+    p_med = df['pearson_median'].to_numpy()
+    s_avg = df['spearman_avg'].to_numpy()
+    s_med = df['spearman_median'].to_numpy()
+    
+    data = np.array([p_avg, p_med, s_avg, s_med])
+    
+    for arr in data:
+        p, _ = pearsonr(arr, accs)
+        s, _ = spearmanr(arr, accs)
+        
+        print(f"Pearson correlation: {p}\nSpearman correlation: {s}\n")
 
 
 if __name__ == "__main__":
     metric=metrics[0]
     #MtoMDatasetCorrelation(metric)
     #generalDatasetCorrelation(metric)
-    MRSS()
+    #MRSS()
+    corrAccMSRR()

@@ -97,19 +97,36 @@ def run(instances, datasets, method, start_params: startParams):
                 run_main_with_subprocess(arguments)
 
 
+def revalidate(instances, datasets, start_params: startParams):
+    
+    for i in range(len(instances)):
+        for (dataset, subset) in datasets:
+            dt_name = dataset.replace('/', '-')
+        
+            idx1, (s1, m1, w1) = instances.index(instances[i]), instances[i]
+            idx2, (s2, m2, w2) = instances.index(instances[len(instances)-1-i]), instances[len(instances)-1-i]
+            
+            if idx1 > idx2:
+                return
+            
+            args = ["--dataset", dataset, "--specific_subset", str(subset), "-ndsc", "--m1_source", s1, "-m1", m1, "--m1_weights", w1, 
+                                    "--m2_source", s2, "-m2", m2, "--m2_weights", w2, '-met', 'validation']
+        
+            run_main_with_subprocess(args)
+
 if __name__ == "__main__":
     # Capture all command-line arguments passed to this script, 
     # excluding the script name itself (sys.argv[0] is 'run_pipeline.py').
     
     instances = [
-        #('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
-        #('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT'),
-        #('clip', 'ViT-B/32', 'DEFAULT'),
-        #('clip', 'ViT-B/16', 'DEFAULT'),
-        #('clip', 'ViT-L/14', 'DEFAULT'),
-        #('open_clip', 'ViT-B-32-256', 'DEFAULT'),
-        #('open_clip', 'ViT-B-16', 'DEFAULT'),
-        #('open_clip', 'ViT-L-14', 'DEFAULT'),
+        ('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
+        ('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT'),
+        ('clip', 'ViT-B/32', 'DEFAULT'),
+        ('clip', 'ViT-B/16', 'DEFAULT'),
+        ('clip', 'ViT-L/14', 'DEFAULT'),
+        ('open_clip', 'ViT-B-32-256', 'DEFAULT'),
+        ('open_clip', 'ViT-B-16', 'DEFAULT'),
+        ('open_clip', 'ViT-L-14', 'DEFAULT'),
         ('torchvision', 'resnet18', 'IMAGENET1K_V1'),
         ('torchvision', 'resnet50', 'IMAGENET1K_V1'),
         ('torchvision', 'resnet152', 'IMAGENET1K_V1'),
@@ -146,6 +163,7 @@ if __name__ == "__main__":
         case _:
             raise
         
-    start_params = {'fst_instance': 2, 'snd_instance': 8, 'dataset': 0}
+    start_params = {'fst_instance': 0, 'snd_instance': 1, 'dataset': 0}
     
-    run(instances, datasets, method, start_params)
+    #run(instances, datasets, method, start_params)
+    revalidate(instances, datasets, method, start_params)

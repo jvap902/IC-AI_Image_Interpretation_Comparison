@@ -95,8 +95,8 @@ if __name__ == "__main__":
     fst_modelc.setAcc(0.0)
     snd_modelc.setAcc(0.0)
     
-    #validation_csv = output_dir+"/validation_results.csv"
-    validation_csv = './ztempData/validation_results.csv'
+    validation_csv = output_dir+"/validation_results.csv"
+    #validation_csv = './ztempData/validation_results.csv'
     
     fst_val = plot.findInCsv(validation_csv, ["model","model_source","model_weights","dataset"], [fst_modelc.name, fst_modelc.source, fst_modelc.weights, dt_info.name_w_subset])
     
@@ -132,5 +132,7 @@ if __name__ == "__main__":
             rsa.rsa(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args)
         case "cka":
             cka.cka(dt_info, fst_modelc, snd_modelc)
+        case "validation":
+            print("validado")
         case _:
             raise ValueError(f"Method {args.method} not recognized. The available methods are: {available_methods}")
