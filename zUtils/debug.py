@@ -31,5 +31,8 @@ import clip
 if __name__ == "__main__":
     model = vit_b_16()
     
-    print(model.get_graph_node_names)
+    st = "abcd"
+    
+    print(st[:-1])
+    print(st[-1])
     

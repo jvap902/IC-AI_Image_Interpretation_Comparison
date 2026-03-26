@@ -65,10 +65,10 @@ def jsonCkaToDataFrame(json_path):
         labels.append(data_dic["model1_name"])
         labels.append(data_dic["model2_name"])
         
-        m1 = models[0].split('-')
-        m2 = models[1].split('-')
+        m1 = [models[0][:-1], models[0][-1]]
+        m2 = [models[1][:-1], models[1][-1]]
         
-        i, _ = codToInstace(m1[0], m2[0])
+        i, _ = codToInstace(m1[0], m1[1])
         j, _ = codToInstace(m2[0], m2[1])
         
         matrix[i,j] = data_dic["CKA"]
@@ -89,8 +89,8 @@ def jsonCkaToDataFrame(json_path):
 class modifiedCka(CKA):
     
     def setNewAtt(self, m1_name, m2_name, output_folder):
-        self.m1_name = m1_name.replace(', ', '-')
-        self.m2_name = m2_name.replace(', ', '-')
+        self.m1_name = m1_name
+        self.m2_name = m2_name
         
         self.cka_folder = output_folder
         

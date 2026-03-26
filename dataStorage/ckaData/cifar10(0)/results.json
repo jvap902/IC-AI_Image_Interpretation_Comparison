@@ -1,5 +1,5 @@
 {
-    "9-a 10-a": {
+    "9a 10a": {
         "model1_name": "9, a",
         "model2_name": "10, a",
         "CKA": [
@@ -14,7 +14,7 @@
             "avgpool"
         ]
     },
-    "9-a 11-a": {
+    "9a 11a": {
         "model1_name": "9, a",
         "model2_name": "11, a",
         "CKA": [
@@ -29,7 +29,7 @@
             "avgpool"
         ]
     },
-    "9-a 12-a": {
+    "9a 12a": {
         "model1_name": "9, a",
         "model2_name": "12, a",
         "CKA": [
@@ -44,7 +44,7 @@
             "avgpool"
         ]
     },
-    "9-a 12-b": {
+    "9a 12b": {
         "model1_name": "9, a",
         "model2_name": "12, b",
         "CKA": [
@@ -59,7 +59,7 @@
             "avgpool"
         ]
     },
-    "9-a 12-c": {
+    "9a 12c": {
         "model1_name": "9, a",
         "model2_name": "12, c",
         "CKA": [
@@ -74,7 +74,7 @@
             "avgpool"
         ]
     },
-    "9-a 13-b": {
+    "9a 13b": {
         "model1_name": "9, a",
         "model2_name": "13, b",
         "CKA": [
@@ -89,7 +89,7 @@
             "avgpool"
         ]
     },
-    "9-a 14-a": {
+    "9a 14a": {
         "model1_name": "9, a",
         "model2_name": "14, a",
         "CKA": [
@@ -104,7 +104,7 @@
             "encoder.ln"
         ]
     },
-    "9-a 14-c": {
+    "9a 14c": {
         "model1_name": "9, a",
         "model2_name": "14, c",
         "CKA": [
@@ -119,7 +119,7 @@
             "encoder.ln"
         ]
     },
-    "9-a 15-a": {
+    "9a 15a": {
         "model1_name": "9, a",
         "model2_name": "15, a",
         "CKA": [
@@ -134,7 +134,7 @@
             "encoder.ln"
         ]
     },
-    "9-a 16-c": {
+    "9a 16c": {
         "model1_name": "9, a",
         "model2_name": "16, c",
         "CKA": [
@@ -149,7 +149,7 @@
             "encoder.ln"
         ]
     },
-    "9-a 17-a": {
+    "9a 17a": {
         "model1_name": "9, a",
         "model2_name": "17, a",
         "CKA": [
@@ -164,7 +164,7 @@
             "classifier.0"
         ]
     },
-    "9-a 18-a": {
+    "9a 18a": {
         "model1_name": "9, a",
         "model2_name": "18, a",
         "CKA": [
@@ -179,7 +179,7 @@
             "avgpool"
         ]
     },
-    "9-a 19-a": {
+    "9a 19a": {
         "model1_name": "9, a",
         "model2_name": "19, a",
         "CKA": [
@@ -194,7 +194,7 @@
             "avgpool"
         ]
     },
-    "9-a 20-a": {
+    "9a 20a": {
         "model1_name": "9, a",
         "model2_name": "20, a",
         "CKA": [
@@ -209,7 +209,7 @@
             "avgpool"
         ]
     },
-    "9-a 21-a": {
+    "9a 21a": {
         "model1_name": "9, a",
         "model2_name": "21, a",
         "CKA": [
@@ -224,7 +224,7 @@
             "avgpool"
         ]
     },
-    "9-a 22-a": {
+    "9a 22a": {
         "model1_name": "9, a",
         "model2_name": "22, a",
         "CKA": [
@@ -239,7 +239,7 @@
             "avgpool"
         ]
     },
-    "9-a 23-a": {
+    "9a 23a": {
         "model1_name": "9, a",
         "model2_name": "23, a",
         "CKA": [
@@ -254,7 +254,7 @@
             "avgpool"
         ]
     },
-    "9-a 24-a": {
+    "9a 24a": {
         "model1_name": "9, a",
         "model2_name": "24, a",
         "CKA": [
@@ -269,7 +269,7 @@
             "avgpool"
         ]
     },
-    "10-a 11-a": {
+    "10a 11a": {
         "model1_name": "10, a",
         "model2_name": "11, a",
         "CKA": [
@@ -284,7 +284,7 @@
             "avgpool"
         ]
     },
-    "10-a 12-a": {
+    "10a 12a": {
         "model1_name": "10, a",
         "model2_name": "12, a",
         "CKA": [
@@ -299,7 +299,7 @@
             "avgpool"
         ]
     },
-    "10-a 12-b": {
+    "10a 12b": {
         "model1_name": "10, a",
         "model2_name": "12, b",
         "CKA": [
@@ -314,7 +314,7 @@
             "avgpool"
         ]
     },
-    "10-a 12-c": {
+    "10a 12c": {
         "model1_name": "10, a",
         "model2_name": "12, c",
         "CKA": [
@@ -329,7 +329,7 @@
             "avgpool"
         ]
     },
-    "10-a 13-b": {
+    "10a 13b": {
         "model1_name": "10, a",
         "model2_name": "13, b",
         "CKA": [
@@ -344,7 +344,7 @@
             "avgpool"
         ]
     },
-    "10-a 14-a": {
+    "10a 14a": {
         "model1_name": "10, a",
         "model2_name": "14, a",
         "CKA": [
@@ -359,7 +359,7 @@
             "encoder.ln"
         ]
     },
-    "10-a 14-c": {
+    "10a 14c": {
         "model1_name": "10, a",
         "model2_name": "14, c",
         "CKA": [
@@ -374,7 +374,7 @@
             "encoder.ln"
         ]
     },
-    "10-a 15-a": {
+    "10a 15a": {
         "model1_name": "10, a",
         "model2_name": "15, a",
         "CKA": [
@@ -389,7 +389,7 @@
             "encoder.ln"
         ]
     },
-    "10-a 16-c": {
+    "10a 16c": {
         "model1_name": "10, a",
         "model2_name": "16, c",
         "CKA": [
@@ -404,7 +404,7 @@
             "encoder.ln"
         ]
     },
-    "10-a 17-a": {
+    "10a 17a": {
         "model1_name": "10, a",
         "model2_name": "17, a",
         "CKA": [
@@ -419,7 +419,7 @@
             "classifier.0"
         ]
     },
-    "10-a 18-a": {
+    "10a 18a": {
         "model1_name": "10, a",
         "model2_name": "18, a",
         "CKA": [
@@ -434,7 +434,7 @@
             "avgpool"
         ]
     },
-    "10-a 19-a": {
+    "10a 19a": {
         "model1_name": "10, a",
         "model2_name": "19, a",
         "CKA": [
@@ -449,7 +449,7 @@
             "avgpool"
         ]
     },
-    "10-a 20-a": {
+    "10a 20a": {
         "model1_name": "10, a",
         "model2_name": "20, a",
         "CKA": [
@@ -464,7 +464,7 @@
             "avgpool"
         ]
     },
-    "10-a 21-a": {
+    "10a 21a": {
         "model1_name": "10, a",
         "model2_name": "21, a",
         "CKA": [
@@ -479,7 +479,7 @@
             "avgpool"
         ]
     },
-    "10-a 22-a": {
+    "10a 22a": {
         "model1_name": "10, a",
         "model2_name": "22, a",
         "CKA": [
@@ -494,7 +494,7 @@
             "avgpool"
         ]
     },
-    "10-a 23-a": {
+    "10a 23a": {
         "model1_name": "10, a",
         "model2_name": "23, a",
         "CKA": [
@@ -509,7 +509,7 @@
             "avgpool"
         ]
     },
-    "10-a 24-a": {
+    "10a 24a": {
         "model1_name": "10, a",
         "model2_name": "24, a",
         "CKA": [
@@ -524,7 +524,7 @@
             "avgpool"
         ]
     },
-    "11-a 12-a": {
+    "11a 12a": {
         "model1_name": "11, a",
         "model2_name": "12, a",
         "CKA": [
@@ -539,7 +539,7 @@
             "avgpool"
         ]
     },
-    "11-a 12-b": {
+    "11a 12b": {
         "model1_name": "11, a",
         "model2_name": "12, b",
         "CKA": [
@@ -554,7 +554,7 @@
             "avgpool"
         ]
     },
-    "11-a 12-c": {
+    "11a 12c": {
         "model1_name": "11, a",
         "model2_name": "12, c",
         "CKA": [
@@ -569,7 +569,7 @@
             "avgpool"
         ]
     },
-    "11-a 13-b": {
+    "11a 13b": {
         "model1_name": "11, a",
         "model2_name": "13, b",
         "CKA": [
@@ -584,7 +584,7 @@
             "avgpool"
         ]
     },
-    "11-a 14-a": {
+    "11a 14a": {
         "model1_name": "11, a",
         "model2_name": "14, a",
         "CKA": [
@@ -599,7 +599,7 @@
             "encoder.ln"
         ]
     },
-    "11-a 14-c": {
+    "11a 14c": {
         "model1_name": "11, a",
         "model2_name": "14, c",
         "CKA": [
@@ -614,7 +614,7 @@
             "encoder.ln"
         ]
     },
-    "11-a 15-a": {
+    "11a 15a": {
         "model1_name": "11, a",
         "model2_name": "15, a",
         "CKA": [
