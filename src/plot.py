@@ -1,12 +1,13 @@
 import torch
 import numpy as np
-import os
 from pathlib import Path
 import matplotlib.pyplot as plt
 import csv
 import seaborn
 import pandas as pd
 import ast
+from typing import Tuple
+from src.codifications import getModelTrainStr
 
 def plot_history(history):
     """Plots the training and validation history."""
@@ -232,7 +233,7 @@ def paramDataFrameFromCsv(csv_path, param, diagonal=1.0):
 
     return dataFrame
 
-def dataFrameFromData(data, param, diagonal=1.0):
+def dataFrameFromData(data, param='pearson', diagonal=1.0, codification=False):
     if not data:
         return np.array([])
 
@@ -264,20 +265,31 @@ def dataFrameFromData(data, param, diagonal=1.0):
         matrix[i][j] = val
         matrix[j][i] = val # Garante a simetria se o CSV tiver apenas um lado
 
+    if codification:
+        for idx, (s, m, w) in enumerate(models):
+            models[idx] = getModelTrainStr(s, m, w)
+
     dataFrame = pd.DataFrame(matrix, columns=models, index=models)
 
     return dataFrame
             
-def heatMap(csv_path, correlation_type):
-    data = paramDataFrameFromCsv(csv_path, correlation_type)
+def heatMap(csv_path, correlation_type, specific_value: None | Tuple[list[str], list[str]] = None, show=True, save_path=None, codification=False):
+    
+    if specific_value == None:
+        data = paramDataFrameFromCsv(csv_path, correlation_type)
+    else:
+        data = findInCsv(csv_path, specific_value[0], specific_value[1])
+        data = dataFrameFromData(data, param=correlation_type, codification=codification)
     
     print(data.shape)
-    plt.figure(figsize=(data.shape[1] * 0.8, data.shape[0] * 0.4))
+    plt.figure(figsize=(10, 8))
     
     seaborn.heatmap(data, vmin=-0.5, vmax=1.0)
     
     plt.tight_layout()
-    plt.show()
+    if show: plt.show()
+
+    if save_path != None: plt.savefig(save_path)
 
 if __name__ == '__main__':
     pass
