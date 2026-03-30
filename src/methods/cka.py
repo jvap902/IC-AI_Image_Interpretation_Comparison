@@ -4,7 +4,7 @@ import torch
 from tqdm import tqdm
 from warnings import warn
 import os
-from src.dataAnalysis.codifications import *
+from src.codifications import *
 from ..fileSystem.fileSystem import getJsonInfo, updateJson, createFile
 import numpy as np
 import pandas as pd

@@ -1,6 +1,6 @@
 from ..plot import *
 from typing import List,Tuple
-from .codifications import *
+from src.codifications import *
 from seaborn import heatmap
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,7 +11,7 @@ import json
 results_folder = "./dataStorage/results"
 datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
 metrics = ['pearson', 'spearman']
-output_folder = "ztempData/datasetCorrelations"
+output_folder = "dataStorage/processedResults/datasetCorrelations"
 
 instances = getInstances()
 
@@ -239,7 +239,7 @@ def generalDatasetCorrelation(metric):
     
     plt.title(f"Correlação de {metric} entre datasets")
     plt.tight_layout()
-    plt.savefig(f"ztempData/datasetCorrelations/{metric}.png")
+    plt.savefig(f"{output_folder}/{metric}.png")
     #plt.show()
     
     return df

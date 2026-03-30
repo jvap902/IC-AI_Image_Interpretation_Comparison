@@ -9,8 +9,6 @@ def makeFileSystem(outputFile):
     # --- Folders ---
 
     os.makedirs("data", exist_ok=True)
-
-    os.makedirs("datasetCache", exist_ok=True)
     
     ds = "dataStorage"
     os.makedirs(ds, exist_ok=True) # Ensure dataStorage folder exists

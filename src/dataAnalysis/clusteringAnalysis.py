@@ -1,5 +1,5 @@
 from src.plot import *
-from .codifications import *
+from ..codifications import *
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.cluster.hierarchy import dendrogram, linkage, cophenet
@@ -44,7 +44,7 @@ def distMatirxModelNames(df):
     return dist_matrix, model_names
 
 def pltDendogram(dist_matrix, model_names, dataset, method='average'):
-    save_folder = f'zTempData/dendograms/{method}'
+    save_folder = f'dataStorage/processedResults/dendograms/{method}'
     
     condensed_dist = squareform(dist_matrix)
     

@@ -2,7 +2,7 @@ import csv
 import numpy as np
 from src.plot import *
 from pandas import DataFrame
-from .codifications import getModelTrainStr
+from src.codifications import getModelTrainStr
 
 datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)] #apenas datasets utilizados no artigo
 
