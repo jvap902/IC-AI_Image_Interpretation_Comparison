@@ -119,14 +119,14 @@ if __name__ == "__main__":
     # excluding the script name itself (sys.argv[0] is 'run_pipeline.py').
     
     instances = [
-        ('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
-        ('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT'),
-        ('clip', 'ViT-B/32', 'DEFAULT'),
-        ('clip', 'ViT-B/16', 'DEFAULT'),
-        ('clip', 'ViT-L/14', 'DEFAULT'),
-        ('open_clip', 'ViT-B-32-256', 'DEFAULT'),
-        ('open_clip', 'ViT-B-16', 'DEFAULT'),
-        ('open_clip', 'ViT-L-14', 'DEFAULT'),
+        #('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
+        #('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT'),
+        #('clip', 'ViT-B/32', 'DEFAULT'),
+        #('clip', 'ViT-B/16', 'DEFAULT'),
+        #('clip', 'ViT-L/14', 'DEFAULT'),
+        #('open_clip', 'ViT-B-32-256', 'DEFAULT'),
+        #('open_clip', 'ViT-B-16', 'DEFAULT'),
+        #('open_clip', 'ViT-L-14', 'DEFAULT'),
         ('torchvision', 'resnet18', 'IMAGENET1K_V1'),
         ('torchvision', 'resnet50', 'IMAGENET1K_V1'),
         ('torchvision', 'resnet152', 'IMAGENET1K_V1'),
@@ -163,7 +163,7 @@ if __name__ == "__main__":
         case _:
             raise
         
-    start_params = {'fst_instance': 0, 'snd_instance': 1, 'dataset': 0}
+    start_params = {'fst_instance': 2, 'snd_instance': 12, 'dataset': 0}
     
-    #run(instances, datasets, method, start_params)
-    revalidate(instances, datasets, method, start_params)
+    run(instances, datasets, method, start_params)
+    #revalidate(instances, datasets, method, start_params)
