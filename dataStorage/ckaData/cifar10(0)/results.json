@@ -2068,5 +2068,80 @@
         "model2_layers": [
             "avgpool"
         ]
+    },
+    "16c 20a": {
+        "model1_name": "16c",
+        "model2_name": "20a",
+        "CKA": [
+            [
+                0.2091917097568512
+            ]
+        ],
+        "model1_layers": [
+            "encoder.ln"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "16c 21a": {
+        "model1_name": "16c",
+        "model2_name": "21a",
+        "CKA": [
+            [
+                0.20470435917377472
+            ]
+        ],
+        "model1_layers": [
+            "encoder.ln"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "16c 22a": {
+        "model1_name": "16c",
+        "model2_name": "22a",
+        "CKA": [
+            [
+                0.19214889407157898
+            ]
+        ],
+        "model1_layers": [
+            "encoder.ln"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "16c 23a": {
+        "model1_name": "16c",
+        "model2_name": "23a",
+        "CKA": [
+            [
+                0.2055814564228058
+            ]
+        ],
+        "model1_layers": [
+            "encoder.ln"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "16c 24a": {
+        "model1_name": "16c",
+        "model2_name": "24a",
+        "CKA": [
+            [
+                0.18894203007221222
+            ]
+        ],
+        "model1_layers": [
+            "encoder.ln"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
     }
 }
