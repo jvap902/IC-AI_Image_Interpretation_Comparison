@@ -163,8 +163,8 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = instances.index(('torchvision', 'vit_h_14', 'IMAGENET1K_SWAG_E2E_V1'))
-    snd_idx = instances.index(('torchvision', 'swin_t', 'IMAGENET1K_V1'))
+    fst_idx = instances.index(('torchvision', 'maxvit_t', 'IMAGENET1K_V1'))
+    snd_idx = fst_idx+1 #instances.index(('torchvision', 'swin_t', 'IMAGENET1K_V1'))
         
     start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0}
     

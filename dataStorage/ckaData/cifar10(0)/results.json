@@ -2143,5 +2143,110 @@
         "model2_layers": [
             "avgpool"
         ]
+    },
+    "17a 18a": {
+        "model1_name": "17a",
+        "model2_name": "18a",
+        "CKA": [
+            [
+                0.6776085495948792
+            ]
+        ],
+        "model1_layers": [
+            "classifier.0"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "17a 19a": {
+        "model1_name": "17a",
+        "model2_name": "19a",
+        "CKA": [
+            [
+                0.6719120144844055
+            ]
+        ],
+        "model1_layers": [
+            "classifier.0"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "17a 20a": {
+        "model1_name": "17a",
+        "model2_name": "20a",
+        "CKA": [
+            [
+                0.5972614884376526
+            ]
+        ],
+        "model1_layers": [
+            "classifier.0"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "17a 21a": {
+        "model1_name": "17a",
+        "model2_name": "21a",
+        "CKA": [
+            [
+                0.59962397813797
+            ]
+        ],
+        "model1_layers": [
+            "classifier.0"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "17a 22a": {
+        "model1_name": "17a",
+        "model2_name": "22a",
+        "CKA": [
+            [
+                0.5142657160758972
+            ]
+        ],
+        "model1_layers": [
+            "classifier.0"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "17a 23a": {
+        "model1_name": "17a",
+        "model2_name": "23a",
+        "CKA": [
+            [
+                0.625916063785553
+            ]
+        ],
+        "model1_layers": [
+            "classifier.0"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "17a 24a": {
+        "model1_name": "17a",
+        "model2_name": "24a",
+        "CKA": [
+            [
+                0.5843201279640198
+            ]
+        ],
+        "model1_layers": [
+            "classifier.0"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
     }
 }

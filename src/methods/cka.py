@@ -47,10 +47,10 @@ def getModelLayer(model_name):
             #return ['getitem_5']
         case 'maxvit_t':
             return ['classifier.0']
-        #case 'facebook/dinov3-vitb16-pretrain-lvd1689m' | 'facebook/dinov3-vitl16-pretrain-lvd1689m':
-            #return ['embedddings']
-        #case 'ViT-B/32' | 'ViT-B/16' | 'ViT-L/14' | 'ViT-B-32-256' | 'ViT-B-16' | 'ViT-L-14'
-            #return['token_embedding']
+        case 'facebook/dinov3-vitb16-pretrain-lvd1689m' | 'facebook/dinov3-vitl16-pretrain-lvd1689m':
+            return ['embedddings']
+        case 'ViT-B/32' | 'ViT-B/16' | 'ViT-L/14' | 'ViT-B-32-256' | 'ViT-B-16' | 'ViT-L-14':
+            return['token_embedding']
         case _:
             return ['avgpool']
 
