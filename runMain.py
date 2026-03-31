@@ -32,6 +32,7 @@ class startParams(TypedDict):
     fst_instance: int
     snd_instance: int
     dataset: int
+    interrupt: Tuple[int, int, int] #índices do: dataset, modelo1, modelo2
     
 
 def rsa_args(run_data):
@@ -62,7 +63,15 @@ def run(instances, datasets, method, start_params: startParams):
     (src1, model1, weight1) = instances[begin]
     (src2, model2, weight2) = instances[snd_start]
     
+    m1_interr = True if (src1, model1, weight1) == instances[start_params["interrupt"][1]] else False
+    m2_interr = True if (src2, model2, weight2) == instances[start_params["interrupt"][2]] else False
+    
     for (dataset, subset) in datasets[initial_dt:]:
+        dt_interr = True if (dataset, subset) == datasets[start_params["interrupt"][0]] else False
+        
+        if m1_interr and m2_interr and dt_interr:
+            return
+        
         dt_name = dataset.replace('/', '-')
         run_data = [dataset, subset, src1, model1, weight1, src2, model2, weight2, dt_name]
         
@@ -74,7 +83,13 @@ def run(instances, datasets, method, start_params: startParams):
     snd_start = snd_start + 1
     
     for (src2, model2, weight2) in instances[snd_start:]:
+        m2_interr = True if (src2, model2, weight2) == instances[start_params["interrupt"][2]] else False
         for (dataset, subset) in datasets:
+            dt_interr = True if (dataset, subset) == datasets[start_params["interrupt"][0]] else False
+            
+            if m1_interr and m2_interr and dt_interr:
+                return
+            
             dt_name = dataset.replace('/', '-')
             
             run_data = [dataset, subset, src1, model1, weight1, src2, model2, weight2, dt_name]
@@ -86,8 +101,15 @@ def run(instances, datasets, method, start_params: startParams):
 
     begin = begin+1
     for idx, (src1, model1, weight1) in enumerate(instances[begin:]):
+        m1_interr = True if (src1, model1, weight1) == instances[start_params["interrupt"][1]] else False
         for (src2, model2, weight2) in instances[idx+begin+1:]:
+            m2_interr = True if (src2, model2, weight2) == instances[start_params["interrupt"][2]] else False
             for (dataset, subset) in datasets:
+                dt_interr = True if (dataset, subset) == datasets[start_params["interrupt"][0]] else False
+            
+                if m1_interr and m2_interr and dt_interr:
+                    return
+                
                 dt_name = dataset.replace('/', '-')
         
                 run_data = [dataset, subset, src1, model1, weight1, src2, model2, weight2, dt_name]
@@ -119,14 +141,14 @@ if __name__ == "__main__":
     # excluding the script name itself (sys.argv[0] is 'run_pipeline.py').
     
     instances = [
-        #('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
-        #('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT'),
-        #('clip', 'ViT-B/32', 'DEFAULT'),
-        #('clip', 'ViT-B/16', 'DEFAULT'),
-        #('clip', 'ViT-L/14', 'DEFAULT'),
-        #('open_clip', 'ViT-B-32-256', 'DEFAULT'),
-        #('open_clip', 'ViT-B-16', 'DEFAULT'),
-        #('open_clip', 'ViT-L-14', 'DEFAULT'),
+        ('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
+        ('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT'),
+        ('clip', 'ViT-B/32', 'DEFAULT'),
+        ('clip', 'ViT-B/16', 'DEFAULT'),
+        ('clip', 'ViT-L/14', 'DEFAULT'),
+        ('open_clip', 'ViT-B-32-256', 'DEFAULT'),
+        ('open_clip', 'ViT-B-16', 'DEFAULT'),
+        ('open_clip', 'ViT-L-14', 'DEFAULT'),
         ('torchvision', 'resnet18', 'IMAGENET1K_V1'),
         ('torchvision', 'resnet50', 'IMAGENET1K_V1'),
         ('torchvision', 'resnet152', 'IMAGENET1K_V1'),
@@ -163,10 +185,10 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = instances.index(('torchvision', 'maxvit_t', 'IMAGENET1K_V1'))
-    snd_idx = fst_idx+1 #instances.index(('torchvision', 'swin_t', 'IMAGENET1K_V1'))
+    fst_idx = 0 #instances.index(('torchvision', 'convnext_tiny', 'IMAGENET1K_V1'))
+    snd_idx = fst_idx+2 #instances.index(('torchvision', 'swin_t', 'IMAGENET1K_V1'))
         
-    start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0}
+    start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (0, 8, 9)}
     
     run(instances, datasets, method, start_params)
     #revalidate(instances, datasets, method, start_params)

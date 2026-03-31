@@ -48,9 +48,9 @@ def getModelLayer(model_name):
         case 'maxvit_t':
             return ['classifier.0']
         case 'facebook/dinov3-vitb16-pretrain-lvd1689m' | 'facebook/dinov3-vitl16-pretrain-lvd1689m':
-            return ['embedddings']
+            return ['embeddings']
         case 'ViT-B/32' | 'ViT-B/16' | 'ViT-L/14' | 'ViT-B-32-256' | 'ViT-B-16' | 'ViT-L-14':
-            return['token_embedding']
+            return['visual.ln_post']
         case _:
             return ['avgpool']
 
@@ -128,7 +128,20 @@ class modifiedCka(CKA):
                                                         self.hsic_matrix[:, :, 2].sqrt())
 
         assert not torch.isnan(self.hsic_matrix).any(), "HSIC computation resulted in NANs"
+    
+    
+    def getTensor(self, x):
+        #para suportar modelos de fora do pytorch
         
+        if hasattr(x, 'pixel_values'): #dinov3
+            tensor = torch.stack(x['pixel_values']).to(self.device)
+            if tensor.dim() == 5 and tensor.size(0) == 1:
+                tensor = tensor.squeeze(0)
+            
+            return tensor
+        
+        else: #pytorch
+            return x
     
     
     def originalComparePart(self, dataloader1, dataloader2 = None):
@@ -173,18 +186,31 @@ class modifiedCka(CKA):
                 
                 self.model1_features = {}
                 self.model2_features = {}
-                _ = self.model1(x1.to(self.device))
-                _ = self.model2(x2.to(self.device))
+                
+                tensor1 = self.getTensor(x1)
+                tensor2 = self.getTensor(x2)
+                
+                if hasattr(self.model1, 'visual'): #para suportar CLIP
+                    # Move tensor to device and pass to the visual backbone only
+                    _ = self.model1.visual(tensor1.to(self.device).type(self.model1.dtype))
+                else:
+                    _ = self.model1(tensor1.to(self.device))
+
+                if hasattr(self.model2, 'visual'):
+                    # Move tensor to device and pass to the visual backbone only
+                    _ = self.model2.visual(tensor2.to(self.device).type(self.model2.dtype))
+                else:
+                    _ = self.model2(tensor2.to(self.device))
                                 
                 for i, (name1, feat1) in enumerate(self.model1_features.items()):
-                    X = feat1.flatten(1)
+                    X = feat1.flatten(1).to(torch.float32)
                     K = X @ X.t()
                     K.fill_diagonal_(0.0)
                     
                     if not hsic1: self.hsic_matrix[i, :, 0] += self._HSIC(K, K) / num_batches
                     
-                    for j, (name2, feat2) in enumerate(self.model2_features.items()):                    
-                        Y = feat2.flatten(1)                        
+                    for j, (name2, feat2) in enumerate(self.model2_features.items()):
+                        Y = feat2.flatten(1).to(torch.float32)
                         L = Y @ Y.t()
                         L.fill_diagonal_(0)
                         assert K.shape == L.shape, f"Feature shape mistach! {K.shape}, {L.shape}"
