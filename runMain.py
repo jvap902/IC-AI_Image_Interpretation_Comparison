@@ -163,7 +163,10 @@ if __name__ == "__main__":
         case _:
             raise
         
-    start_params = {'fst_instance': 2, 'snd_instance': 12, 'dataset': 0}
+    fst_idx = instances.index(('torchvision', 'vit_b_16', 'IMAGENET1K_SWAG_E2E_V1'))+1
+    snd_idx = fst_idx+1 #instances.index((''))
+        
+    start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0}
     
     run(instances, datasets, method, start_params)
     #revalidate(instances, datasets, method, start_params)
