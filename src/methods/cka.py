@@ -187,20 +187,22 @@ class modifiedCka(CKA):
                 self.model1_features = {}
                 self.model2_features = {}
                 
-                tensor1 = self.getTensor(x1)
-                tensor2 = self.getTensor(x2)
-                
-                if hasattr(self.model1, 'visual'): #para suportar CLIP
-                    # Move tensor to device and pass to the visual backbone only
-                    _ = self.model1.visual(tensor1.to(self.device).type(self.model1.dtype))
+                tensor1 = self.getTensor(x1).to(self.device)
+                tensor2 = self.getTensor(x2).to(self.device)
+
+                if hasattr(self.model1, 'visual'): 
+                    m1_type = next(self.model1.visual.parameters()).dtype
+                    _ = self.model1.visual(tensor1.to(m1_type))
                 else:
-                    _ = self.model1(tensor1.to(self.device))
+                    m1_type = next(self.model1.parameters()).dtype
+                    _ = self.model1(tensor1.to(m1_type))
 
                 if hasattr(self.model2, 'visual'):
-                    # Move tensor to device and pass to the visual backbone only
-                    _ = self.model2.visual(tensor2.to(self.device).type(self.model2.dtype))
+                    m2_type = next(self.model2.visual.parameters()).dtype
+                    _ = self.model2.visual(tensor2.to(m2_type))
                 else:
-                    _ = self.model2(tensor2.to(self.device))
+                    m2_type = next(self.model2.parameters()).dtype
+                    _ = self.model2(tensor2.to(m2_type))
                                 
                 for i, (name1, feat1) in enumerate(self.model1_features.items()):
                     X = feat1.flatten(1).to(torch.float32)
