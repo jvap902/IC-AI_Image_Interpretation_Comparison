@@ -50,7 +50,7 @@ def loadTorchvisionModel(model_name, weights="DEFAULT"):
 
 def loadClipModel(model_name):
     model, data_transforms = clip.load(model_name, device=device)
-    
+    model = model.float()
     model.eval()
     
     return model, data_transforms

@@ -2624,6 +2624,7 @@
             "visual.ln_post"
         ]
     },
+
     "1e 6d": {
         "model1_name": "1e",
         "model2_name": "6d",
@@ -2639,6 +2640,7 @@
             "visual.ln_post"
         ]
     },
+
     "1e 7d": {
         "model1_name": "1e",
         "model2_name": "7d",
@@ -2654,6 +2656,23 @@
             "visual.ln_post"
         ]
     },
+    
+    "2e 7d": {
+        "model1_name": "2e",
+        "model2_name": "7d",
+        "CKA": [
+            [
+                0.21529032289981842
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
+        ]
+    },
+
     "1e 8d": {
         "model1_name": "1e",
         "model2_name": "8d",
@@ -2669,6 +2688,23 @@
             "visual.ln_post"
         ]
     },
+
+    "2e 8d": {
+        "model1_name": "2e",
+        "model2_name": "8d",
+        "CKA": [
+            [
+                0.2123061716556549
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
+        ]
+    },
+
     "1e 9a": {
         "model1_name": "1e",
         "model2_name": "9a",
@@ -2684,6 +2720,23 @@
             "avgpool"
         ]
     },
+
+    "2e 9a": {
+        "model1_name": "2e",
+        "model2_name": "9a",
+        "CKA": [
+            [
+                0.2664337754249573
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+
     "1e 10a": {
         "model1_name": "1e",
         "model2_name": "10a",
@@ -2698,7 +2751,24 @@
         "model2_layers": [
             "avgpool"
         ]
+    },          
+
+    "2e 10a": {
+        "model1_name": "2e",
+        "model2_name": "10a",
+        "CKA": [
+            [
+                0.2743997573852539
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
     },
+
     "1e 11a": {
         "model1_name": "1e",
         "model2_name": "11a",
@@ -2714,6 +2784,23 @@
             "avgpool"
         ]
     },
+
+    "2e 11a": {
+        "model1_name": "2e",
+        "model2_name": "11a",
+        "CKA": [
+            [
+                0.2490663081407547
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+
     "1e 12a": {
         "model1_name": "1e",
         "model2_name": "12a",
@@ -2729,6 +2816,23 @@
             "avgpool"
         ]
     },
+
+    "2e 12a": {
+        "model1_name": "2e",
+        "model2_name": "12a",
+        "CKA": [
+            [
+                0.26420965790748596
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+
     "1e 12b": {
         "model1_name": "1e",
         "model2_name": "12b",
@@ -2744,6 +2848,23 @@
             "avgpool"
         ]
     },
+
+    "2e 12b": {
+        "model1_name": "2e",
+        "model2_name": "12b",
+        "CKA": [
+            [
+                0.20329689979553223
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+
     "1e 12c": {
         "model1_name": "1e",
         "model2_name": "12c",
@@ -2759,6 +2880,23 @@
             "avgpool"
         ]
     },
+
+    "2e 12c": {
+        "model1_name": "2e",
+        "model2_name": "12c",
+        "CKA": [
+            [
+                0.21195106208324432
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+
     "1e 13b": {
         "model1_name": "1e",
         "model2_name": "13b",
@@ -2774,6 +2912,23 @@
             "avgpool"
         ]
     },
+
+    "2e 13b": {
+        "model1_name": "2e",
+        "model2_name": "13b",
+        "CKA": [
+            [
+                0.20833076536655426
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+
     "1e 14a": {
         "model1_name": "1e",
         "model2_name": "14a",
@@ -2789,6 +2944,23 @@
             "encoder.ln"
         ]
     },
+
+    "2e 14a": {
+        "model1_name": "2e",
+        "model2_name": "14a",
+        "CKA": [
+            [
+                0.21119731664657593
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+
     "1e 14c": {
         "model1_name": "1e",
         "model2_name": "14c",
@@ -2804,6 +2976,23 @@
             "encoder.ln"
         ]
     },
+
+    "2e 14c": {
+        "model1_name": "2e",
+        "model2_name": "14c",
+        "CKA": [
+            [
+                0.2369994968175888
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+
     "1e 15a": {
         "model1_name": "1e",
         "model2_name": "15a",
@@ -2817,6 +3006,910 @@
         ],
         "model2_layers": [
             "encoder.ln"
+        ]
+    },
+
+    "2e 15a": {
+        "model1_name": "2e",
+        "model2_name": "15a",
+        "CKA": [
+            [
+                0.2678305208683014
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+
+    "2e 16c": {
+        "model1_name": "2e",
+        "model2_name": "16c",
+        "CKA": [
+            [
+                0.10724492371082306
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+    "2e 17a": {
+        "model1_name": "2e",
+        "model2_name": "17a",
+        "CKA": [
+            [
+                0.1328110247850418
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "classifier.0"
+        ]
+    },
+    "2e 18a": {
+        "model1_name": "2e",
+        "model2_name": "18a",
+        "CKA": [
+            [
+                0.20287108421325684
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "2e 19a": {
+        "model1_name": "2e",
+        "model2_name": "19a",
+        "CKA": [
+            [
+                0.15141384303569794
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "2e 20a": {
+        "model1_name": "2e",
+        "model2_name": "20a",
+        "CKA": [
+            [
+                0.23480571806430817
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "2e 21a": {
+        "model1_name": "2e",
+        "model2_name": "21a",
+        "CKA": [
+            [
+                0.2173161506652832
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "2e 22a": {
+        "model1_name": "2e",
+        "model2_name": "22a",
+        "CKA": [
+            [
+                0.1936042159795761
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "2e 23a": {
+        "model1_name": "2e",
+        "model2_name": "23a",
+        "CKA": [
+            [
+                0.203108549118042
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "2e 24a": {
+        "model1_name": "2e",
+        "model2_name": "24a",
+        "CKA": [
+            [
+                0.19440008699893951
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "3d 4d": {
+        "model1_name": "3d",
+        "model2_name": "4d",
+        "CKA": [
+            [
+                0.7271031737327576
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
+        ]
+    },
+    "3d 5d": {
+        "model1_name": "3d",
+        "model2_name": "5d",
+        "CKA": [
+            [
+                0.6261166334152222
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
+        ]
+    },
+    "3d 6d": {
+        "model1_name": "3d",
+        "model2_name": "6d",
+        "CKA": [
+            [
+                0.5965552926063538
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
+        ]
+    },
+    "3d 7d": {
+        "model1_name": "3d",
+        "model2_name": "7d",
+        "CKA": [
+            [
+                0.6104097366333008
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
+        ]
+    },
+    "3d 8d": {
+        "model1_name": "3d",
+        "model2_name": "8d",
+        "CKA": [
+            [
+                0.6053277850151062
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
+        ]
+    },
+    "3d 9a": {
+        "model1_name": "3d",
+        "model2_name": "9a",
+        "CKA": [
+            [
+                0.49264514446258545
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "3d 10a": {
+        "model1_name": "3d",
+        "model2_name": "10a",
+        "CKA": [
+            [
+                0.538702666759491
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "3d 11a": {
+        "model1_name": "3d",
+        "model2_name": "11a",
+        "CKA": [
+            [
+                0.5543783903121948
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "3d 12a": {
+        "model1_name": "3d",
+        "model2_name": "12a",
+        "CKA": [
+            [
+                0.5339115262031555
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "3d 12b": {
+        "model1_name": "3d",
+        "model2_name": "12b",
+        "CKA": [
+            [
+                0.48380231857299805
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "3d 12c": {
+        "model1_name": "3d",
+        "model2_name": "12c",
+        "CKA": [
+            [
+                0.6065777540206909
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "3d 13b": {
+        "model1_name": "3d",
+        "model2_name": "13b",
+        "CKA": [
+            [
+                0.5069088339805603
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "3d 14a": {
+        "model1_name": "3d",
+        "model2_name": "14a",
+        "CKA": [
+            [
+                0.4330154061317444
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+    "3d 14c": {
+        "model1_name": "3d",
+        "model2_name": "14c",
+        "CKA": [
+            [
+                0.48245495557785034
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+    "3d 15a": {
+        "model1_name": "3d",
+        "model2_name": "15a",
+        "CKA": [
+            [
+                0.49194568395614624
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+    "3d 16c": {
+        "model1_name": "3d",
+        "model2_name": "16c",
+        "CKA": [
+            [
+                0.21038362383842468
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+    "3d 17a": {
+        "model1_name": "3d",
+        "model2_name": "17a",
+        "CKA": [
+            [
+                0.48754242062568665
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "classifier.0"
+        ]
+    },
+    "3d 18a": {
+        "model1_name": "3d",
+        "model2_name": "18a",
+        "CKA": [
+            [
+                0.5235229730606079
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "3d 19a": {
+        "model1_name": "3d",
+        "model2_name": "19a",
+        "CKA": [
+            [
+                0.42677563428878784
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "3d 20a": {
+        "model1_name": "3d",
+        "model2_name": "20a",
+        "CKA": [
+            [
+                0.5561749935150146
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "3d 21a": {
+        "model1_name": "3d",
+        "model2_name": "21a",
+        "CKA": [
+            [
+                0.5593965649604797
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "3d 22a": {
+        "model1_name": "3d",
+        "model2_name": "22a",
+        "CKA": [
+            [
+                0.5140269994735718
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "3d 23a": {
+        "model1_name": "3d",
+        "model2_name": "23a",
+        "CKA": [
+            [
+                0.5445509552955627
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "3d 24a": {
+        "model1_name": "3d",
+        "model2_name": "24a",
+        "CKA": [
+            [
+                0.5141876935958862
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "4d 5d": {
+        "model1_name": "4d",
+        "model2_name": "5d",
+        "CKA": [
+            [
+                0.6572925448417664
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
+        ]
+    },
+    "4d 6d": {
+        "model1_name": "4d",
+        "model2_name": "6d",
+        "CKA": [
+            [
+                0.5767666101455688
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
+        ]
+    },
+    "4d 7d": {
+        "model1_name": "4d",
+        "model2_name": "7d",
+        "CKA": [
+            [
+                0.5843809843063354
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
+        ]
+    },
+    "5d 9a": {
+        "model1_name": "5d",
+        "model2_name": "9a",
+        "CKA": [
+            [
+                0.4086754322052002
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "5d 10a": {
+        "model1_name": "5d",
+        "model2_name": "10a",
+        "CKA": [
+            [
+                0.44762182235717773
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "5d 11a": {
+        "model1_name": "5d",
+        "model2_name": "11a",
+        "CKA": [
+            [
+                0.463214635848999
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "5d 12a": {
+        "model1_name": "5d",
+        "model2_name": "12a",
+        "CKA": [
+            [
+                0.4574931561946869
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "5d 12b": {
+        "model1_name": "5d",
+        "model2_name": "12b",
+        "CKA": [
+            [
+                0.4163127839565277
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "5d 12c": {
+        "model1_name": "5d",
+        "model2_name": "12c",
+        "CKA": [
+            [
+                0.5277808308601379
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "5d 13b": {
+        "model1_name": "5d",
+        "model2_name": "13b",
+        "CKA": [
+            [
+                0.4417029023170471
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "5d 14a": {
+        "model1_name": "5d",
+        "model2_name": "14a",
+        "CKA": [
+            [
+                0.3562220335006714
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+    "5d 14c": {
+        "model1_name": "5d",
+        "model2_name": "14c",
+        "CKA": [
+            [
+                0.40233471989631653
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+    "5d 15a": {
+        "model1_name": "5d",
+        "model2_name": "15a",
+        "CKA": [
+            [
+                0.41986480355262756
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+
+    "1e 16c": {
+        "model1_name": "1e",
+        "model2_name": "16c",
+        "CKA": [
+            [
+                0.11785890907049179
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+    "1e 17a": {
+        "model1_name": "1e",
+        "model2_name": "17a",
+        "CKA": [
+            [
+                0.16079552471637726
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "classifier.0"
+        ]
+    },
+    "1e 18a": {
+        "model1_name": "1e",
+        "model2_name": "18a",
+        "CKA": [
+            [
+                0.24039731919765472
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "1e 19a": {
+        "model1_name": "1e",
+        "model2_name": "19a",
+        "CKA": [
+            [
+                0.17733927071094513
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "1e 20a": {
+        "model1_name": "1e",
+        "model2_name": "20a",
+        "CKA": [
+            [
+                0.2773135006427765
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "1e 21a": {
+        "model1_name": "1e",
+        "model2_name": "21a",
+        "CKA": [
+            [
+                0.25579482316970825
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "1e 22a": {
+        "model1_name": "1e",
+        "model2_name": "22a",
+        "CKA": [
+            [
+                0.23462535440921783
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "1e 23a": {
+        "model1_name": "1e",
+        "model2_name": "23a",
+        "CKA": [
+            [
+                0.23950761556625366
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "1e 24a": {
+        "model1_name": "1e",
+        "model2_name": "24a",
+        "CKA": [
+            [
+                0.23439757525920868
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "2e 3d": {
+        "model1_name": "2e",
+        "model2_name": "3d",
+        "CKA": [
+            [
+                0.18759232759475708
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
+        ]
+    },
+    "2e 4d": {
+        "model1_name": "2e",
+        "model2_name": "4d",
+        "CKA": [
+            [
+                0.16475535929203033
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
+        ]
+    },
+    "2e 5d": {
+        "model1_name": "2e",
+        "model2_name": "5d",
+        "CKA": [
+            [
+                0.15594391524791718
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
+        ]
+    },
+    "2e 6d": {
+        "model1_name": "2e",
+        "model2_name": "6d",
+        "CKA": [
+            [
+                0.1969902366399765
+
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
         ]
     }
 }
