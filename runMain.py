@@ -3,6 +3,7 @@ import sys
 from src import *
 from time import sleep
 from typing import TypedDict, Tuple
+from src.codifications import *
 
 def run_main_with_subprocess(args):
     """
@@ -185,8 +186,8 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = 4 #instances.index(('torchvision', 'convnext_tiny', 'IMAGENET1K_V1'))
-    snd_idx = 8 #instances.index(('torchvision', 'vit_h_14', 'IMAGENET1K_SWAG_E2E_V1'))
+    fst_idx = instances.index(codToInstace(5, 'd'))
+    snd_idx = instances.index(codToInstace(16, 'c'))
         
     start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (0, 8, 9)}
     

@@ -30,7 +30,7 @@ def getModelNumber():
     
     return model_number
 
-def getNumberModel():
+def getNumberModel(number=None):
     number_model = {
     1: 'facebook/dinov3-vitb16-pretrain-lvd1689m',
     2: 'facebook/dinov3-vitl16-pretrain-lvd1689m',
@@ -57,8 +57,11 @@ def getNumberModel():
     23: 'efficientnet_b4',
     24: 'efficientnet_b7'
     }
-    
-    return number_model
+
+    if number == None:
+        return number_model
+    else:
+        return number_model[number]
 
 def getTrainLetter():
     train_letter = {
@@ -71,7 +74,7 @@ def getTrainLetter():
     
     return train_letter
 
-def getLetterTrain():
+def getLetterTrain(letter=None):
     letter_train = {
         'a': "IMAGENET1K_V1",
         'b': "IMAGENET1K_V2",
@@ -79,8 +82,11 @@ def getLetterTrain():
         'd': "CLIP",
         'e': "DINOV3"
     }
-    
-    return letter_train
+
+    if letter == None:
+        return letter_train
+    else:
+        return letter_train[letter]
 
 def dtNameSubset(dt: Tuple[str, int] | List[Tuple[str, int]]):
     if isinstance(dt, tuple):
@@ -103,7 +109,7 @@ def getModelTrainStr(src, model, train):
         
     return f"{model_number[model]}{t}"
 
-def codToInstace(number, letter):
+def codToInstace(number: int, letter: chr):
     instances = getInstances()
     
     model = getNumberModel(number)
