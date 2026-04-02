@@ -18,4 +18,4 @@ if __name__ == "__main__":
         #heatMap(f'{csv_folder}/{dt}Data.csv', 'pearson', specific_value=(['dataset'], [f'{dt}({subset})']), show=False, save_path=f'{save_folder}/pearson/{dt}.png', codification=True)
         
         print(f"{dataset} - spearman")
-        heatMap(f'{csv_folder}/{dt}Data.csv', 'spearman', specific_value=(['dataset'], [f'{dt}({subset})']), show=False, save_path=f'{save_folder}/spearman/{dt}.png', codification=True)
+        heatMap(f'{csv_folder}/{dt}Data.csv', 'spearman', specific_value=(['dataset'], [f'{dt}({subset})']), save_path=f'{save_folder}/spearman/{dt}.png', codification=True, show=True)

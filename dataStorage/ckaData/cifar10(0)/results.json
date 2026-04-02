@@ -2623,5 +2623,200 @@
         "model2_layers": [
             "visual.ln_post"
         ]
+    },
+    "1e 6d": {
+        "model1_name": "1e",
+        "model2_name": "6d",
+        "CKA": [
+            [
+                0.23514150083065033
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
+        ]
+    },
+    "1e 7d": {
+        "model1_name": "1e",
+        "model2_name": "7d",
+        "CKA": [
+            [
+                0.2612308859825134
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
+        ]
+    },
+    "1e 8d": {
+        "model1_name": "1e",
+        "model2_name": "8d",
+        "CKA": [
+            [
+                0.25026506185531616
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "visual.ln_post"
+        ]
+    },
+    "1e 9a": {
+        "model1_name": "1e",
+        "model2_name": "9a",
+        "CKA": [
+            [
+                0.31530511379241943
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "1e 10a": {
+        "model1_name": "1e",
+        "model2_name": "10a",
+        "CKA": [
+            [
+                0.329335480928421
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "1e 11a": {
+        "model1_name": "1e",
+        "model2_name": "11a",
+        "CKA": [
+            [
+                0.30200111865997314
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "1e 12a": {
+        "model1_name": "1e",
+        "model2_name": "12a",
+        "CKA": [
+            [
+                0.3133948743343353
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "1e 12b": {
+        "model1_name": "1e",
+        "model2_name": "12b",
+        "CKA": [
+            [
+                0.24145303666591644
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "1e 12c": {
+        "model1_name": "1e",
+        "model2_name": "12c",
+        "CKA": [
+            [
+                0.25733739137649536
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "1e 13b": {
+        "model1_name": "1e",
+        "model2_name": "13b",
+        "CKA": [
+            [
+                0.2528124451637268
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "1e 14a": {
+        "model1_name": "1e",
+        "model2_name": "14a",
+        "CKA": [
+            [
+                0.24479873478412628
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+    "1e 14c": {
+        "model1_name": "1e",
+        "model2_name": "14c",
+        "CKA": [
+            [
+                0.27342426776885986
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+    "1e 15a": {
+        "model1_name": "1e",
+        "model2_name": "15a",
+        "CKA": [
+            [
+                0.3014600872993469
+            ]
+        ],
+        "model1_layers": [
+            "embeddings"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
     }
 }

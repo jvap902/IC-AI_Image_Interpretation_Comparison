@@ -57,11 +57,11 @@ def pltDendogram(dist_matrix, model_names, dataset, method='average'):
         Z,
         labels=model_names,
         leaf_rotation=45,
-        leaf_font_size=10,
+        leaf_font_size=12,
         color_threshold=None # Can be set to a float to color clusters at a specific depth
     )
     
-    plt.title(dataset, fontsize=16)
+    plt.title(dataset, fontsize=18)
     plt.ylabel("Distance = (1 - Pearson Correlation)/2")
     plt.xlabel("Models")
     plt.grid(axis='y', linestyle='--', alpha=0.7)

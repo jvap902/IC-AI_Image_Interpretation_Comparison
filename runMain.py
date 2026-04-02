@@ -186,7 +186,7 @@ if __name__ == "__main__":
             raise
         
     fst_idx = 0 #instances.index(('torchvision', 'convnext_tiny', 'IMAGENET1K_V1'))
-    snd_idx = fst_idx+2 #instances.index(('torchvision', 'swin_t', 'IMAGENET1K_V1'))
+    snd_idx = 5 #instances.index(('torchvision', 'swin_t', 'IMAGENET1K_V1'))
         
     start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (0, 8, 9)}
     

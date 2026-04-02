@@ -284,12 +284,13 @@ def heatMap(csv_path, correlation_type, specific_value: None | Tuple[list[str], 
     print(data.shape)
     plt.figure(figsize=(10, 8))
     
-    seaborn.heatmap(data, vmin=-0.5, vmax=1.0)
-    
-    plt.tight_layout()
-    if show: plt.show()
+    ax = seaborn.heatmap(data, vmin=-0.5, vmax=1.0)
 
+    ax.tick_params(axis='both', which='major', labelsize=14)
+    
+    plt.tight_layout(pad=0.8)
     if save_path != None: plt.savefig(save_path)
+    if show: plt.show()
 
 if __name__ == '__main__':
     pass

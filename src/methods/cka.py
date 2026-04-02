@@ -186,19 +186,21 @@ class modifiedCka(CKA):
                 
                 self.model1_features = {}
                 self.model2_features = {}
+                m1_dtype = next(self.model1.parameters()).dtype
+                m2_dtype = next(self.model2.parameters()).dtype
                 
                 tensor1 = self.getTensor(x1)
                 tensor2 = self.getTensor(x2)
                 
                 if hasattr(self.model1, 'visual'): #para suportar CLIP
                     # Move tensor to device and pass to the visual backbone only
-                    _ = self.model1.visual(tensor1.to(self.device).type(self.model1.dtype))
+                    _ = self.model1.visual(tensor1.to(self.device).type(m1_dtype))
                 else:
                     _ = self.model1(tensor1.to(self.device))
 
                 if hasattr(self.model2, 'visual'):
                     # Move tensor to device and pass to the visual backbone only
-                    _ = self.model2.visual(tensor2.to(self.device).type(self.model2.dtype))
+                    _ = self.model2.visual(tensor2.to(self.device).type(m2_dtype))
                 else:
                     _ = self.model2(tensor2.to(self.device))
                                 
