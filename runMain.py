@@ -186,8 +186,8 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = instances.index(codToInstace(5, 'd'))
-    snd_idx = instances.index(codToInstace(16, 'c'))
+    fst_idx = codToInstace(5, 'd')[0]
+    snd_idx = codToInstace(16, 'c')[0]
         
     start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (0, 8, 9)}
     
