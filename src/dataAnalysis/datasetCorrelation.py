@@ -95,7 +95,7 @@ def dtCorrelationHeatmaps(dic, metric):
         df.index = names
 
         #print(df)
-        plt.figure(figsize=(10, 8))
+        plt.figure(figsize=(4, 3))
             
         heatmap(df, vmin=-0.5, vmax=1.0)
         
@@ -239,7 +239,7 @@ def generalDatasetCorrelation(metric):
     
     plt.title(f"Correlação de {metric} entre datasets")
     plt.tight_layout()
-    plt.savefig(f"{output_folder}/{metric}.png")
+    plt.savefig(f"{output_folder}/{metric}.png", dpi=100)
     #plt.show()
     
     return df
@@ -314,8 +314,8 @@ def corrAccMSRR(mrss_csv=f"{output_folder}/mrss.csv"):
 
 
 if __name__ == "__main__":
-    metric=metrics[0]
+    metric=metrics[1]
     #MtoMDatasetCorrelation(metric)
-    #generalDatasetCorrelation(metric)
+    generalDatasetCorrelation(metric)
     #MRSS()
-    corrAccMSRR()
+    #corrAccMSRR()

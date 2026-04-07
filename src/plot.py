@@ -273,7 +273,7 @@ def dataFrameFromData(data, param='pearson', diagonal=1.0, codification=False):
 
     return dataFrame
             
-def heatMap(csv_path, correlation_type, specific_value: None | Tuple[list[str], list[str]] = None, show=True, save_path=None, codification=False):
+def heatMap(csv_path, correlation_type, specific_value: None | Tuple[list[str], list[str]] = None, save_path=None, show=True, codification=False, extension='png', dpi=100):
     
     if specific_value == None:
         data = paramDataFrameFromCsv(csv_path, correlation_type)
@@ -289,7 +289,7 @@ def heatMap(csv_path, correlation_type, specific_value: None | Tuple[list[str], 
     ax.tick_params(axis='both', which='major', labelsize=14)
     
     plt.tight_layout(pad=0.8)
-    if save_path != None: plt.savefig(save_path)
+    if save_path != None: plt.savefig(save_path, format=extension, dpi=dpi)
     if show: plt.show()
 
 if __name__ == '__main__':
