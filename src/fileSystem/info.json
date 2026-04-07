@@ -2,10 +2,6 @@
     "output_dir": "dataStorage",
     "dissimilarity_csv_path": "dataStorage/cosineDissimilarity.csv",
     "dissimilarity_folder": "dataStorage/dissimilarity_arrays",
-<<<<<<< HEAD
-    "fst_embedding_path": "./dataStorage/model_output/embedding/facebook-dinov3-vitb16-pretrain-lvd1689m_DEFAULT_huggingface_cifar10(0).pt",
-=======
-    "fst_embedding_path": "./dataStorage/model_output/embedding/ViT-L-14_DEFAULT_clip_cifar10(0).pt",
->>>>>>> 9e474869c215e6be4a4157f4dc57813ceb14ae6b
-    "snd_embedding_path": "./dataStorage/model_output/embedding/vit_h_14_IMAGENET1K_SWAG_E2E_V1_torchvision_cifar10(0).pt"
+    "fst_embedding_path": "./dataStorage/model_output/embedding/ViT-L-14_DEFAULT_open_clip_cifar10(0).pt",
+    "snd_embedding_path": "./dataStorage/model_output/embedding/maxvit_t_IMAGENET1K_V1_torchvision_cifar10(0).pt"
 }
