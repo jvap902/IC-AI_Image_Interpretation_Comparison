@@ -61,9 +61,11 @@ def pltDendrogram(dist_matrix, model_names, dataset, method='average', correlati
         color_threshold=None # Can be set to a float to color clusters at a specific depth
     )
     
-    plt.title(dataset, fontsize=18)
+    #plt.title(dataset, fontsize=18)
     plt.ylabel(f"Distance = (1 - Pearson {correlation})/2")
     plt.xlabel("Models")
+    plt.ylim(0.0, 0.5)
+    plt.yticks(np.arange(0.0, 0.5, 0.05))
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.tight_layout()
     plt.savefig(f"{save_folder}/{dataset}.{extension}", format=extension, dpi=dpi)
