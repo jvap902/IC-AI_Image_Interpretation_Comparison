@@ -109,7 +109,7 @@ def getModelTrainStr(src, model, train):
         
     return f"{model_number[model]}{t}"
 
-def codToInstace(number: int, letter: chr):
+def codToInstance(number: int, letter: chr):
     instances = getInstances()
     
     model = getNumberModel(number)
@@ -164,6 +164,9 @@ def getInstances():
     ]
 
     return instances
+
+def getCods():
+    return ["1e", "2e", "3d", "4d", "5d", "6d", "7d", "8d", "9a", "10a", "11a", "12a", "12b", "12c", "13b", "14a", "14c", "15a", "16c", "17a", "18a", "19a", "20a", "21a", "22a", "23a", "24a"]
 
 if __name__ == "__main__":
     instances = getInstances()

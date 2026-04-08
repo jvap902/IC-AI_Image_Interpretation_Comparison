@@ -72,8 +72,8 @@ def jsonCkaToDataFrame(json_path):
         m1 = [models[0][:-1], models[0][-1]]
         m2 = [models[1][:-1], models[1][-1]]
         
-        i, _ = codToInstace(m1[0], m1[1])
-        j, _ = codToInstace(m2[0], m2[1])
+        i, _ = codToInstance(m1[0], m1[1])
+        j, _ = codToInstance(m2[0], m2[1])
         
         matrix[i,j] = data_dic["CKA"]
         matrix[j,i] = data_dic["CKA"]

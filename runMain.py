@@ -157,10 +157,10 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = codToInstace(8, 'd')[0]
-    snd_idx = codToInstace(17, 'a')[0]+1
+    fst_idx = codToInstance(4, 'd')[0]
+    snd_idx = codToInstance(8, 'd')[0]
         
-    start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (0, 8, 9)}
+    start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (3, 5, 6)}
     
     run(instances, datasets, method, start_params)
     #revalidate(instances, datasets, method, start_params)
