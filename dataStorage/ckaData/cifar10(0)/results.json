@@ -4813,5 +4813,110 @@
         "model2_layers": [
             "classifier.0"
         ]
+    },
+    "8d 18a": {
+        "model1_name": "8d",
+        "model2_name": "18a",
+        "CKA": [
+            [
+                0.506524920463562
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "8d 19a": {
+        "model1_name": "8d",
+        "model2_name": "19a",
+        "CKA": [
+            [
+                0.4246100187301636
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "8d 20a": {
+        "model1_name": "8d",
+        "model2_name": "20a",
+        "CKA": [
+            [
+                0.5383239984512329
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "8d 21a": {
+        "model1_name": "8d",
+        "model2_name": "21a",
+        "CKA": [
+            [
+                0.531391978263855
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "8d 22a": {
+        "model1_name": "8d",
+        "model2_name": "22a",
+        "CKA": [
+            [
+                0.5099294781684875
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "8d 23a": {
+        "model1_name": "8d",
+        "model2_name": "23a",
+        "CKA": [
+            [
+                0.5439109206199646
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "8d 24a": {
+        "model1_name": "8d",
+        "model2_name": "24a",
+        "CKA": [
+            [
+                0.5036795139312744
+            ]
+        ],
+        "model1_layers": [
+            "visual.ln_post"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
     }
 }

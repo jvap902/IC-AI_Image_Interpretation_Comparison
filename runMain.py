@@ -140,37 +140,8 @@ def revalidate(instances, datasets, start_params: startParams):
 if __name__ == "__main__":
     # Capture all command-line arguments passed to this script, 
     # excluding the script name itself (sys.argv[0] is 'run_pipeline.py').
-    
-    instances = [
-        ('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
-        ('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT'),
-        ('clip', 'ViT-B/32', 'DEFAULT'),
-        ('clip', 'ViT-B/16', 'DEFAULT'),
-        ('clip', 'ViT-L/14', 'DEFAULT'),
-        ('open_clip', 'ViT-B-32-256', 'DEFAULT'),
-        ('open_clip', 'ViT-B-16', 'DEFAULT'),
-        ('open_clip', 'ViT-L-14', 'DEFAULT'),
-        ('torchvision', 'resnet18', 'IMAGENET1K_V1'),
-        ('torchvision', 'resnet50', 'IMAGENET1K_V1'),
-        ('torchvision', 'resnet152', 'IMAGENET1K_V1'),
-        ('torchvision', 'regnet_y_16gf', 'IMAGENET1K_V1'),
-        ('torchvision', 'regnet_y_16gf', 'IMAGENET1K_V2'),
-        ('torchvision', 'regnet_y_16gf', 'IMAGENET1K_SWAG_E2E_V1'),
-        ('torchvision', 'regnet_y_32gf', 'IMAGENET1K_V2'),
-        ('torchvision', 'vit_b_16', 'IMAGENET1K_V1'),
-        ('torchvision', 'vit_b_16', 'IMAGENET1K_SWAG_E2E_V1'),
-        ('torchvision', 'vit_l_16', 'IMAGENET1K_V1'),
-        ('torchvision', 'vit_h_14', 'IMAGENET1K_SWAG_E2E_V1'),
-        ('torchvision', 'maxvit_t', 'IMAGENET1K_V1'),
-        ('torchvision', 'convnext_tiny', 'IMAGENET1K_V1'),
-        ('torchvision', 'convnext_base', 'IMAGENET1K_V1'),
-        ('torchvision', 'swin_t', 'IMAGENET1K_V1'),
-        ('torchvision', 'swin_v2_t', 'IMAGENET1K_V1'),
-        ('torchvision', 'efficientnet_b0', 'IMAGENET1K_V1'),
-        ('torchvision', 'efficientnet_b4', 'IMAGENET1K_V1'),
-        ('torchvision', 'efficientnet_b7', 'IMAGENET1K_V1')
-        
-    ]
+
+    instances = getInstances()
     
     datasets = [('timm/mini-imagenet', 0), ('imagenet-sketch', 1), ('cifar10', 0), ('cifar100', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
     datasets = [datasets[1], datasets[2], datasets[4], datasets[5]]
@@ -186,10 +157,41 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = codToInstace(5, 'd')[0]
-    snd_idx = codToInstace(16, 'c')[0]
+    fst_idx = codToInstace(8, 'd')[0]
+    snd_idx = codToInstace(17, 'a')[0]+1
         
     start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (0, 8, 9)}
     
     run(instances, datasets, method, start_params)
     #revalidate(instances, datasets, method, start_params)
+
+
+'''
+    ('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
+    ('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT'),
+    ('clip', 'ViT-B/32', 'DEFAULT'),
+    ('clip', 'ViT-B/16', 'DEFAULT'),
+    ('clip', 'ViT-L/14', 'DEFAULT'),
+    ('open_clip', 'ViT-B-32-256', 'DEFAULT'),
+    ('open_clip', 'ViT-B-16', 'DEFAULT'),
+    ('open_clip', 'ViT-L-14', 'DEFAULT'),
+    ('torchvision', 'resnet18', 'IMAGENET1K_V1'),
+    ('torchvision', 'resnet50', 'IMAGENET1K_V1'),
+    ('torchvision', 'resnet152', 'IMAGENET1K_V1'),
+    ('torchvision', 'regnet_y_16gf', 'IMAGENET1K_V1'),
+    ('torchvision', 'regnet_y_16gf', 'IMAGENET1K_V2'),
+    ('torchvision', 'regnet_y_16gf', 'IMAGENET1K_SWAG_E2E_V1'),
+    ('torchvision', 'regnet_y_32gf', 'IMAGENET1K_V2'),
+    ('torchvision', 'vit_b_16', 'IMAGENET1K_V1'),
+    ('torchvision', 'vit_b_16', 'IMAGENET1K_SWAG_E2E_V1'),
+    ('torchvision', 'vit_l_16', 'IMAGENET1K_V1'),
+    ('torchvision', 'vit_h_14', 'IMAGENET1K_SWAG_E2E_V1'),
+    ('torchvision', 'maxvit_t', 'IMAGENET1K_V1'),
+    ('torchvision', 'convnext_tiny', 'IMAGENET1K_V1'),
+    ('torchvision', 'convnext_base', 'IMAGENET1K_V1'),
+    ('torchvision', 'swin_t', 'IMAGENET1K_V1'),
+    ('torchvision', 'swin_v2_t', 'IMAGENET1K_V1'),
+    ('torchvision', 'efficientnet_b0', 'IMAGENET1K_V1'),
+    ('torchvision', 'efficientnet_b4', 'IMAGENET1K_V1'),
+    ('torchvision', 'efficientnet_b7', 'IMAGENET1K_V1')
+'''
