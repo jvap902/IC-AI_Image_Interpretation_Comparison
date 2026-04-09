@@ -36,9 +36,6 @@ def ckaHeatmap(json_path, save_path=None, show=True):
     if save_path != None: plt.savefig(save_path, dpi=100)
     if show: plt.show()
         
-        
-    
-    
 
 if __name__ == "__main__":
     
@@ -47,7 +44,7 @@ if __name__ == "__main__":
     datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
     
     for (dt, subset) in datasets[1:2]: #pois estou fazendo apenas o cifar10 por enquanto
-        dt_dir = f"{dt.replace('/', '-')}({subset})"
+        dt_dir = dtNameSubset((dt, subset))
         
         json_path = f"{data_folder}/{dt_dir}/results.json"
     

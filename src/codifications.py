@@ -168,6 +168,23 @@ def getInstances():
 def getCods():
     return ["1e", "2e", "3d", "4d", "5d", "6d", "7d", "8d", "9a", "10a", "11a", "12a", "12b", "12c", "13b", "14a", "14c", "15a", "16c", "17a", "18a", "19a", "20a", "21a", "22a", "23a", "24a"]
 
+def dtPaperName(dt: Tuple[str, int] | List[Tuple[str, int]]):
+    
+    name_map = {
+        "ILSVRC/imagenet-1k": "ImageNet-1K",
+        "fgvc-aircraft": "FGVC-Aircraft",
+        "cifar10": "CIFAR-10",
+        "imagenet-sketch": "ImageNet-Sketch"
+    }
+    
+    if isinstance(dt, tuple):
+        name, subset = dt
+        return name_map[name]
+    
+    # Otherwise, treat it as a list of tuples
+    return [name_map[n] for (n, s) in dt]
+
+
 if __name__ == "__main__":
     instances = getInstances()
 

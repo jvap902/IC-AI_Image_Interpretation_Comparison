@@ -222,7 +222,7 @@ def generalDatasetCorrelation(metric):
 
     df = pd.DataFrame(data)
 
-    names = dtNameSubset(datasets)
+    names = dtPaperName(datasets)
 
     df.columns = names
     df.index = names
@@ -235,11 +235,12 @@ def generalDatasetCorrelation(metric):
     
     plt.figure(figsize=(10, 8))
     
-    heatmap(df, vmin=-0.5, vmax=1.0)
+    ax = heatmap(df, vmin=-0.5, vmax=1.0)
     
     plt.title(f"Correlação de {metric} entre datasets")
     plt.tight_layout()
-    plt.savefig(f"{output_folder}/{metric}.png", dpi=100)
+    ax.tick_params(axis='both', which='major', labelsize=14)
+    plt.savefig(f"{output_folder}/{metric}.eps", format='eps', dpi=100)
     #plt.show()
     
     return df
@@ -314,7 +315,7 @@ def corrAccMSRR(mrss_csv=f"{output_folder}/mrss.csv"):
 
 
 if __name__ == "__main__":
-    metric=metrics[1]
+    metric=metrics[0]
     #MtoMDatasetCorrelation(metric)
     generalDatasetCorrelation(metric)
     #MRSS()
