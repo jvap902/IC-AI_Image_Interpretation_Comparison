@@ -16,88 +16,14 @@ Tarefas:
 
 
 
+Investigando instabilidade regnet_y_16gf(12, c especificamente), vit_h_14(16), efficientnet_b4(23) e efficientnet_b7(24)
+    12, 23 e 24 utilizam NAS, poderia ser um motivo?
 
-O que mencionar no artigo:
+    12c especificamente, treinameto IMAGENET1K_SWAG_E2E_V1 -> mesmo treinamento de 16
+        todos modelos com mais de um treinamento sendo um deles o "c", o "c" é o menor
+        vocabulário maior -> PyTorch: "These weights are learnt via transfer learning by end-to-end fine-tuning the original SWAG weights on ImageNet-1K data"
 
+    efficientnets tem falta de redundancia por conta da otimização?
+        precision overtunning
 
-Explicação geral
-
-Pipeline:
-Extrair embeddings (eval mode, preprocess correto)
-P1: Similaridade entre embeddings → Cosine
-P2: RDM = 1 - cosine
-P3: RSA entre modelos → Spearman (principal)
-Gerar matriz Model × Model por dataset
-Análises comparativas
-
-Explicar os dataset e modelos e justificar a escolha
-
-Metodologia
-    Pipeline principal:
-        Seleção de modelos -> carregamento dos 2 modelos a serem comparados -> carregamento dos datasets com transformações específicas dos modelos
-        -> validação (treinamento em split específico e validação em outro) -> extração de embeddings no split de validação
-        -> Cálculo dissimilaridades de cosseno (1 - cos) -> Cálculo de correlações de pearson e spearman
-
-    Detalhes carregamento dos datasets:
-        as imagens escolhidas são duplicadas para que cada modelo tenha acesso a um conjunto e cada um destes conjuntos passam pelas transformações de imagens que o modelo 
-        espera. Os datasets podem ser coletados de diferentes fontes: huggingface (imagenet-1k), pytorch(cifar10 e cifar100) e url(fgvc-aircraft e imagenet-sketch).
-
-        Para cada dataset são escolhidas 20 imagens aleatórias de 100 classes diferentes, depois de selecionadas os seus indíces são salvos em um arquivo .csv para ser possível
-        carregar as mesmas imagens para todos modelos que estão sendo comparados, isso tanto para o dataset de treinamento quanto o de validação.
-
-    Detalhes carregamento dos modelos:
-        os modelos podem ser carregados de 4 fontes diferentes: torchvision, huggingface, clip e open_clip. Cada uma das fontes exige uma integração um pouco diferente, mas ao
-        final do carregamento os modelos são operados de formas semelhantes.
-
-    Detalhes extração de embeddings:
-        todos modelos são colocados em modo eval(), utilizando torch.no_grad(). Diferentes modelos/fontes podem exigir diferentes formas de extrair as embeddings, para isso foram
-        feitas diferentes funções para lidar com cada um dos comportamentos. Para uma comparação mais padronizada todas embeddings passam por um flatten e norm no final.
-
-        Para modelos torchvision, se seleciona a saída da camada específica desejada com base no seu nome (utilizando a função torch.create_feature_extractor),
-        para conseguir os nomes e conteúdos das camadas, os modelos foram carregados com a biblioteca pytorch e depois visualizado o atributo "named_children", com isso para 
-        cada modelo torchvision foi selecionada a camada mais adequada.
-
-        Já os modelos clip e open_clip têm estruturas semelhantes e podem utilizar as mesmas funções para extração de embeddings. A própria API destas fontes da acesso à função
-        "encode_image()" que por sua vez retorna as prórpias embeddings.
-
-        Por fim, os modelos baseados na arquitetura dinov3 funcionam de maneira um pouco diferente, a documentação mostra exemplos com imgens em formatos diferentes do utilizado
-        no código para os outros modelos, então antes de utilizar as imagens nos modelos dino elas passam por uma pequena adaptação, após isso basta passar a imagem para o modelo
-        e coletar "data.pooler_output".
-
-
-Funcionalidades não mencionadas:
-    Para otimizar o tempo de teste e avaliação dos modelos, foram salvas as informações de cada combinação entre modelo, peso e conjunto de imagens, assim ao invés de se calcular
-    tudo a cada comparação, caso algum modelo que está sendo utilizado já tenha suas embeddings e dissimilaridade de cosseno calculadas, é pulada a etapa de extração de informações
-    deste modelo e se utiliza diretamente o que já está salvo, para assim poupar tempo. O mesmo se faz para a validação.
-
-    É possível criar subsets com classes específicas utilizando flags na execução do programa e um arquivo contendo os wnids das classes desejadas. Além disso, pode-se criar um
-    novo subset com as mesmas classes de outro previamente criado.
-
-
-Datasets selecionados:
-    timm/mini-imagenet, imagenet-1k, imagenet-sketch, fgvc-aircraft, cifar10, cifar100
-
-    Motivos para seleção desses:
-        imagenet-1k: é o dataset padrão de treinamento para muitos modelos, é comum e diverso, serve como boa baseline.
-            1000 classes, 1,281,167 training images, 50,000 validation images and 100,000 test images. https://www.image-net.org/download.php, https://huggingface.co/datasets/ILSVRC/imagenet-1k
-
-        timm/mini-imagenet: foi utilizado como uma alternativa menor e de mais fácil carregamento do imagenet-1k, é um subconjunto de 100 das 1000 classes do imagenet-1k
-            utilizando as imagens originais do dataset maior.
-            50000 samples from ImageNet-1k train split, 10000 samples from ImageNet-1k train split, 5000 samples from ImageNet-1k validation split (all 50 samples per class), 
-            https://huggingface.co/datasets/timm/mini-imagenet
-
-        imagenet-sketch: ainda é diverso, mas é mais desafiador que o imagenet-1k
-            ImageNet-Sketch data set consists of 50000 images, 50 images for each of the 1000 ImageNet classes. https://www.kaggle.com/datasets/wanghaohan/imagenetsketch
-
-        fgvc-aircraft: um dataset que avalia classificação de imagens semelhantes umas as outras
-            The dataset contains 10,000 images of aircraft, The data is split into 3334 training images, 3333 validation and 3333 testing images, https://www.kaggle.com/datasets/seryouxblaster764/fgvc-aircraft
-
-        cifar10 e cifar100: datasets comuns e relativamente diversos, mas diferentes dos datasets imagenet, pode ilustrar alguma diferença de correlação não aparente dos imagenet
-            The CIFAR-10 dataset consists of 60000 32x32 colour images in 10 classes, with 6000 images per class. There are 50000 training images and 10000 test images. https://www.cs.toronto.edu/~kriz/cifar.html
-            cifar100 just like the CIFAR-10, except it has 100 classes containing 600 images each. There are 500 training images and 100 testing images per class. The 100 classes in the CIFAR-100 are grouped into 20 superclasses.
-
-    
-    Para ter uma comparação mais direta entre resultados de diferentes datasets, foi feita uma seleção de classes para datasets imagenet e rodados testes com estas classes 
-    específicas. Os nomes dos subsets do imagenet-sketch e imagenet-1k que compartilham as mesmas classes são imagenet-sketch(1) e ILVRC-imagenet-1k(0), ambos subsets contém 
-    classes que tem imagens de mais fácil desenho e identifcação com a intenção de comparar as diferenças no comportamento dos modelos com esses dois datasets em situações 
-    semelhantes.
+    CLIP muito estável
