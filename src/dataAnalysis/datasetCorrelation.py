@@ -1,7 +1,7 @@
 from ..plot import *
 from typing import List,Tuple
 from src.codifications import *
-from seaborn import heatmap
+from seaborn import heatmap, barplot, color_palette
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import pearsonr, spearmanr
@@ -259,7 +259,23 @@ def modelAccAvg(model_val_df):
     return np.array(accs).mean()
 
 
-def MRSS(output_csv_path=f"{output_folder}/mrss.csv", validation_csv_path=f"dataStorage/validation_results.csv"):
+def MRSSBarChart(df, bar_param, extension='png', dpi=100):
+    
+    drop_metric = [m for m in metrics if m != bar_param]
+    drop_metric = drop_metric[0] #funciona pois consideramos apenas 2 métricas
+    
+    df['Model'] = [getModelTrainStr(row["model_source"], row["model_name"], row["model_weights"]) for index, row in df.iterrows()]
+    
+    plt.figure(figsize=(10, 5))
+    ax = barplot(df, x='Model', y=f'{bar_param}_avg', hue=f'{bar_param}_avg', legend=False, palette=color_palette("flare_r", as_cmap=True), saturation=1.0)
+    plt.yticks(np.arange(0.0, 1.0, 0.1))
+    ax.set(ylabel="Model's results average dataset correlation")
+    plt.tight_layout()
+    plt.savefig(f"{output_folder}/model-wise.{extension}", format=extension, dpi=dpi)
+    plt.show()
+    
+
+def MRSS(output_csv_path=f"{output_folder}/mrss.csv", validation_csv_path=f"dataStorage/validation_results.csv", bar_param='pearson', extension='png'):
     
     df = pd.DataFrame(columns=["model_source", "model_name", "model_weights", "pearson_avg", "pearson_median", "spearman_avg", "spearman_median", "acc_avg"])
     
@@ -293,7 +309,11 @@ def MRSS(output_csv_path=f"{output_folder}/mrss.csv", validation_csv_path=f"data
         
     df.set_index(['model_source', 'model_name', 'model_weights'])
     
-    df.to_csv(output_csv_path, mode='w', header=True, index=False, index_label="modelo")
+    print(df)
+    
+    #df.to_csv(output_csv_path, mode='w', header=True, index=False, index_label="modelo")
+    
+    MRSSBarChart(df, bar_param, extension=extension)
     
 
 def corrAccMSRR(mrss_csv=f"{output_folder}/mrss.csv"):
@@ -317,6 +337,6 @@ def corrAccMSRR(mrss_csv=f"{output_folder}/mrss.csv"):
 if __name__ == "__main__":
     metric=metrics[0]
     #MtoMDatasetCorrelation(metric)
-    generalDatasetCorrelation(metric)
-    #MRSS()
+    #generalDatasetCorrelation(metric)
+    MRSS(extension='eps')
     #corrAccMSRR()

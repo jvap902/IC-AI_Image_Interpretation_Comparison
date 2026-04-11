@@ -43,7 +43,7 @@ def distMatirxModelNames(df):
     
     return dist_matrix, model_names
 
-def pltDendrogram(dist_matrix, model_names, dataset, method='average', correlation='pearson', extension='png', dpi=100):
+def pltDendrogram(dist_matrix, model_names, dataset, method='average', correlation='pearson', extension='png', dpi=100, show=True):
     save_folder = f'dataStorage/processedResults/dendrograms/{method}'
     
     condensed_dist = squareform(dist_matrix)
@@ -62,14 +62,14 @@ def pltDendrogram(dist_matrix, model_names, dataset, method='average', correlati
     )
     
     #plt.title(dataset, fontsize=18)
-    plt.ylabel(f"Distance = (1 - Pearson {correlation})/2")
+    plt.ylabel(f"Distance = (1 - Pearson {correlation})/2", fontsize=14)
     plt.xlabel("Models")
     plt.ylim(0.0, 0.5)
     plt.yticks(np.arange(0.0, 0.5, 0.05))
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.tight_layout()
     plt.savefig(f"{save_folder}/{dataset}.{extension}", format=extension, dpi=dpi)
-    plt.show()
+    if show: plt.show()
     
     
     pearson, r = pearsonr(coph, condensed_dist)
@@ -100,5 +100,5 @@ if __name__ == "__main__":
         print(df)
 
         dist_matrix, model_names = distMatirxModelNames(df)
-        pltDendrogram(dist_matrix, model_names, f"{dt}({subset})", correlation=correlation, method='average')
+        pltDendrogram(dist_matrix, model_names, f"{dt}({subset})", correlation=correlation, method='average', extension='eps', show=True)
 

@@ -9,13 +9,14 @@ if __name__ == "__main__":
 
     for (dataset, subset) in datasets:
 
+        extension = 'eps'
         
         dt = dataset.replace('/', '-')
         
         print(f"\n--- {dt} ---")
         
         print(f"{dataset} - pearson")
-        heatMap(f'{csv_folder}/{dt}Data.csv', 'pearson', specific_value=(['dataset'], [f'{dt}({subset})']), save_path=f'{save_folder}/pearson/{dt}.png', show=False, codification=True, extension='png')
+        heatMap(f'{csv_folder}/{dt}Data.csv', 'pearson', specific_value=(['dataset'], [f'{dt}({subset})']), save_path=f'{save_folder}/pearson/{dt}.{extension}', show=False, codification=True, extension=extension)
         
-        print(f"{dataset} - spearman")
-        heatMap(f'{csv_folder}/{dt}Data.csv', 'spearman', specific_value=(['dataset'], [f'{dt}({subset})']), save_path=f'{save_folder}/spearman/{dt}.png', show=False, codification=True, extension='png')
+        #print(f"{dataset} - spearman")
+        #heatMap(f'{csv_folder}/{dt}Data.csv', 'spearman', specific_value=(['dataset'], [f'{dt}({subset})']), save_path=f'{save_folder}/spearman/{dt}.{extension}', show=False, codification=True, extension=extension)

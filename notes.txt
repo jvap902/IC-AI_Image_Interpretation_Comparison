@@ -26,4 +26,4 @@ Investigando instabilidade regnet_y_16gf(12, c especificamente), vit_h_14(16), e
     efficientnets tem falta de redundancia por conta da otimização?
         precision overtunning
 
-    CLIP muito estável
+    CLIP e OpenCLIP muito estável -> creio que o que quer que façam de diferente nesse treinamento tenha esse efeito, DINO que é treinado em ainda mais dados (17 bilhões) não é tão consistente
