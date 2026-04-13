@@ -3,8 +3,10 @@ import torch
 import numpy as np
 import math
 from scipy.stats import pearsonr, spearmanr
+
+from src.fileManagement import csvUtils
 from . import similarityUtils
-from src import csvUtils, memoryManagement
+from src import memoryManagement
 from ..model.modelClass import Model
 from ..dataset.datasetClass import DtInfo
 import os

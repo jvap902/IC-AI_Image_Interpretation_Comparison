@@ -1,9 +1,9 @@
 import csv
 import numpy as np
-from src.csvUtils import *
+from src.fileManagement.csvUtils import *
 from pandas import DataFrame
 from src.codifications import getModelTrainStr
-from ...fileSystem.fileSystem import getJsonInfo
+from ...fileManagement.jsonUtils import getJsonInfo
 
 datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)] #apenas datasets utilizados no artigo
 

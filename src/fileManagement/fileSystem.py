@@ -2,8 +2,6 @@ import os
 import json
 from typing import Dict
 
-default_json_path = 'src/fileSystem/info.json'
-
 def makeFileSystem(outputFile):
     
     # --- Folders ---
@@ -54,31 +52,6 @@ def createFile(file_path, content):
         print("Arquivo não existente, criando novo")
         with open(file_path, mode="a", newline='', encoding='utf-8') as f:
             f.write(content)
-
-def updateJson(fields, values, json_path=default_json_path):
-    with open(json_path, "r+") as f:
-        json_data = json.load(f)
-        
-        for idx, field in enumerate(fields):
-            json_data[field] = values[idx]
-        
-        f.seek(0)
-        json.dump(json_data, f, indent=4)
-        f.truncate()
-
-def getJsonInfo(fields=[], json_path=default_json_path):
-    with open(json_path, "r") as f:
-        json_data = json.load(f)
-    
-    if len(fields) == 0:
-        return json_data
-    
-    data = []
-
-    for field in fields:
-        data.append(json_data[field])
-        
-    return data
 
 if __name__ == '__main__':
     pass

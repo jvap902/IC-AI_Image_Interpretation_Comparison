@@ -1,11 +1,11 @@
-from ...csvUtils import *
+from ...fileManagement.csvUtils import *
 from typing import List,Tuple
 from src.codifications import *
 from seaborn import heatmap, barplot, color_palette
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import pearsonr, spearmanr
-from ...fileSystem.fileSystem import getJsonInfo
+from ...fileManagement.jsonUtils import getJsonInfo
 import json
 
 results_folder = getJsonInfo()["rsaData"]

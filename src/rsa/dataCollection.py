@@ -1,7 +1,7 @@
 import torch
-from ..csvUtils import *
+from ..fileManagement.csvUtils import *
 from ..extraction.featureExtraction import getFeatureTensors
-from fileSystem.defaultPaths import embeddingSavePath
+from ..fileManagement.defaultPaths import embeddingSavePath
 from tqdm.auto import tqdm
 from ..model.modelClass import Model
 from ..dataset.datasetClass import DtInfo

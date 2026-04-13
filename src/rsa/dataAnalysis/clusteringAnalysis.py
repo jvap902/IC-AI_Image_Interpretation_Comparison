@@ -1,4 +1,4 @@
-from src.csvUtils import *
+from src.fileManagement.csvUtils import *
 from ...codifications import *
 import numpy as np
 import matplotlib.pyplot as plt
@@ -6,7 +6,7 @@ from scipy.cluster.hierarchy import dendrogram, linkage, cophenet
 from scipy.spatial.distance import squareform
 from scipy.stats import pearsonr, spearmanr
 import json
-from ...fileSystem.fileSystem import getJsonInfo
+from ...fileManagement.jsonUtils import getJsonInfo
 import os
 
 datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)] #apenas datasets utilizados no artigo

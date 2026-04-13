@@ -3,7 +3,7 @@ from .classUtils import getExtractor, get_attention_layers, get_conv_layers, is_
 import os
 from src.dataset import loadDataset
 from src.dataset.datasetUtils import getClasses
-from src import csvUtils
+from src.fileManagement import csvUtils
 from torch.utils.data import DataLoader
 
 class Model:

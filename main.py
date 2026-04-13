@@ -124,7 +124,7 @@ if __name__ == "__main__":
     # --- Salvando informações da execução ---
     fields = ["output_dir", "dissimilarity_folder", "dissimilarity_csv_path", "fst_embedding_path", "snd_embedding_path"]
     values = [output_dir, dissimilarity_folder, dissimilarity_csv_path, fst_embedding_path, snd_embedding_path]
-    fileSystem.updateJson(fields, values)
+    jsonUtils.updateJson(fields, values)
 
     match args.method:
         case "rsa":

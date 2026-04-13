@@ -1,4 +1,4 @@
-from ..csvUtils import *
+from ..fileManagement.csvUtils import *
 from .loadDataset import *
 
 class DtInfo:

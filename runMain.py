@@ -147,7 +147,7 @@ if __name__ == "__main__":
     datasets = [datasets[1], datasets[2], datasets[4], datasets[5]]
     datasets = [datasets[1]]
     
-    method_name = 'cka'
+    method_name = 'rsa'
     
     match method_name:
         case 'rsa':
@@ -160,7 +160,7 @@ if __name__ == "__main__":
     fst_idx = codToInstance(4, 'd')[0]
     snd_idx = codToInstance(8, 'd')[0]
         
-    start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (3, 5, 6)}
+    start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (0, 5, 6)}
     
     run(instances, datasets, method, start_params)
     #revalidate(instances, datasets, method, start_params)

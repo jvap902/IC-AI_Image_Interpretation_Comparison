@@ -1,5 +1,5 @@
-from src.csvUtils import *
-from src.fileSystem.fileSystem import getJsonInfo
+from src.fileManagement.csvUtils import *
+from src.fileManagement.jsonUtils import getJsonInfo
 
 def heatMap(csv_path, correlation_type, specific_value: None | Tuple[list[str], list[str]] = None, save_path=None, show=True, codification=False, extension='png', dpi=100):
     

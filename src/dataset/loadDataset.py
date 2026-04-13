@@ -5,7 +5,7 @@ import os
 from . import auxDatasetClasses, datasetUtils
 from datasets import load_dataset, load_from_disk
 from huggingface_hub import login
-from .. import csvUtils
+from ..fileManagement import csvUtils
 import random
 
 def loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir, modelc):

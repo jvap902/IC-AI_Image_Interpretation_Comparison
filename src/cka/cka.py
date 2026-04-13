@@ -4,7 +4,8 @@ from tqdm import tqdm
 from warnings import warn
 import os
 from ..codifications import *
-from ..fileSystem.fileSystem import getJsonInfo, updateJson, createFile
+from ..fileManagement.fileSystem import createFile
+from ..fileManagement.jsonUtils import getJsonInfo, updateJson
 import numpy as np
 import pandas as pd
 from itertools import groupby
