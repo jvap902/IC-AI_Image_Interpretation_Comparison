@@ -7,11 +7,14 @@ from .model import modelCreation
 from .model import modelClass
 from .model import classUtils
 from .fileSystem import fileSystem
-from .methods import *
+from .fileSystem import defaultPaths
+from .rsa import dataCollection
+from .rsa import rsa
+from .rsa.dataAnalysis import *
+from .cka import cka
+from .cka.dataAnalysis import *
 from . import plot
 from . import memoryManagement
-from . import dataCollection
 from . import codifications
-from .dataAnalysis import *
 
-__all__ = ["extractionTraining", "featureExtraction", "modelCreation", "plot", "loadDataset", "similarityAnalysis", "datasetUtils", "memoryManagement", "dataCollection", "fileSystem", "modelClass", "classUtils", "rsa", "cka", "dataset_ipc", "makeHeatmaps", "correlationAnalysis", "clusteringAnalysis", "codifications"]
+__all__ = ["extractionTraining", "featureExtraction", "modelCreation", "plot", "loadDataset", "similarityAnalysis", "datasetUtils", "memoryManagement", "dataCollection", "fileSystem", "modelClass", "classUtils", "rsa", "cka", "dataset_ipc", "rsaHeatmaps", "correlationAnalysis", "clusteringAnalysis", "codifications", "defaultPaths", "ckaHeatmaps"]

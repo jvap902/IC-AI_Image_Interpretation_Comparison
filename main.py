@@ -36,7 +36,6 @@ parser.add_argument("-met", "--method", type=str, required=False, default="rsa",
 
 args = parser.parse_args()
 
-
 if __name__ == "__main__":
     
     fileSystem.makeFileSystem(args.output_file)
@@ -119,8 +118,8 @@ if __name__ == "__main__":
         print(f"\n{first_model_name} Validation Accuracy: {fst_modelc.acc:.4f}")
         print(f"\n{second_model_name} Validation Accuracy: {snd_modelc.acc:.4f}")
     
-    fst_embedding_path = dataCollection.getSavePath(fst_modelc, dt_info, True)
-    snd_embedding_path = dataCollection.getSavePath(snd_modelc, dt_info, True)
+    fst_embedding_path = defaultPaths.embeddingSavePath(fst_modelc, dt_info, True)
+    snd_embedding_path = defaultPaths.embeddingSavePath(snd_modelc, dt_info, True)
     
     # --- Salvando informações da execução ---
     fields = ["output_dir", "dissimilarity_folder", "dissimilarity_csv_path", "fst_embedding_path", "snd_embedding_path"]

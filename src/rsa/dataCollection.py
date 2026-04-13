@@ -1,23 +1,17 @@
 import torch
-from .plot import *
-from .extraction.featureExtraction import getFeatureTensors
+from ..plot import *
+from ..extraction.featureExtraction import getFeatureTensors
+from fileSystem.defaultPaths import embeddingSavePath
 from tqdm.auto import tqdm
-from .model.modelClass import Model
-from .dataset.datasetClass import DtInfo
-from .dataset.datasetUtils import getClasses
+from ..model.modelClass import Model
+from ..dataset.datasetClass import DtInfo
+from ..dataset.datasetUtils import getClasses
 import clip
 import open_clip
 
 modelOutputCsv_path = './dataStorage/model_output/modelOutput.csv'
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-
-def getSavePath(modelc, dt_info, embedding : bool):
-    m_name = modelc.name.replace('/', '-')
-    if embedding:
-        return f'./dataStorage/model_output/embedding/{m_name}_{modelc.weights}_{modelc.source}_{dt_info.name_w_subset}.pt'
-    else:
-        return f'./dataStorage/model_output/std_output/{m_name}_{modelc.weights}_{modelc.source}_{dt_info.name_w_subset}.pt'
 
 def stdOutputExtractor(modelc : Model, inputs):
     match modelc.source:
@@ -101,7 +95,7 @@ def getModelStdOutput(modelc : Model, dt_info):
     
     stdOutput = getStdOutputTensors(modelc, modelc.val_loader)
     
-    torch.save(stdOutput, getSavePath(modelc, dt_info, False))    
+    torch.save(stdOutput, embeddingSavePath(modelc, dt_info, False))    
     
     del stdOutput
     
@@ -111,13 +105,13 @@ def getModelEmbeddings(modelc : Model, dt_info):
     
     data = getFeatureTensors(modelc.val_loader, modelc)
     
-    torch.save(data, getSavePath(modelc, dt_info, True))
+    torch.save(data, embeddingSavePath(modelc, dt_info, True))
     
     del data
     
 def writeModelOutputLine(modelc : Model, dt_info):
-    std_output_path = getSavePath(modelc, dt_info, False)
-    embedding_path = getSavePath(modelc, dt_info, True)
+    std_output_path = embeddingSavePath(modelc, dt_info, False)
+    embedding_path = embeddingSavePath(modelc, dt_info, True)
     
     data = [modelc.name, modelc.weights, modelc.source, dt_info.name_w_subset, std_output_path, embedding_path]
     

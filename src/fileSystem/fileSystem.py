@@ -13,6 +13,8 @@ def makeFileSystem(outputFile):
     ds = "dataStorage"
     os.makedirs(ds, exist_ok=True) # Ensure dataStorage folder exists
 
+    os.makedirs(ds+"processedResults", exist_ok=True)
+
     res = ds+"/results"
     os.makedirs(res, exist_ok=True)
     

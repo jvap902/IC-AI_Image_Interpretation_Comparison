@@ -1,11 +1,11 @@
-from ..plot import *
+from ...plot import *
 from typing import List,Tuple
 from src.codifications import *
 from seaborn import heatmap, barplot, color_palette
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import pearsonr, spearmanr
-from ..fileSystem.fileSystem import updateJson
+from ...fileSystem.fileSystem import updateJson
 import json
 
 results_folder = "./dataStorage/results"

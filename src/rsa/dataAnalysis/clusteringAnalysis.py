@@ -1,5 +1,5 @@
 from src.plot import *
-from ..codifications import *
+from ...codifications import *
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.cluster.hierarchy import dendrogram, linkage, cophenet

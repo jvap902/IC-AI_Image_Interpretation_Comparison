@@ -1,7 +1,7 @@
 from ..extraction.featureExtraction import extractFeatures
 from ..similarity import similarityAnalysis
 from ..fileSystem.fileSystem import *
-from ..dataCollection import getSavePath, gatherAdditionalData
+from .dataCollection import gatherAdditionalData
 from .. import plot
 
 def getRsaPaths(json_path="src/fileSystem/info.json"):
