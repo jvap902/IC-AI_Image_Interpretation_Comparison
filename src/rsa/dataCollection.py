@@ -1,5 +1,5 @@
 import torch
-from ..plot import *
+from ..csvUtils import *
 from ..extraction.featureExtraction import getFeatureTensors
 from fileSystem.defaultPaths import embeddingSavePath
 from tqdm.auto import tqdm

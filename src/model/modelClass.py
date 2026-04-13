@@ -3,7 +3,7 @@ from .classUtils import getExtractor, get_attention_layers, get_conv_layers, is_
 import os
 from src.dataset import loadDataset
 from src.dataset.datasetUtils import getClasses
-from src import plot
+from src import csvUtils
 from torch.utils.data import DataLoader
 
 class Model:
@@ -30,11 +30,11 @@ class Model:
         
         if os.path.exists(indices_file):
             
-            indices = plot.findInCsv(indices_file, ['file_name'], [file_name])
+            indices = csvUtils.findInCsv(indices_file, ['file_name'], [file_name])
                 
             if len(indices) != 0:
-                train_indices = plot.getStringIntArray(indices[0]['train_indices'])
-                val_indices = plot.getStringIntArray(indices[0]['validation_indices'])
+                train_indices = csvUtils.getStringIntArray(indices[0]['train_indices'])
+                val_indices = csvUtils.getStringIntArray(indices[0]['validation_indices'])
                 
                 self.train_dataset, self.val_dataset = loadDataset.loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir, self)
                 

@@ -1,4 +1,5 @@
-from src.plot import *
+from src.csvUtils import *
+from src.fileSystem.fileSystem import getJsonInfo
 
 def heatMap(csv_path, correlation_type, specific_value: None | Tuple[list[str], list[str]] = None, save_path=None, show=True, codification=False, extension='png', dpi=100):
     
@@ -24,7 +25,7 @@ if __name__ == "__main__":
     datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
         
     save_folder=f'./dataStorage/processedResults/model-model'
-    csv_folder = f'./dataStorage/results/'
+    csv_folder = getJsonInfo()["rsaData"]
 
     for (dataset, subset) in datasets:
 

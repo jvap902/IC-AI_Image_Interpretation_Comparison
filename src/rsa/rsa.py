@@ -2,7 +2,7 @@ from ..extraction.featureExtraction import extractFeatures
 from ..similarity import similarityAnalysis
 from ..fileSystem.fileSystem import *
 from .dataCollection import gatherAdditionalData
-from .. import plot
+from .. import csvUtils
 
 def getRsaPaths(json_path="src/fileSystem/info.json"):
     fields = ["dissimilarity_folder", "dissimilarity_csv_path", "fst_embedding_path", "snd_embedding_path"]
@@ -34,7 +34,7 @@ def rsa(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args):
 
     runData = [str(total_images), str(num_classes), fst_modelc.source, fst_modelc.name, args.m1_weights, snd_modelc.source, snd_modelc.name, args.m2_weights, str(fst_modelc.acc), str(snd_modelc.acc), str(spearman), str(pearson), dt_info.name_w_subset]
 
-    plot.writeCsvLine(args.output_file, runData)
+    csvUtils.writeCsvLine(args.output_file, runData)
     
     gatherAdditionalData(fst_modelc, dt_info, has_embedding=get_fst_embedding)
     gatherAdditionalData(snd_modelc, dt_info, has_embedding=get_snd_embedding)

@@ -1,5 +1,5 @@
 from pathlib import Path
-from src.plot import writeCsvLine
+from src.csvUtils import writeCsvLine
 
 def get_immediate_subdirectories_pathlib(parent_dir):
     p = Path(parent_dir)

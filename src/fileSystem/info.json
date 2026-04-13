@@ -3,5 +3,7 @@
     "dissimilarity_csv_path": "dataStorage/cosineDissimilarity.csv",
     "dissimilarity_folder": "dataStorage/dissimilarity_arrays",
     "fst_embedding_path": "./dataStorage/model_output/embedding/ViT-L-14_DEFAULT_clip_cifar10(0).pt",
-    "snd_embedding_path": "./dataStorage/model_output/embedding/vit_h_14_IMAGENET1K_SWAG_E2E_V1_torchvision_cifar10(0).pt"
+    "snd_embedding_path": "./dataStorage/model_output/embedding/vit_h_14_IMAGENET1K_SWAG_E2E_V1_torchvision_cifar10(0).pt",
+    "rsaData": "dataStorage/rsaData",
+    "ckaData": "dataStorage/ckaData"
 }

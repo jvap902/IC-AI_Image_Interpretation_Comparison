@@ -5,7 +5,7 @@ import os
 from . import auxDatasetClasses, datasetUtils
 from datasets import load_dataset, load_from_disk
 from huggingface_hub import login
-from .. import plot
+from .. import csvUtils
 import random
 
 def loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir, modelc):
@@ -95,7 +95,7 @@ def newAircraftDataset(dt_info, data_dir, output_dir, modelc):
     
     file_name = f"{dt_info.name}_subset_i{dt_info.num_images}_c{dt_info.num_classes}({dt_info.subset}).pt"
     
-    plot.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
+    csvUtils.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
     
     return train_subset, val_subset
     
@@ -130,7 +130,7 @@ def newCifar10Dataset(dt_info, data_dir, output_dir, modelc):
     
     file_name = f"cifar10_subset_i{total_images}_c{num_classes}({subset_num}).pt"
     
-    plot.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
+    csvUtils.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
 
     return subset_train_dataset, subset_val_dataset
     
@@ -162,7 +162,7 @@ def newCifar100Dataset(dt_info, data_dir, output_dir, modelc,):
     
     file_name = f"cifar100_subset_i{total_images}_c{num_classes}({subset_num}).pt"
     
-    plot.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
+    csvUtils.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
 
     return subset_train_dataset, subset_val_dataset
 
@@ -201,7 +201,7 @@ def newUrlDownloadedDataset(dt_info, data_dir, output_dir, modelc):
     
     file_name = f"{dataset}_subset_i{total_images}_c{num_classes}({subset_num}).pt"
     
-    plot.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
+    csvUtils.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
     
     print(f"New {dataset} subset created")
     
@@ -304,7 +304,7 @@ def newHuggingfaceDataset(dt_info, output_dir, modelc):
     dt_name = dataset_link.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
     file_name = f"{dt_name}_subset_i{total_images}_c{num_classes}({subset_num}).pt"
     
-    plot.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
+    csvUtils.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
     
     # Debugging check
     img, label = train_dataset[0]

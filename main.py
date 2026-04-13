@@ -29,7 +29,7 @@ parser.add_argument("-m1_w", "--m1_weights", type=str, required=False, default="
 parser.add_argument("-m2_w", "--m2_weights", type=str, required=False, default="IMAGENET1K_V1", help="Specify weights for torchvision models")
 parser.add_argument("-ed", "--existing_dissimilarity", action='store_true', required=False, default=False, help="Use previously calculated cossine dissimilarity for run")
 parser.add_argument("-sc", "--same_classes", type=str, required=False, default=None, nargs='+', help="Specify [name, subset, num_classes, num_images] of a dataset for its classes to be used, only works for new subsets")
-parser.add_argument("-out", "--output_file", type=str, required=False, default="./dataStorage/results/runData.csv", help="Specify path to file the run information will be written")
+parser.add_argument("-out", "--output_file", type=str, required=False, default="./dataStorage/rsaData/runData.csv", help="Specify path to file the run information will be written")
 parser.add_argument("--revalidate", action='store_true', required=False, default=False, help="Force validation step even with previously calculated accuracy")
 parser.add_argument("-ndsc", "--new_dt_specific_classes", action='store_true', required=False, default=False, help="Specify arbitrary classes in a classes.csv file, only works for new subsets")
 parser.add_argument("-met", "--method", type=str, required=False, default="rsa", help=f"Specify the method to be used, the available methods are: {available_methods}")
@@ -97,21 +97,21 @@ if __name__ == "__main__":
     validation_csv = output_dir+"/validation_results.csv"
     #validation_csv = './ztempData/validation_results.csv'
     
-    fst_val = plot.findInCsv(validation_csv, ["model","model_source","model_weights","dataset"], [fst_modelc.name, fst_modelc.source, fst_modelc.weights, dt_info.name_w_subset])
+    fst_val = csvUtils.findInCsv(validation_csv, ["model","model_source","model_weights","dataset"], [fst_modelc.name, fst_modelc.source, fst_modelc.weights, dt_info.name_w_subset])
     
-    snd_val = plot.findInCsv(validation_csv, ["model","model_source","model_weights","dataset"], [snd_modelc.name, snd_modelc.source, snd_modelc.weights, dt_info.name_w_subset])
+    snd_val = csvUtils.findInCsv(validation_csv, ["model","model_source","model_weights","dataset"], [snd_modelc.name, snd_modelc.source, snd_modelc.weights, dt_info.name_w_subset])
     
     if (args.no_validation):
         
         if len(fst_val) == 0 or args.revalidate:
             fst_modelc.acc = featureExtraction.train_and_validate_head(fst_modelc, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
-            plot.writeCsvLine(validation_csv, [fst_modelc.name, fst_modelc.source, fst_modelc.weights, dt_info.name_w_subset, fst_modelc.acc])
+            csvUtils.writeCsvLine(validation_csv, [fst_modelc.name, fst_modelc.source, fst_modelc.weights, dt_info.name_w_subset, fst_modelc.acc])
         else:
             fst_modelc.acc = np.float32(fst_val[0]['accuracy'])
             
         if len(snd_val) == 0 or args.revalidate:
             snd_modelc.acc = featureExtraction.train_and_validate_head(snd_modelc, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
-            plot.writeCsvLine(validation_csv, [snd_modelc.name, snd_modelc.source, snd_modelc.weights, dt_info.name_w_subset, snd_modelc.acc])
+            csvUtils.writeCsvLine(validation_csv, [snd_modelc.name, snd_modelc.source, snd_modelc.weights, dt_info.name_w_subset, snd_modelc.acc])
         else:
             snd_modelc.acc = np.float32(snd_val[0]['accuracy'])
 

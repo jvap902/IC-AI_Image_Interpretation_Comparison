@@ -1,11 +1,12 @@
-from src.plot import *
+from src.csvUtils import *
 from ...codifications import *
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.cluster.hierarchy import dendrogram, linkage, cophenet
 from scipy.spatial.distance import squareform
 from scipy.stats import pearsonr, spearmanr
-import json, codecs
+import json
+from ...fileSystem.fileSystem import getJsonInfo
 import os
 
 datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)] #apenas datasets utilizados no artigo
@@ -89,7 +90,7 @@ if __name__ == "__main__":
 
         dt = dataset.replace('/', '-')
 
-        csv_path = f'./dataStorage/results/{dt}Data.csv'
+        csv_path = getJsonInfo()["rsaData"]
         
         correlation = 'pearson'
         

@@ -1,10 +1,13 @@
 import csv
 import numpy as np
-from src.plot import *
+from src.csvUtils import *
 from pandas import DataFrame
 from src.codifications import getModelTrainStr
+from ...fileSystem.fileSystem import getJsonInfo
 
 datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)] #apenas datasets utilizados no artigo
+
+rsaData_dir = getJsonInfo()["rsaData"]
 
 def getAverages(data):
     
@@ -90,7 +93,7 @@ def getMinMaxModelAvg(data):
 def buildFromBeginning(txt):
     for (dataset, subset) in datasets:
         dt_name = dataset.replace('/','-')
-        csv_name = (f"./dataStorage/results/{dt_name}Data.csv")
+        csv_name = (f"{rsaData_dir}/{dt_name}Data.csv")
         
         data = findInCsv(csv_name, ['dataset'], [f'{dt_name}({subset})'])
         
@@ -117,7 +120,7 @@ def dataAsDict():
 
     for (dataset, subset) in datasets:
         dt_name = dataset.replace('/','-')
-        csv_name = (f"./dataStorage/results/{dt_name}Data.csv")
+        csv_name = (f"{rsaData_dir}/{dt_name}Data.csv")
             
         data = findInCsv(csv_name, ['dataset'], [f'{dt_name}({subset})'])
 
@@ -140,7 +143,7 @@ def ModelModelAvgStd(txt):
     for (dataset, subset) in datasets:
         dt_name = dataset.replace('/','-')
 
-        data = findInCsv(f"./dataStorage/results/{dt_name}Data.csv", ['dataset'], [f'{dt_name}({subset})'])
+        data = findInCsv(f"{rsaData_dir}/{dt_name}Data.csv", ['dataset'], [f'{dt_name}({subset})'])
 
         df = dataFrameFromData(data, 'pearson')
 

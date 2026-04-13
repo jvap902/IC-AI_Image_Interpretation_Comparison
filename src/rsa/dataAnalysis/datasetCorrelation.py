@@ -1,14 +1,14 @@
-from ...plot import *
+from ...csvUtils import *
 from typing import List,Tuple
 from src.codifications import *
 from seaborn import heatmap, barplot, color_palette
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import pearsonr, spearmanr
-from ...fileSystem.fileSystem import updateJson
+from ...fileSystem.fileSystem import getJsonInfo
 import json
 
-results_folder = "./dataStorage/results"
+results_folder = getJsonInfo()["rsaData"]
 datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
 metrics = ['pearson', 'spearman']
 output_folder = "dataStorage/processedResults/datasetCorrelations"

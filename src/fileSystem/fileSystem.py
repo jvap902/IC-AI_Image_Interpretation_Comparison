@@ -15,8 +15,9 @@ def makeFileSystem(outputFile):
 
     os.makedirs(ds+"processedResults", exist_ok=True)
 
-    res = ds+"/results"
-    os.makedirs(res, exist_ok=True)
+    os.makedirs(ds+"rsaData", exist_ok=True)
+    
+    os.makedirs(ds+"ckaData", exist_ok=True)
     
     os.makedirs(ds+"/dissimilarity_arrays", exist_ok=True)
     

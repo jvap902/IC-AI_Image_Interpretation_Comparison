@@ -11,8 +11,8 @@ from itertools import groupby
 
 def cka(dt_info, fst_modelc, snd_modelc):
     
-    output_dir = getJsonInfo(["output_dir"])[0]
-    cka_folder = output_dir+f"/ckaData/{dt_info.name_w_subset}"
+    output_dir = getJsonInfo()["ckaData"]
+    cka_folder = output_dir+f"/{dt_info.name_w_subset}"
     
     m1_name, m2_name = getModelTrainStr(fst_modelc.source, fst_modelc.name, fst_modelc.weights), getModelTrainStr(snd_modelc.source, snd_modelc.name, snd_modelc.weights)
     

@@ -6,7 +6,7 @@ import requests
 from torch.utils.data import Dataset, Subset
 import random
 from collections import defaultdict
-from ..plot import findInCsv, writeCsvLine
+from ..csvUtils import findInCsv, writeCsvLine
 import json
 
 

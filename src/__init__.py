@@ -13,8 +13,8 @@ from .rsa import rsa
 from .rsa.dataAnalysis import *
 from .cka import cka
 from .cka.dataAnalysis import *
-from . import plot
+from . import csvUtils
 from . import memoryManagement
 from . import codifications
 
-__all__ = ["extractionTraining", "featureExtraction", "modelCreation", "plot", "loadDataset", "similarityAnalysis", "datasetUtils", "memoryManagement", "dataCollection", "fileSystem", "modelClass", "classUtils", "rsa", "cka", "dataset_ipc", "rsaHeatmaps", "correlationAnalysis", "clusteringAnalysis", "codifications", "defaultPaths", "ckaHeatmaps"]
+__all__ = ["extractionTraining", "featureExtraction", "modelCreation", "csvUtils", "loadDataset", "similarityAnalysis", "datasetUtils", "memoryManagement", "dataCollection", "fileSystem", "modelClass", "classUtils", "rsa", "cka", "dataset_ipc", "rsaHeatmaps", "correlationAnalysis", "clusteringAnalysis", "codifications", "defaultPaths", "ckaHeatmaps"]
