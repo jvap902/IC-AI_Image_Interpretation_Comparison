@@ -1,37 +1,45 @@
 import os
 import json
 from typing import Dict
+from .defaultPaths import *
+from .jsonUtils import *
 
 def makeFileSystem(outputFile):
     
+    paths = {
+        "output_dir": "dataStorage",
+        "cache": "cache"
+    }
+    paths["model_output"] = f"{paths["output_dir"]}/model_output"
+    paths.update(
+        {
+            "dissimilarity_folder": f"{paths["cache"]}/dissimilarity_arrays",
+            "cka_matrices_folder": f"{paths["cache"]}/cka_matrices",
+            "embedding_folder": f"{paths["model_output"]}/embedding",
+            "std_output_folder": f"{paths["model_output"]}/std_output",
+            "rsaData": f"{paths["output_dir"]}/rsaData",
+            "ckaData": f"{paths["output_dir"]}/ckaData",
+            "processedResults": f"{paths["output_dir"]}/processedResults"
+        }
+    )
+    
+    writeJson(json_path=jsonInfoPath(), dic=paths)
+    
     # --- Folders ---
-
+    
     os.makedirs("data", exist_ok=True)
     
-    ds = "dataStorage"
-    os.makedirs(ds, exist_ok=True) # Ensure dataStorage folder exists
+    for key, value in paths.items(): #garante que todas as pastas em paths existem
+        os.makedirs(value, exist_ok=True)
 
-    os.makedirs(ds+"/processedResults", exist_ok=True)
-
-    os.makedirs(ds+"/rsaData", exist_ok=True)
-    
-    os.makedirs(ds+"/ckaData", exist_ok=True)
-    
-    os.makedirs(ds+"/dissimilarity_arrays", exist_ok=True)
-    
-    mo = ds+"/model_output"
-    os.makedirs(mo, exist_ok=True)
-    
-    os.makedirs(mo+"/embedding", exist_ok=True)
-    
-    os.makedirs(mo+"/std_output", exist_ok=True)    
-    
+    ds = paths["output_dir"]
+    mo = paths["model_output"]
     
     # --- Files ---
     
     model_params = 'model,model_source,model_weights,dataset'
     
-    createFile(ds+'/cosineDissimilarity.csv', model_params+',path\n')
+    createFile(paths["dissimilarity_folder"]+'/cosineDissimilarity.csv', model_params+',path\n')
     
     createFile(ds+'/datasetClasses.csv', 'dataset,subset,num_classes,num_images,train_classes,validation_classes\n')
     

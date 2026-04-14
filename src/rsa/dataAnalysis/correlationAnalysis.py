@@ -4,10 +4,11 @@ from src.fileManagement.csvUtils import *
 from pandas import DataFrame
 from src.codifications import getModelTrainStr
 from ...fileManagement.jsonUtils import getJsonInfo
+from ...fileManagement.defaultPaths import jsonInfoPath
 
 datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)] #apenas datasets utilizados no artigo
 
-rsaData_dir = getJsonInfo()["rsaData"]
+rsaData_dir = getJsonInfo(json_path=jsonInfoPath(), fields=["rsaData"])[0]
 
 def getAverages(data):
     

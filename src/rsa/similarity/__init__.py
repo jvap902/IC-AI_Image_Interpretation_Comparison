@@ -1,4 +1,4 @@
-from ...similarity import similarityAnalysis
-from ...similarity import similarityUtils
+from . import similarityAnalysis
+from . import similarityUtils
 
 __all__ = ["similarityAnalysis", "similarityUtils"]

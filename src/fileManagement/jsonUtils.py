@@ -27,6 +27,10 @@ def getJsonInfo(json_path, fields=[]):
         data.append(json_data[field])
         
     return data
+
+def writeJson(dic, json_path):
+    with open(json_path, "w") as f:
+        json.dump(dic, f, indent=4)
     
 if __name__ == "__main__":
     pass
