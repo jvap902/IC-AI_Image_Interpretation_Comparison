@@ -45,7 +45,7 @@ def rsa_args(run_data):
     sleep(5.0)
     
     return ["--dataset", dataset, "--specific_subset", str(subset), "-ndsc", "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, '-met', 'rsa',
-                                    "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "-out", f"./ztempData/{dt_name}Data.csv"]
+                                    "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "-out", f"./dataStorage/rsaData/{dt_name}Data.csv"]
     
 def cka_args(run_data):
     dataset, subset, src1, model1, weight1, src2, model2, weight2, dt_name = run_data

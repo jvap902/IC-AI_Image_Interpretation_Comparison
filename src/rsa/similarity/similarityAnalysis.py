@@ -7,8 +7,8 @@ from scipy.stats import pearsonr, spearmanr
 from src.fileManagement import csvUtils
 from . import similarityUtils
 from src import memoryManagement
-from ..model.modelClass import Model
-from ..dataset.datasetClass import DtInfo
+from ...model.modelClass import Model
+from ...dataset.datasetClass import DtInfo
 import os
 
 # Constants for memory calculation (assuming torch.float32)

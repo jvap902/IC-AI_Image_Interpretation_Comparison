@@ -35,7 +35,7 @@ def createNewDataset(dt_info, output_dir, data_dir, modelc):
     
     print(f"\nCreating new set of indices for {dataset}\n")
     
-    if (dataset == 'imagenet-a' or dataset == 'imagenet-sketch'):
+    if ((dataset == 'imagenet-a') or (dataset == 'imagenet-sketch') or ('imagenet-c' in dataset)):
         train_dataset, val_dataset = newUrlDownloadedDataset(dt_info, data_dir, output_dir, modelc)
     elif dataset == 'fgvc-aircraft':
         train_dataset, val_dataset = newAircraftDataset(dt_info, data_dir, output_dir, modelc)

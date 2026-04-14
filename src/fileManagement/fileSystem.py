@@ -11,11 +11,11 @@ def makeFileSystem(outputFile):
     ds = "dataStorage"
     os.makedirs(ds, exist_ok=True) # Ensure dataStorage folder exists
 
-    os.makedirs(ds+"processedResults", exist_ok=True)
+    os.makedirs(ds+"/processedResults", exist_ok=True)
 
-    os.makedirs(ds+"rsaData", exist_ok=True)
+    os.makedirs(ds+"/rsaData", exist_ok=True)
     
-    os.makedirs(ds+"ckaData", exist_ok=True)
+    os.makedirs(ds+"/ckaData", exist_ok=True)
     
     os.makedirs(ds+"/dissimilarity_arrays", exist_ok=True)
     

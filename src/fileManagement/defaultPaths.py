@@ -6,4 +6,7 @@ def embeddingSavePath(modelc, dt_info, embedding : bool):
         return f'./dataStorage/model_output/std_output/{m_name}_{modelc.weights}_{modelc.source}_{dt_info.name_w_subset}.pt'
      
 def jsonInfoPath():
-    return "src/fileManagement/info.json"
+    return "src/fileManagement/info.json"    
+    
+if __name__ == "__main__":
+    pass

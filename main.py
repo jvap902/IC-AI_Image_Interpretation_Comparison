@@ -39,7 +39,9 @@ args = parser.parse_args()
 if __name__ == "__main__":
     
     fileSystem.makeFileSystem(args.output_file)
-    output_dir = 'dataStorage'
+    paths = jsonUtils.getJsonInfo(defaultPaths.jsonInfoPath())
+    
+    output_dir = paths["output_dir"]
     
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"\nDevice set to: {device}")
@@ -77,8 +79,7 @@ if __name__ == "__main__":
 
     print(f"\nNumber of images total: {total_images}")
     
-    dissimilarity_csv_path = output_dir+"/cosineDissimilarity.csv"
-    dissimilarity_folder = output_dir+"/dissimilarity_arrays"
+    dissimilarity_csv_path, dissimilarity_folder = paths["dissimilarity_csv_path"], paths["dissimilarity_folder"]
 
     fst_modelc.getDataset(dt_info, output_dir)
     snd_modelc.getDataset(dt_info, output_dir)
@@ -90,12 +91,11 @@ if __name__ == "__main__":
     class_names = datasetUtils.getClasses(fst_modelc.train_dataset)
     num_classes = len(class_names)
 
-    # --- teste se modelos estão funcionando de acordo ---
+    # --- Model validation ---
     fst_modelc.setAcc(0.0)
     snd_modelc.setAcc(0.0)
     
     validation_csv = output_dir+"/validation_results.csv"
-    #validation_csv = './ztempData/validation_results.csv'
     
     fst_val = csvUtils.findInCsv(validation_csv, ["model","model_source","model_weights","dataset"], [fst_modelc.name, fst_modelc.source, fst_modelc.weights, dt_info.name_w_subset])
     
@@ -121,11 +121,11 @@ if __name__ == "__main__":
     fst_embedding_path = defaultPaths.embeddingSavePath(fst_modelc, dt_info, True)
     snd_embedding_path = defaultPaths.embeddingSavePath(snd_modelc, dt_info, True)
     
-    # --- Salvando informações da execução ---
     fields = ["output_dir", "dissimilarity_folder", "dissimilarity_csv_path", "fst_embedding_path", "snd_embedding_path"]
     values = [output_dir, dissimilarity_folder, dissimilarity_csv_path, fst_embedding_path, snd_embedding_path]
     jsonUtils.updateJson(fields, values)
 
+    # --- Experiment execution ---
     match args.method:
         case "rsa":
             rsa.rsa(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args)

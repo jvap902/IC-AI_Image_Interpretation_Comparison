@@ -4,15 +4,10 @@ from .fileManagement.csvUtils import *
 from .fileManagement.jsonUtils import *
 from .fileManagement.defaultPaths import *
 
+datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)] #apenas datasets utilizados no artigo    
 info_path = jsonInfoPath()
-dir_paths = getJsonInfo(["rsaData", "ckaData"], json_path=info_path)
-rsa_dir = dir_paths[0]
-cka_dir = dir_paths[1]
 
-if __name__ == "__main__":
-    
-    datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)] #apenas datasets utilizados no artigo    
-    
+def rsaCka(rsa_dir, cka_dir):
     for (name, sub) in datasets[1:2]:
         
         name_with_subset = f"{name.replace('/', '-')}({sub})"
@@ -23,3 +18,10 @@ if __name__ == "__main__":
         df_cka = ckaFileRead.dfFromCkaJson(f"{cka_dir}/{name_with_subset}/results.json")
     
         print(df_rsa.corrwith(df_cka))
+
+if __name__ == "__main__":
+    dir_paths = getJsonInfo(["rsaData", "ckaData"], json_path=info_path)
+    rsa_dir = dir_paths[0]
+    cka_dir = dir_paths[1]
+    
+    rsaCka(rsa_dir, cka_dir)

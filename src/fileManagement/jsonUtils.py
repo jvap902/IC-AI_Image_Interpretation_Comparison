@@ -1,12 +1,9 @@
 import json
-from .defaultPaths import jsonInfoPath
 import numpy as np
 import pandas as pd
 from ..codifications import *
 
-info_json_path = jsonInfoPath()
-
-def updateJson(fields, values, json_path=info_json_path):
+def updateJson(fields, values, json_path):
     with open(json_path, "r+") as f:
         json_data = json.load(f)
         
@@ -17,7 +14,7 @@ def updateJson(fields, values, json_path=info_json_path):
         json.dump(json_data, f, indent=4)
         f.truncate()
 
-def getJsonInfo(fields=[], json_path=info_json_path):
+def getJsonInfo(json_path, fields=[]):
     with open(json_path, "r") as f:
         json_data = json.load(f)
     
