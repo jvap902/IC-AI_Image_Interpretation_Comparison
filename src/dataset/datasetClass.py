@@ -1,4 +1,4 @@
-from ..plot import *
+from ..fileManagement.csvUtils import *
 from .loadDataset import *
 
 class DtInfo:
@@ -45,15 +45,15 @@ class DtInfo:
             file_name = f"{dt_name}_subset_i{base_dataset.num_images}_c{base_dataset.num_classes}({base_dataset.subset}).pt"
             indices_file = os.path.join(dataStorage_dir, 'selectedIndices.csv')
             
-            indices = plot.findInCsv(indices_file, ['file_name'], [file_name])
+            indices = csvUtils.findInCsv(indices_file, ['file_name'], [file_name])
             
             if (len(indices) == 0):
                 raise ValueError("Dataset a ter classes copiadas não existe")
             
             dummy_model = Model('resnet18', 'torchvision', 'IMAGENET1K_V1')
             
-            train_indices = plot.getStringIntArray(indices[0]['train_indices'])
-            val_indices = plot.getStringIntArray(indices[0]['validation_indices'])
+            train_indices = csvUtils.getStringIntArray(indices[0]['train_indices'])
+            val_indices = csvUtils.getStringIntArray(indices[0]['validation_indices'])
                         
             _, _ = loadIndicesFromDataset(base_dataset, train_indices, val_indices, './data', dummy_model)
             

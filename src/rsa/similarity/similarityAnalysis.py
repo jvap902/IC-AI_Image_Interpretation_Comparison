@@ -3,10 +3,12 @@ import torch
 import numpy as np
 import math
 from scipy.stats import pearsonr, spearmanr
+
+from src.fileManagement import csvUtils
 from . import similarityUtils
-from src import memoryManagement, plot
-from ..model.modelClass import Model
-from ..dataset.datasetClass import DtInfo
+from src import memoryManagement
+from ...model.modelClass import Model
+from ...dataset.datasetClass import DtInfo
 import os
 
 # Constants for memory calculation (assuming torch.float32)
@@ -71,8 +73,8 @@ def cosineDissimilarity(ptPath, csv_path, dissimilarity_path, modelc: Model, dt_
     print(f"Saving similarity array to {dissimilarity_path} to free up system memory.")
     np.save(dissimilarity_path, np_dissimilarity)
     
-    if len(plot.findInCsv(csv_path, ['model', 'model_source', 'model_weights', 'dataset'], [modelc.name, modelc.source, modelc.weights, dt_name_w_subset])) == 0:
-        plot.writeCsvLine(csv_path, [modelc.name, modelc.source, modelc.weights, dt_name_w_subset, dissimilarity_path])
+    if len(csvUtils.findInCsv(csv_path, ['model', 'model_source', 'model_weights', 'dataset'], [modelc.name, modelc.source, modelc.weights, dt_name_w_subset])) == 0:
+        csvUtils.writeCsvLine(csv_path, [modelc.name, modelc.source, modelc.weights, dt_name_w_subset, dissimilarity_path])
     
     # Delete the large tensor from RAM immediately after saving
     del dissimilarity_array_tensor
@@ -140,6 +142,6 @@ def isDissimilarityCalculated(dt_name_w_subset, dissimilarity_csv, modelc):
     params = ['model', 'model_source', 'model_weights', 'dataset']
     values = [modelc.name, modelc.source, modelc.weights, dt_name_w_subset]
     
-    ans = plot.findInCsv(dissimilarity_csv, params, values)
+    ans = csvUtils.findInCsv(dissimilarity_csv, params, values)
     
     return ans

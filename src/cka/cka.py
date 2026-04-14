@@ -1,19 +1,21 @@
 from torch_cka import CKA
-from functools import partial
 import torch
 from tqdm import tqdm
 from warnings import warn
 import os
-from src.codifications import *
-from ..fileSystem.fileSystem import getJsonInfo, updateJson, createFile
+from ..codifications import *
+from ..fileManagement.fileSystem import createFile
+from ..fileManagement.defaultPaths import jsonInfoPath
+from ..fileManagement.jsonUtils import getJsonInfo, updateJson
 import numpy as np
 import pandas as pd
 from itertools import groupby
 
 def cka(dt_info, fst_modelc, snd_modelc):
     
-    output_dir = getJsonInfo(["output_dir"])[0]
-    cka_folder = output_dir+f"/ckaData/{dt_info.name_w_subset}"
+    paths = getJsonInfo(json_path=jsonInfoPath(), fields=["ckaData", "cka_matrices_folder"])
+    cka_results_folder = paths[0]+f"/{dt_info.name_w_subset}"
+    cka_matrices_folder = paths[1]+f"/{dt_info.name_w_subset}"
     
     m1_name, m2_name = getModelTrainStr(fst_modelc.source, fst_modelc.name, fst_modelc.weights), getModelTrainStr(snd_modelc.source, snd_modelc.name, snd_modelc.weights)
     
@@ -22,11 +24,11 @@ def cka(dt_info, fst_modelc, snd_modelc):
               model1_layers=getModelLayer(fst_modelc.name), model2_layers=getModelLayer(snd_modelc.name), #a princípio extrai de todos por padrão
               device='cuda' if torch.cuda.is_available() else 'cpu')
     
-    cka.setNewAtt(m1_name, m2_name, cka_folder)
+    cka.setNewAtt(m1_name, m2_name, cka_results_folder, cka_matrices_folder)
     
     cka.compare(dataloader1=fst_modelc.val_loader, dataloader2=snd_modelc.val_loader)
 
-    #cka.plot_results(save_path=f"{cka_folder}/images/{cka.m1_name}_{cka.m2_name}.png")
+    #cka.plot_results(save_path=f"{cka_results_folder}/images/{cka.m1_name}_{cka.m2_name}.png")
     dic = cka.export()
         
     dic["CKA"] = dic['CKA'].cpu().numpy().tolist()
@@ -34,7 +36,7 @@ def cka(dt_info, fst_modelc, snd_modelc):
     del dic["dataset1_name"]
     del dic["dataset2_name"]
     
-    json_path = f"{cka_folder}/results.json"
+    json_path = f"{cka_results_folder}/results.json"
     
     updateJson([f"{cka.m1_name} {cka.m2_name}"], [dic], json_path=json_path)
 
@@ -92,19 +94,19 @@ def jsonCkaToDataFrame(json_path):
 #modificando método de comparação para salvar em disco os resultados de um modelo para não ser necessário recalcular para a próxima comparação
 class modifiedCka(CKA):
     
-    def setNewAtt(self, m1_name, m2_name, output_folder):
+    def setNewAtt(self, m1_name, m2_name, output_folder, cka_matrices_folder):
         self.m1_name = m1_name
         self.m2_name = m2_name
         
-        self.cka_folder = output_folder
+        self.cka_results_folder = output_folder
         
-        self.hsic1_path = f"{self.cka_folder}/cka_matrices/{self.m1_name}_cka.pt"
-        self.hsic2_path = f"{self.cka_folder}/cka_matrices/{self.m2_name}_cka.pt"
+        self.hsic1_path = f"{cka_matrices_folder}/{self.m1_name}_cka.pt"
+        self.hsic2_path = f"{cka_matrices_folder}/{self.m2_name}_cka.pt"
+        os.makedirs(f"{cka_matrices_folder}", exist_ok=True)
         
-        os.makedirs(self.cka_folder, exist_ok=True)
-        os.makedirs(f"{self.cka_folder}/cka_matrices", exist_ok=True)
-        createFile(f"{self.cka_folder}/results.json", "{}")
-        os.makedirs(f"{self.cka_folder}/images", exist_ok=True)
+        os.makedirs(self.cka_results_folder, exist_ok=True)
+        createFile(f"{self.cka_results_folder}/results.json", "{}")
+        os.makedirs(f"{self.cka_results_folder}/images", exist_ok=True)
         
         
     def saveHsics(self, m1: bool, m2: bool):

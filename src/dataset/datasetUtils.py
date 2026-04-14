@@ -6,7 +6,7 @@ import requests
 from torch.utils.data import Dataset, Subset
 import random
 from collections import defaultdict
-from ..plot import findInCsv, writeCsvLine
+from ..fileManagement.csvUtils import findInCsv, writeCsvLine
 import json
 
 
@@ -25,6 +25,14 @@ AIRCRAFT_URL = "https://www.robots.ox.ac.uk/~vgg/data/fgvc-aircraft/archives/fgv
 AIRCRAFT_FILENAME = "fgvc-aircraft-2013b.tar.gz"
 AIRCRAFT_EXTRACT_DIR = "fgvc-aircraft-2013b"
 
+#Imagenet-C
+def imagenetCDownloadInfo(subset):
+    imagenet_c_url = f"https://zenodo.org/records/2235448/files/{subset}.tar?download=1"
+    imagenet_c_filename = f"{subset}.tar"
+    imagenet_c_extract_dir = subset
+    
+    return imagenet_c_url, imagenet_c_filename, imagenet_c_extract_dir
+
 def getDownloadInfo(dataset):
     if dataset == 'imagenet-a':
         return IMAGENET_A_URL, IMAGENET_A_FILENAME, IMAGENET_A_EXTRACT_DIR, 'tar'
@@ -32,6 +40,9 @@ def getDownloadInfo(dataset):
         return IMAGENET_SKETCH_URL, IMAGENET_SKETCH_FILENAME, IMAGENET_SKETCH_EXTRACT_DIR, 'zip'
     elif dataset == 'fgvc-aircraft':
         return AIRCRAFT_URL, AIRCRAFT_FILENAME, AIRCRAFT_EXTRACT_DIR, 'tar'
+    elif 'imagenet-c' in dataset:
+        url, filename, extract_dir = imagenetCDownloadInfo(dataset.split('-')[-1])
+        return url, filename, extract_dir, 'tar'
     else:
         raise ValueError("Unsupported dataset")
 
