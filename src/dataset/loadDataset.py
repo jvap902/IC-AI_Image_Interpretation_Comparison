@@ -169,20 +169,7 @@ def newCifar100Dataset(dt_info, data_dir, output_dir, modelc,):
 def newUrlDownloadedDataset(dt_info, data_dir, output_dir, modelc):
     dataset, subset_num, num_classes, total_images = dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images
     
-    url, file_name, extract_dir, compression_type = datasetUtils.getDownloadInfo(dataset)
-    
-    # 1. Download and extract the data
-    # This calls the function from src/dataset_utils.py to handle the download
-    folder_path = datasetUtils.downloadUrlDataset(root_dir=data_dir, url=url, file_name=file_name, extract_dir=extract_dir, compression_type=compression_type)
-    print(folder_path)
-    if folder_path is None:
-        raise FileNotFoundError(f"Failed to download or extract {dataset}.")
-    
-    # 2. Load data using ImageFolder (which expects class subdirectories)
-    full_dataset = torchvision.datasets.ImageFolder(root=folder_path, transform=modelc.data_transforms)
-    
-    if not full_dataset.classes:
-        raise ValueError(f"Could not find any classes (subdirectories) in {folder_path}. Check the directory structure.")
+    full_dataset = datasetUtils.getUrlDataset(data_dir, dataset, modelc)
         
     val_indices = datasetUtils.imageSelector(dt_info, full_dataset, len(full_dataset.classes), 'validation')
     
@@ -207,22 +194,10 @@ def newUrlDownloadedDataset(dt_info, data_dir, output_dir, modelc):
     
     return train_dataset, val_dataset
 
-def loadUrlDownloadedDataset(root, train_indices, val_indices, dataset, modelc):
+def loadUrlDownloadedDataset(data_dir, train_indices, val_indices, dataset, modelc):
     print(f"\n--- Loading {dataset} Subset ---")
     
-    url, file_name, extract_dir, compression_type = datasetUtils.getDownloadInfo(dataset)
-    
-    # 1. Download and extract the data
-    # This calls the function from src/dataset_utils.py to handle the download
-    data_dir = datasetUtils.downloadUrlDataset(root_dir=root, url=url, file_name=file_name, extract_dir=extract_dir, compression_type=compression_type)
-    if data_dir is None:
-        raise FileNotFoundError(f"Failed to download or extract {dataset}.")
-
-    # 2. Load data using ImageFolder (which expects class subdirectories)
-    full_dataset = torchvision.datasets.ImageFolder(root=data_dir, transform=modelc.data_transforms)
-    
-    if not full_dataset.classes:
-        raise ValueError(f"Could not find any classes (subdirectories) in {data_dir}. Check the directory structure.")
+    full_dataset = datasetUtils.getUrlDataset(data_dir, dataset, modelc)
     
     train_dataset = Subset(full_dataset, train_indices)
     val_dataset = Subset(full_dataset, list(val_indices))

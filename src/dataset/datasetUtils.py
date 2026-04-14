@@ -8,7 +8,7 @@ import random
 from collections import defaultdict
 from ..fileManagement.csvUtils import findInCsv, writeCsvLine
 import json
-
+import torchvision
 
 # ImageNet-A download details
 IMAGENET_A_URL = "https://people.eecs.berkeley.edu/~hendrycks/imagenet-a.tar"
@@ -26,10 +26,13 @@ AIRCRAFT_FILENAME = "fgvc-aircraft-2013b.tar.gz"
 AIRCRAFT_EXTRACT_DIR = "fgvc-aircraft-2013b"
 
 #Imagenet-C
-def imagenetCDownloadInfo(subset):
-    imagenet_c_url = f"https://zenodo.org/records/2235448/files/{subset}.tar?download=1"
-    imagenet_c_filename = f"{subset}.tar"
-    imagenet_c_extract_dir = subset
+def imagenetCDownloadInfo(distortion):
+    
+    tp = imagenetCDistortionMap(distortion)
+    
+    imagenet_c_url = f"https://zenodo.org/records/2235448/files/{tp}.tar?download=1"
+    imagenet_c_filename = f"{tp}.tar"
+    imagenet_c_extract_dir = tp
     
     return imagenet_c_url, imagenet_c_filename, imagenet_c_extract_dir
 
@@ -41,7 +44,7 @@ def getDownloadInfo(dataset):
     elif dataset == 'fgvc-aircraft':
         return AIRCRAFT_URL, AIRCRAFT_FILENAME, AIRCRAFT_EXTRACT_DIR, 'tar'
     elif 'imagenet-c' in dataset:
-        url, filename, extract_dir = imagenetCDownloadInfo(dataset.split('-')[-1])
+        url, filename, extract_dir = imagenetCDownloadInfo(dataset.split('-')[-2])
         return url, filename, extract_dir, 'tar'
     else:
         raise ValueError("Unsupported dataset")
@@ -317,3 +320,49 @@ def getStdMapping():
     # class_index looks like {"0": ["n01443537", "goldfish"]}
     # We want {"n01443537": 0}
     return {v[0]: int(k) for k, v in class_index.items()}
+
+def imagenetCDistortionMap(dist):
+    distortions = {
+        "noise": {'gaussian_noise', 'shot_noise', 'impulse_noise'},
+        "blur": {'defocus_blur', 'glass_blur', 'motion_blur', 'zoom_blur'},
+        "weather": {'frost', 'snow', 'fog', 'brightness'},
+        "digital": {'constrast', 'elastic_transform', 'pixelate', 'jpeg_compression'},
+        "extra": {'speckle_noise', 'spatter', 'gaussian_blur', 'saturate'},
+        "types": {'noise', 'blur', 'weather', 'digital', 'extra'}
+    }
+    
+    if dist in distortions['types']:
+        return distortions[dist] #retorna distorções disponíveis para o tipo de entrada
+    
+    else:
+        for type, dists in distortions.items():
+            if dist in dists:
+                return type
+            
+    raise ValueError("Unavailable distortion")
+
+def pathConcat(dataset):
+    if 'imagenet-c' in dataset:
+        split_dt = dataset.split('-')
+        return f'/{split_dt[-2]}/{split_dt[-1]}' #[-2] = distorção, [-1] = intensidade
+    else:
+        return '' #se não precisa concatenar nada só retorna str vazia
+
+def getUrlDataset(data_dir, dataset, modelc):
+    url, file_name, extract_dir, compression_type = getDownloadInfo(dataset)
+    
+    # 1. Download and extract the data
+    # This calls the function from src/datasetUtils.py to handle the download
+    folder_path = downloadUrlDataset(root_dir=data_dir, url=url, file_name=file_name, extract_dir=extract_dir, compression_type=compression_type)
+    if folder_path is None:
+        raise FileNotFoundError(f"Failed to download or extract {dataset}.")
+
+    folder_path = folder_path+pathConcat(dataset)
+
+    # 2. Load data using ImageFolder (which expects class subdirectories)
+    full_dataset = torchvision.datasets.ImageFolder(root=data_dir, transform=modelc.data_transforms)
+    
+    if not full_dataset.classes:
+        raise ValueError(f"Could not find any classes (subdirectories) in {data_dir}. Check the directory structure.")
+    
+    return full_dataset
