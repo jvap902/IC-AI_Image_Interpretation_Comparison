@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
     print(f"\nNumber of images total: {total_images}")
     
-    dissimilarity_csv_path, dissimilarity_folder = paths["dissimilarity_csv_path"], paths["dissimilarity_folder"]
+    dissimilarity_csv_path, dissimilarity_folder = paths["cosineDissimilarity"], paths["dissimilarity_folder"]
 
     fst_modelc.getDataset(dt_info, output_dir)
     snd_modelc.getDataset(dt_info, output_dir)
@@ -121,9 +121,9 @@ if __name__ == "__main__":
     fst_embedding_path = defaultPaths.embeddingSavePath(fst_modelc, dt_info, True)
     snd_embedding_path = defaultPaths.embeddingSavePath(snd_modelc, dt_info, True)
     
-    fields = ["output_dir", "dissimilarity_folder", "dissimilarity_csv_path", "fst_embedding_path", "snd_embedding_path"]
-    values = [output_dir, dissimilarity_folder, dissimilarity_csv_path, fst_embedding_path, snd_embedding_path]
-    jsonUtils.updateJson(fields, values)
+    fields = ["fst_embedding_path", "snd_embedding_path"]
+    values = [fst_embedding_path, snd_embedding_path]
+    jsonUtils.updateJson(defaultPaths.jsonInfoPath(), fields, values)
 
     # --- Experiment execution ---
     match args.method:

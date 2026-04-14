@@ -8,5 +8,14 @@
     "std_output_folder": "dataStorage/model_output/std_output",
     "rsaData": "dataStorage/rsaData",
     "ckaData": "dataStorage/ckaData",
-    "processedResults": "dataStorage/processedResults"
+    "processedResults": "dataStorage/processedResults",
+    "cosineDissimilarity": "cache/dissimilarity_arrays/cosineDissimilarity.csv",
+    "classes": "classes.csv",
+    "datasetClasses": "dataStorage/datasetClasses.csv",
+    "selectedIndices": "dataStorage/selectedIndices.csv",
+    "validation_results": "dataStorage/validation_results.csv",
+    "modelOutput": "dataStorage/model_output/modelOutput.csv",
+    "runData": "./dataStorage/rsaData/runData.csv",
+    "fst_embedding_path": "./dataStorage/model_output/embedding/ViT-B-16_DEFAULT_clip_cifar10(0).pt",
+    "snd_embedding_path": "./dataStorage/model_output/embedding/ViT-L-14_DEFAULT_open_clip_cifar10(0).pt"
 }

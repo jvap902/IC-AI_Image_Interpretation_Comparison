@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from ..codifications import *
 
-def updateJson(fields, values, json_path):
+def updateJson(json_path, fields, values):
     with open(json_path, "r+") as f:
         json_data = json.load(f)
         
@@ -28,7 +28,7 @@ def getJsonInfo(json_path, fields=[]):
         
     return data
 
-def writeJson(dic, json_path):
+def writeJson(json_path, dic):
     with open(json_path, "w") as f:
         json.dump(dic, f, indent=4)
     

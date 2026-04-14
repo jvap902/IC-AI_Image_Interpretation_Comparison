@@ -5,9 +5,9 @@ from .dataCollection import gatherAdditionalData
 from ..fileManagement import csvUtils, defaultPaths
 
 def getRsaPaths(json_path=defaultPaths.jsonInfoPath()):
-    fields = ["dissimilarity_folder", "dissimilarity_csv_path", "fst_embedding_path", "snd_embedding_path"]
+    fields = ["dissimilarity_folder", "cosineDissimilarity", "fst_embedding_path", "snd_embedding_path"]
     
-    return getJsonInfo(fields, json_path)
+    return getJsonInfo(json_path, fields)
 
 def rsa(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args):
     dissimilarity_folder, dissimilarity_csv_path, fst_embedding_path, snd_embedding_path = getRsaPaths()

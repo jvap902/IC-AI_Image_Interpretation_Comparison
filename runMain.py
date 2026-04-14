@@ -147,7 +147,7 @@ if __name__ == "__main__":
     datasets = [datasets[1], datasets[2], datasets[4], datasets[5]]
     datasets = [datasets[1]]
     
-    method_name = 'rsa'
+    method_name = 'cka'
     
     match method_name:
         case 'rsa':
