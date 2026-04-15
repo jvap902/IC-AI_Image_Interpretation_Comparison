@@ -29,10 +29,11 @@ import clip
 #print(model.named_children)
 
 if __name__ == "__main__":
-    model = vit_b_16()
+    from pathlib import Path
+
+    path = Path("data/digital/jpeg_compression/5")
     
-    st = "abcd"
-    
-    print(st[:-1])
-    print(st[-1])
-    
+    for i, folder in enumerate(path.iterdir()):
+        file_count = sum(1 for x in folder.iterdir() if x.is_file())
+        print(folder.name, file_count)
+

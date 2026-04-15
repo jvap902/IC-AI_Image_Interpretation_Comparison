@@ -153,33 +153,15 @@ def loadToken(file_path):
         print(f"Error: The file '{file_path}' was not found.")
     except Exception as e:
         print(f"An error occurred: {e}")
-    
-def selectindices(dataset, imagesPerClass, num_classes):
-    # 1. Initialize storage for selected indices
-    selected_indices = []
-    count_per_class = {i: 0 for i in range(num_classes)}
 
-    # 2. Iterate through the dataset's indices
-    for i in range(len(dataset)):
-        # CIFAR10 stores targets as a list/array attribute or returns them with the data.
-        # We access the class label (target) for the current index 'i'.
-        label = dataset.targets[i] 
 
-        # 3. Check if we need more samples for this class
-        if count_per_class[label] < imagesPerClass:
-            selected_indices.append(i)
-            count_per_class[label] += 1
-        
-        # Optional: Stop early once all classes have x samples
-        if len(selected_indices) == imagesPerClass * num_classes: # x * 10 classes
-            break
-        
-        
-    return selected_indices
-
-def extract_labels(hf_dataset):
+def extract_labels(dataset):
     # Directly access the 'label' column of the HF dataset
-    return hf_dataset['label']
+    
+    if hasattr(dataset, 'targets'):
+        return dataset.targets
+    else:
+        return dataset['label']
 
 def getRandomImages(dt_info, dataset, dataset_classes : int):
     
@@ -188,15 +170,25 @@ def getRandomImages(dt_info, dataset, dataset_classes : int):
     num_classes = dt_info.num_classes
     images_per_class = dt_info.images_per_class
     
+    # 1. Access labels directly and instantaneously
+    # For torchvision ImageFolder, targets is the list of integer labels
+    if hasattr(dataset, 'targets'):
+        labels = dataset.targets
+    else:
+        # Fallback for HuggingFace or other formats
+        labels = dataset['label'] if 'label' in dataset.features else dataset['label']
+    
+    
     # 1. Pick num_classes classes
-    selected_classes = random.sample(range(dataset_classes), num_classes)
+    available_classes = list(set(labels))
+    selected_classes = set(random.sample(available_classes, num_classes))
 
     # 2. Collect indices per class
     class_indices = defaultdict(list)
     
     labels = extract_labels(dataset)
 
-    for idx, label in enumerate(labels):
+    for idx, label in enumerate(tqdm(labels, desc="Scanning dataset labels")):
         if label in selected_classes:
             class_indices[label].append(idx)
 
@@ -360,7 +352,7 @@ def getUrlDataset(data_dir, dataset, modelc):
     folder_path = folder_path+pathConcat(dataset)
 
     # 2. Load data using ImageFolder (which expects class subdirectories)
-    full_dataset = torchvision.datasets.ImageFolder(root=data_dir, transform=modelc.data_transforms)
+    full_dataset = torchvision.datasets.ImageFolder(root=folder_path, transform=modelc.data_transforms)
     
     if not full_dataset.classes:
         raise ValueError(f"Could not find any classes (subdirectories) in {data_dir}. Check the directory structure.")

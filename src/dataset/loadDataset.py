@@ -14,7 +14,7 @@ def loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir, modelc
     
     print(f"\nLoading previously selected {dataset} indices\n")
     
-    if(dataset == 'imagenet-a' or dataset == 'imagenet-sketch'):
+    if((dataset == 'imagenet-a') or (dataset == 'imagenet-sketch') or ('imagenet-c' in dataset)):
         train_dataset, val_dataset = loadUrlDownloadedDataset(data_dir, train_indices, val_indices, dataset, modelc)
     elif dataset == 'fgvc-aircraft':
         train_dataset, val_dataset = loadAircraftDataset(data_dir, train_indices, val_indices, dataset, modelc)

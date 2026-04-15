@@ -188,3 +188,7 @@ swin_v2_t,torchvision,IMAGENET1K_V1,imagenet-sketch(1),0.1375
 efficientnet_b0,torchvision,IMAGENET1K_V1,imagenet-sketch(1),0.1075
 efficientnet_b4,torchvision,IMAGENET1K_V1,imagenet-sketch(1),0.1775
 efficientnet_b7,torchvision,IMAGENET1K_V1,imagenet-sketch(1),0.1605
+resnet18,torchvision,IMAGENET1K_V1,imagenet-c-jpeg_compression-5(0),0.029
+resnet50,torchvision,IMAGENET1K_V1,imagenet-c-jpeg_compression-5(0),0.0565
+resnet18,torchvision,IMAGENET1K_V1,imagenet-c-jpeg_compression-1(0),0.1035
+resnet50,torchvision,IMAGENET1K_V1,imagenet-c-jpeg_compression-1(0),0.212
