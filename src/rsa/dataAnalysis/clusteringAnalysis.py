@@ -7,6 +7,7 @@ from scipy.spatial.distance import squareform
 from scipy.stats import pearsonr, spearmanr
 import json
 from ...fileManagement.jsonUtils import getJsonInfo
+from ...fileManagement.defaultPaths import jsonInfoPath
 import os
 
 datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)] #apenas datasets utilizados no artigo
@@ -53,23 +54,26 @@ def pltDendrogram(dist_matrix, model_names, dataset, method='average', correlati
     
     coph = cophenet(Z)
     
-    plt.figure(figsize=(10, 8))
+    plt.figure(figsize=(8, 10))
     dendrogram(
         Z,
+        orientation='right',
         labels=model_names,
-        leaf_rotation=45,
-        leaf_font_size=12,
+        leaf_rotation=0,
+        leaf_font_size=14,
         color_threshold=None # Can be set to a float to color clusters at a specific depth
     )
     
     #plt.title(dataset, fontsize=18)
-    plt.ylabel(f"Distance = (1 - Pearson {correlation})/2", fontsize=14)
-    plt.xlabel("Models")
-    plt.ylim(0.0, 0.5)
-    plt.yticks(np.arange(0.0, 0.5, 0.05))
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    label_font_size = 18
+    plt.ylabel("Models", fontsize=label_font_size)
+    plt.xlabel(f"Distance = (1 - Pearson {correlation})/2", fontsize=label_font_size)
+    plt.xlim(0.0, 0.5)
+    plt.xticks(np.arange(0.0, 0.5, 0.05))
+    plt.tick_params('x', labelsize=16)
+    plt.grid(axis='x', linestyle='--', alpha=0.7)
     plt.tight_layout()
-    plt.savefig(f"{save_folder}/{dataset}.{extension}", format=extension, dpi=dpi)
+    plt.savefig(f"{save_folder}/right{dataset}.{extension}", format=extension, dpi=dpi)
     if show: plt.show()
     
     
@@ -90,7 +94,8 @@ if __name__ == "__main__":
 
         dt = dataset.replace('/', '-')
 
-        csv_path = getJsonInfo()["rsaData"]
+        csv_path = getJsonInfo(json_path=jsonInfoPath(), fields=["rsaData"])[0]
+        csv_path = csv_path+f"/{dt}Data.csv"
         
         correlation = 'pearson'
         
@@ -101,5 +106,5 @@ if __name__ == "__main__":
         print(df)
 
         dist_matrix, model_names = distMatirxModelNames(df)
-        pltDendrogram(dist_matrix, model_names, f"{dt}({subset})", correlation=correlation, method='average', extension='eps', show=True)
+        pltDendrogram(dist_matrix, model_names, f"{dt}", correlation=correlation, method='average', extension='eps', show=False)
 
