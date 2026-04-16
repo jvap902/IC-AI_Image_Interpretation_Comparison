@@ -138,14 +138,12 @@ def revalidate(instances, datasets, start_params: startParams):
             run_main_with_subprocess(args)
 
 if __name__ == "__main__":
-    # Capture all command-line arguments passed to this script, 
-    # excluding the script name itself (sys.argv[0] is 'run_pipeline.py').
 
     instances = getInstances()
     
     datasets = [('timm/mini-imagenet', 0), ('imagenet-sketch', 1), ('cifar10', 0), ('cifar100', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
-    datasets = [datasets[1], datasets[2], datasets[4], datasets[5]]
-    datasets = [datasets[1]]
+    datasets = [datasets[1], datasets[2], datasets[4], datasets[5]] #do artigo
+    datasets = [datasets[0]]
     
     method_name = 'cka'
     
@@ -157,10 +155,10 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = codToInstance(4, 'd')[0]
-    snd_idx = codToInstance(8, 'd')[0]
+    fst_idx = 0#codToInstance(4, 'd')[0]
+    snd_idx = codToInstance(10, 'a')[0]
         
-    start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (0, 5, 6)}
+    start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (-1, -1, 6)}
     
     run(instances, datasets, method, start_params)
     #revalidate(instances, datasets, method, start_params)

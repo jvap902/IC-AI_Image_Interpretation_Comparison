@@ -38,7 +38,7 @@ def cka(dt_info, fst_modelc, snd_modelc):
     
     json_path = f"{cka_results_folder}/results.json"
     
-    updateJson([f"{cka.m1_name} {cka.m2_name}"], [dic], json_path=json_path)
+    updateJson(json_path=json_path, fields=[f"{cka.m1_name} {cka.m2_name}"], values=[dic])
 
     return
 
