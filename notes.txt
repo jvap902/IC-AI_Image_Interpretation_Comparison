@@ -9,7 +9,7 @@ ideia de otimização:
 
 Tarefas:
     Relatório
-    Testes com imagenet-c
+    Testes com imagenet-c -> falta decididr quais distorções usar
     Outras análises CKA
     Testar a hipótese do motivo de correlações baixas imagenet-1k -> fazer fine-tunning dos modelos para algum dataset (possivelmente CIFAR) e ver se as correlações baixam
 
