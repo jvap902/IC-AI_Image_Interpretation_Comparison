@@ -155,8 +155,8 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = 0#codToInstance(4, 'd')[0]
-    snd_idx = codToInstance(10, 'a')[0]
+    fst_idx = codToInstance(6, 'd')[0]
+    snd_idx = codToInstance(20, 'a')[0]+1
         
     start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (-1, -1, 6)}
     

@@ -16,6 +16,6 @@
     "validation_results": "dataStorage/validation_results.csv",
     "modelOutput": "dataStorage/model_output/modelOutput.csv",
     "runData": "./dataStorage/rsaData/runData.csv",
-    "fst_embedding_path": "./dataStorage/model_output/embedding/ViT-B-16_DEFAULT_clip_imagenet-sketch(1).pt",
-    "snd_embedding_path": "./dataStorage/model_output/embedding/maxvit_t_IMAGENET1K_V1_torchvision_imagenet-sketch(1).pt"
+    "fst_embedding_path": "./dataStorage/model_output/embedding/ViT-L-14_DEFAULT_open_clip_imagenet-sketch(1).pt",
+    "snd_embedding_path": "./dataStorage/model_output/embedding/resnet18_IMAGENET1K_V1_torchvision_imagenet-sketch(1).pt"
 }

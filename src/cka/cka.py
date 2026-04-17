@@ -40,7 +40,7 @@ def cka(dt_info, fst_modelc, snd_modelc):
     
     updateJson(json_path=json_path, fields=[f"{cka.m1_name} {cka.m2_name}"], values=[dic])
 
-    return
+    del dic
 
 def getModelLayer(model_name):
     match model_name:
