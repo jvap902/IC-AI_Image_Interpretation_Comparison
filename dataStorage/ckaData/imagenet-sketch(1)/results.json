@@ -4213,5 +4213,125 @@
         "model2_layers": [
             "encoder.ln"
         ]
+    },
+    "15a 17a": {
+        "model1_name": "15a",
+        "model2_name": "17a",
+        "CKA": [
+            [
+                0.4532208740711212
+            ]
+        ],
+        "model1_layers": [
+            "encoder.ln"
+        ],
+        "model2_layers": [
+            "classifier.0"
+        ]
+    },
+    "15a 18a": {
+        "model1_name": "15a",
+        "model2_name": "18a",
+        "CKA": [
+            [
+                0.5266722440719604
+            ]
+        ],
+        "model1_layers": [
+            "encoder.ln"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "15a 19a": {
+        "model1_name": "15a",
+        "model2_name": "19a",
+        "CKA": [
+            [
+                0.4164445698261261
+            ]
+        ],
+        "model1_layers": [
+            "encoder.ln"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "15a 20a": {
+        "model1_name": "15a",
+        "model2_name": "20a",
+        "CKA": [
+            [
+                0.5639616250991821
+            ]
+        ],
+        "model1_layers": [
+            "encoder.ln"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "15a 21a": {
+        "model1_name": "15a",
+        "model2_name": "21a",
+        "CKA": [
+            [
+                0.5517407655715942
+            ]
+        ],
+        "model1_layers": [
+            "encoder.ln"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "15a 22a": {
+        "model1_name": "15a",
+        "model2_name": "22a",
+        "CKA": [
+            [
+                0.5919886827468872
+            ]
+        ],
+        "model1_layers": [
+            "encoder.ln"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "15a 23a": {
+        "model1_name": "15a",
+        "model2_name": "23a",
+        "CKA": [
+            [
+                0.5564153790473938
+            ]
+        ],
+        "model1_layers": [
+            "encoder.ln"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "15a 24a": {
+        "model1_name": "15a",
+        "model2_name": "24a",
+        "CKA": [
+            [
+                0.4469987154006958
+            ]
+        ],
+        "model1_layers": [
+            "encoder.ln"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
     }
 }
