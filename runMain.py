@@ -155,10 +155,13 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = codToInstance(15, 'a')[0]+1
-    snd_idx = fst_idx+1 #codToInstance(16, 'c')[0]
-        
-    start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (-1, -1, 6)}
+    fst_idx = codToInstance(13, 'b')[0]
+    snd_idx = codToInstance(15, 'a')[0]
+    
+    fst_model_interr = fst_idx
+    snd_model_interr = snd_idx+1
+    
+    start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (0, fst_model_interr, snd_model_interr)}
     
     run(instances, datasets, method, start_params)
     #revalidate(instances, datasets, method, start_params)
