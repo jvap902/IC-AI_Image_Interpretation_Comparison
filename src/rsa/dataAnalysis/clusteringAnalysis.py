@@ -55,6 +55,7 @@ def pltDendrogram(dist_matrix, model_names, dataset, method='average', correlati
     coph = cophenet(Z)
     
     plt.figure(figsize=(8, 10))
+    plt.rcParams['lines.linewidth'] = 2.5
     dendrogram(
         Z,
         orientation='right',
@@ -71,7 +72,7 @@ def pltDendrogram(dist_matrix, model_names, dataset, method='average', correlati
     plt.xlim(0.0, 0.5)
     plt.xticks(np.arange(0.0, 0.5, 0.05))
     plt.tick_params('x', labelsize=16)
-    plt.grid(axis='x', linestyle='--', alpha=0.7)
+    plt.grid(axis='x', linestyle='--', alpha=0.2)
     plt.tight_layout()
     plt.savefig(f"{save_folder}/right{dataset}.{extension}", format=extension, dpi=dpi)
     if show: plt.show()
@@ -106,5 +107,5 @@ if __name__ == "__main__":
         print(df)
 
         dist_matrix, model_names = distMatirxModelNames(df)
-        pltDendrogram(dist_matrix, model_names, f"{dt}", correlation=correlation, method='average', extension='eps', show=False)
+        pltDendrogram(dist_matrix, model_names, f"{dt}", correlation=correlation, method='average', extension='eps', show=True)
 
