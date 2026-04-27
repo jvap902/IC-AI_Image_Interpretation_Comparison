@@ -42,12 +42,14 @@ if __name__ == "__main__":
     
     datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
     
-    for (dt, subset) in datasets[0:1]: #pois estou fazendo apenas o cifar10 por enquanto
+    for (dt, subset) in datasets[1:2]: #pois estou fazendo apenas o cifar10 por enquanto
         dt_dir = dtNameSubset((dt, subset))
         
         json_path = f"{data_folder}/{dt_dir}/results.json"
         
-        verifyIntegrity(f"{data_folder}/{dt_dir}/results.json")
-        raise
+        if verifyIntegrity(f"{data_folder}/{dt_dir}/results.json"):
     
-        ckaHeatmap(json_path, save_path=f"dataStorage/processedResults/cka/{dt_dir}.png")
+            ckaHeatmap(json_path, save_path=f"dataStorage/processedResults/cka/{dt_dir}.png")
+        
+        else:
+            raise

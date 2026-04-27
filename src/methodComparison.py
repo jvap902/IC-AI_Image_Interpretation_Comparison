@@ -10,7 +10,7 @@ datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSV
 info_path = jsonInfoPath()
 
 def rsaCka(rsa_dir, cka_dir):
-    for (name, sub) in datasets[1:2]:
+    for (name, sub) in datasets[0:1]:
         
         name_with_subset = f"{name.replace('/', '-')}({sub})"
         

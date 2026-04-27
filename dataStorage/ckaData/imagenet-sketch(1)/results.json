@@ -5248,5 +5248,20 @@
         "model2_layers": [
             "encoder.ln"
         ]
+    },
+    "13b 14c": {
+        "model1_name": "13b",
+        "model2_name": "14c",
+        "CKA": [
+            [
+                0.3327980041503906
+            ]
+        ],
+        "model1_layers": [
+            "avgpool"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
     }
 }
