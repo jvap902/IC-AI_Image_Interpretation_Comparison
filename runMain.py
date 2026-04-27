@@ -142,7 +142,7 @@ if __name__ == "__main__":
     instances = getInstances()
     
     datasets = [('timm/mini-imagenet', 0), ('imagenet-sketch', 1), ('cifar10', 0), ('cifar100', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
-    datasets = [datasets[1], datasets[2], datasets[4], datasets[5]] #do artigo
+    datasets = [datasets[1], datasets[2], datasets[4], datasets[5]] #do artigo: sketch, cifar10, aircraft, imagenet-1k
     datasets = [datasets[2]]
     
     method_name = 'cka'
@@ -156,7 +156,7 @@ if __name__ == "__main__":
             raise
         
     fst_idx = codToInstance(3, 'd')[0]
-    snd_idx = codToInstance(15, 'a')[0]
+    snd_idx = codToInstance(17, 'a')[0]+1
     
     fst_model_interr = -1 #fst_idx
     snd_model_interr = -1 #snd_idx+1
