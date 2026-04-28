@@ -339,27 +339,16 @@ def datasetConsistency(metric):
 def drs(json_pkl_paths, metric, extension='eps', dpi=100):
 
     df = loadPkl(metric=metric, json_path=json_pkl_paths)
-
-    drs_values = {}
     
-    for index, row in df.iterrows():
-        values = row.drop(index)
-        values = values.tolist()
-
-        drs_val = (2 * sum(values)) / (len(row)*(len(row)-1))
+    consistencies = df.to_numpy()[np.triu_indices_from(df.to_numpy(), k=1)]
     
-        drs_values[index] = drs_val
-
-    print(drs_values)
-
-    plt.figure(figsize=(10, 5))
-    ax = barplot(x=list(drs_values.keys()), y=list(drs_values.values()), hue=list(drs_values.values()), legend=False, palette=color_palette("flare_r", as_cmap=True), saturation=1.0)
-    plt.yticks(np.arange(0.0, 1.0, 0.1))
-    plt.grid(axis='y', linestyle='--')
-    ax.set(ylabel="DRS values")
-    plt.tight_layout()
-    plt.savefig(f"{output_folder}/{metric}DRS.{extension}", format=extension, dpi=dpi)
-    plt.show()
+    len_c = len(consistencies)
+    
+    drs_val = (2 * consistencies.sum()) / (len_c * (len_c-1))
+    
+    print(drs_val)
+    
+    return drs_val
 
 if __name__ == "__main__":
     metric=metrics[0]
