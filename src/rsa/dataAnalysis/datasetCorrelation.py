@@ -1,4 +1,5 @@
 from ...fileManagement.csvUtils import *
+from ...fileManagement.defaultPaths import jsonInfoPath
 from typing import List,Tuple
 from src.codifications import *
 from seaborn import heatmap, barplot, color_palette
@@ -8,10 +9,11 @@ from scipy.stats import pearsonr, spearmanr
 from ...fileManagement.jsonUtils import getJsonInfo
 import json
 
-results_folder = getJsonInfo()["rsaData"]
+json_info_path = jsonInfoPath()
+results_folder = getJsonInfo(json_info_path)["rsaData"]
 datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
 metrics = ['pearson', 'spearman']
-output_folder = "dataStorage/processedResults/datasetCorrelations"
+output_folder = f"{getJsonInfo(json_info_path)["processedResults"]}/datasetCorrelations"
 
 instances = getInstances()
 
@@ -191,7 +193,7 @@ def MtoMDatasetCorrelation(metric):
     similar_bhv = dtCorrelationGrouping(dic, metric)
         
         
-def generalDatasetCorrelation(metric):
+def datasetConsistency(metric):
     df_dict = getDataFrames(metric)
 
     data = np.zeros((len(datasets), len(datasets)))
@@ -244,6 +246,17 @@ def generalDatasetCorrelation(metric):
     #plt.show()
     
     return df
+
+
+def drs(pkl_paths, metric):
+    df = loadPkl(metric=metric, json_path=pkl_paths)
+    
+    m = df.to_numpy()
+    
+    m = df.to_numpy()[np.triu_indices(n=len(4), k=1, m=len(4))]
+    
+    print(df)
+    
 
 
 def modelAccAvg(model_val_df):
@@ -337,6 +350,7 @@ def corrAccMSRR(mrss_csv=f"{output_folder}/mrss.csv"):
 if __name__ == "__main__":
     metric=metrics[0]
     #MtoMDatasetCorrelation(metric)
-    #generalDatasetCorrelation(metric)
-    MRSS(extension='eps')
+    #datasetConsistency(metric)
+    #MRSS(extension='eps')
     #corrAccMSRR()
+    drs(f"{output_folder}/pklPaths.json", metric)

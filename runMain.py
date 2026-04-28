@@ -155,8 +155,8 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = codToInstance(3, 'd')[0]
-    snd_idx = codToInstance(17, 'a')[0]+1
+    fst_idx = codToInstance(5, 'd')[0]
+    snd_idx = codToInstance(23, 'a')[0]+1
     
     fst_model_interr = -1 #fst_idx
     snd_model_interr = -1 #snd_idx+1
