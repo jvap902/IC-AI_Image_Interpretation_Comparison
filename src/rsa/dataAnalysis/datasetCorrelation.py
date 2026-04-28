@@ -191,73 +191,7 @@ def MtoMDatasetCorrelation(metric):
     dtCorrelationHeatmaps(dic, metric)
     
     similar_bhv = dtCorrelationGrouping(dic, metric)
-        
-        
-def datasetConsistency(metric):
-    df_dict = getDataFrames(metric)
-
-    data = np.zeros((len(datasets), len(datasets)))
-
-    for i in range(len(datasets)):
-        dt1_name = dtNameSubset(datasets[i])
-        df1 = df_dict[dt1_name]
-        
-        for j in range(i):
-            dt2_name = dtNameSubset(datasets[j])
-            df2 = df_dict[dt2_name]
-            
-            dt1 = df1.to_numpy()[np.triu_indices(n=len(instances), k=1, m=len(instances))]
-            dt2 = df2.to_numpy()[np.triu_indices(n=len(instances), k=1, m=len(instances))]
-
-            if metric == 'pearson':
-                val, _ = pearsonr(dt1, dt2)
-            elif metric == 'spearman':
-                val, _ = spearmanr(dt1, dt2)
-            else:
-                raise
-            
-            data[i][j] = val
-            data[j][i] = val
-
-    _ = np.fill_diagonal(data, 1.0)
-
-
-    df = pd.DataFrame(data)
-
-    names = dtPaperName(datasets)
-
-    df.columns = names
-    df.index = names
-
-    #print(df)
     
-    pkl_path = f"{output_folder}/pkls/{metric}.pkl"
-
-    savePkl(df, pkl_path, "main", metric)
-    
-    plt.figure(figsize=(10, 8))
-    
-    ax = heatmap(df, vmin=-0.5, vmax=1.0)
-    
-    plt.title(f"Correlação de {metric} entre datasets")
-    plt.tight_layout()
-    ax.tick_params(axis='both', which='major', labelsize=14)
-    plt.savefig(f"{output_folder}/{metric}.eps", format='eps', dpi=100)
-    #plt.show()
-    
-    return df
-
-
-def drs(pkl_paths, metric):
-    df = loadPkl(metric=metric, json_path=pkl_paths)
-    
-    m = df.to_numpy()
-    
-    m = df.to_numpy()[np.triu_indices(n=len(4), k=1, m=len(4))]
-    
-    print(df)
-    
-
 
 def modelAccAvg(model_val_df):
     
@@ -346,6 +280,86 @@ def corrAccMSRR(mrss_csv=f"{output_folder}/mrss.csv"):
         
         print(f"Pearson correlation: {p}\nSpearman correlation: {s}\n")
 
+
+def datasetConsistency(metric):
+    df_dict = getDataFrames(metric)
+
+    data = np.zeros((len(datasets), len(datasets)))
+
+    for i in range(len(datasets)):
+        dt1_name = dtNameSubset(datasets[i])
+        df1 = df_dict[dt1_name]
+        
+        for j in range(i):
+            dt2_name = dtNameSubset(datasets[j])
+            df2 = df_dict[dt2_name]
+            
+            dt1 = df1.to_numpy()[np.triu_indices(n=len(instances), k=1, m=len(instances))]
+            dt2 = df2.to_numpy()[np.triu_indices(n=len(instances), k=1, m=len(instances))]
+
+            if metric == 'pearson':
+                val, _ = pearsonr(dt1, dt2)
+            elif metric == 'spearman':
+                val, _ = spearmanr(dt1, dt2)
+            else:
+                raise
+            
+            data[i][j] = val
+            data[j][i] = val
+
+    _ = np.fill_diagonal(data, 1.0)
+
+
+    df = pd.DataFrame(data)
+
+    names = dtPaperName(datasets)
+
+    df.columns = names
+    df.index = names
+
+    #print(df)
+    
+    pkl_path = f"{output_folder}/pkls/{metric}.pkl"
+
+    savePkl(df, pkl_path, "main", metric)
+    
+    plt.figure(figsize=(10, 8))
+    
+    ax = heatmap(df, vmin=-0.5, vmax=1.0)
+    
+    plt.title(f"Correlação de {metric} entre datasets")
+    plt.tight_layout()
+    ax.tick_params(axis='both', which='major', labelsize=14)
+    plt.savefig(f"{output_folder}/{metric}.eps", format='eps', dpi=100)
+    #plt.show()
+    
+    return df
+
+
+def drs(json_pkl_paths, metric, extension='eps', dpi=100):
+
+    df = loadPkl(metric=metric, json_path=json_pkl_paths)
+
+    drs_values = {}
+    
+    for index, row in df.iterrows():
+        values = row.drop(index)
+        values = values.tolist()
+
+        drs_val = (2 * sum(values)) / (len(row)*(len(row)-1))
+    
+        drs_values[index] = drs_val
+
+    print(drs_values)
+
+    plt.figure(figsize=(10, 5))
+    ax = barplot(x=list(drs_values.keys()), y=list(drs_values.values()), hue=list(drs_values.values()), legend=False, palette=color_palette("flare_r", as_cmap=True), saturation=1.0)
+    plt.yticks(np.arange(0.0, 1.0, 0.1))
+    plt.grid(axis='y', linestyle='--')
+    ax.set(ylabel="DRS values")
+    plt.tight_layout()
+    plt.savefig(f"{output_folder}/{metric}DRS.{extension}", format=extension, dpi=dpi)
+    plt.show()
 
 if __name__ == "__main__":
     metric=metrics[0]
