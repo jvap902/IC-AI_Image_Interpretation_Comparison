@@ -1,18 +1,19 @@
-from src.fileManagement.csvUtils import *
-from ...codifications import *
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.cluster.hierarchy import dendrogram, linkage, cophenet
 from scipy.spatial.distance import squareform
 from scipy.stats import pearsonr, spearmanr
 import json
+import os
+from src.fileManagement.csvUtils import *
+from ...codifications import *
 from ...fileManagement.jsonUtils import getJsonInfo
 from ...fileManagement.defaultPaths import jsonInfoPath
-import os
+from src import config
 
-datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)] #apenas datasets utilizados no artigo
+datasets = config.datasets
 
-instances = getInstances()
+instances = config.instances
 
 def appendCoephData(json_path, data):
     

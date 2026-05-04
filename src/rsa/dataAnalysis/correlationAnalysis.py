@@ -1,12 +1,13 @@
 import csv
 import numpy as np
-from src.fileManagement.csvUtils import *
 from pandas import DataFrame
+from src import config
 from src.codifications import getModelTrainStr
-from ...fileManagement.jsonUtils import getJsonInfo
-from ...fileManagement.defaultPaths import jsonInfoPath
+from src.fileManagement.csvUtils import *
+from src.fileManagement.jsonUtils import getJsonInfo
+from src.fileManagement.defaultPaths import jsonInfoPath
 
-datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)] #apenas datasets utilizados no artigo
+datasets = config.datasets
 
 rsaData_dir = getJsonInfo(json_path=jsonInfoPath(), fields=["rsaData"])[0]
 

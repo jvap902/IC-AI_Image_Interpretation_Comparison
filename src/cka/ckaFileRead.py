@@ -1,7 +1,8 @@
 import json
 import numpy as np
 import pandas as pd
-from ..codifications import *
+from src import config
+from src.codifications import codToInstance
 
 def dfFromCkaJson(json_path):
     with open(json_path, 'r') as f:
@@ -24,7 +25,7 @@ def dfFromCkaJson(json_path):
         data_matrix[j][i] = val
         
         
-    return pd.DataFrame(data_matrix, columns=getCods(), index=getCods())
+    return pd.DataFrame(data_matrix, columns=config.cods, index=config.cods)
     
 
 if __name__ == "__main__":

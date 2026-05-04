@@ -1,3 +1,4 @@
+from src import config
 from src.fileManagement.csvUtils import *
 from src.fileManagement.jsonUtils import getJsonInfo
 
@@ -22,7 +23,7 @@ def heatMap(csv_path, correlation_type, specific_value: None | Tuple[list[str], 
 
 if __name__ == "__main__":
 
-    datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
+    datasets = config.datasets
         
     save_folder=f'./dataStorage/processedResults/model-model'
     csv_folder = getJsonInfo()["rsaData"]

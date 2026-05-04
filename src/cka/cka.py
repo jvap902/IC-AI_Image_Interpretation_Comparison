@@ -3,7 +3,8 @@ import torch
 from tqdm import tqdm
 from warnings import warn
 import os
-from ..codifications import *
+from src.codifications import *
+from src import config
 from ..fileManagement.fileSystem import createFile
 from ..fileManagement.defaultPaths import jsonInfoPath
 from ..fileManagement.jsonUtils import getJsonInfo, updateJson
@@ -59,7 +60,7 @@ def getModelLayer(model_name):
 
 def jsonCkaToDataFrame(json_path):
     data = getJsonInfo(json_path=json_path)
-    instances = getInstances()
+    instances = config.instances
     
     matrix = np.zeros((len(instances), len(instances)))
     

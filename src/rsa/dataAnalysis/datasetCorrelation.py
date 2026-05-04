@@ -1,21 +1,22 @@
-from ...fileManagement.csvUtils import *
-from ...fileManagement.defaultPaths import jsonInfoPath
 from typing import List,Tuple
-from src.codifications import *
 from seaborn import heatmap, barplot, color_palette
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.stats import pearsonr, spearmanr
-from ...fileManagement.jsonUtils import getJsonInfo
 import json
+from scipy.stats import pearsonr, spearmanr
+from src import config
+from src.codifications import *
+from src.fileManagement.csvUtils import *
+from src.fileManagement.defaultPaths import jsonInfoPath
+from src.fileManagement.jsonUtils import getJsonInfo
 
 json_info_path = jsonInfoPath()
 results_folder = getJsonInfo(json_info_path)["rsaData"]
-datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
+datasets = config.datasets
 metrics = ['pearson', 'spearman']
 output_folder = f"{getJsonInfo(json_info_path)["processedResults"]}/datasetCorrelations"
 
-instances = getInstances()
+instances = config.instances
 
 def getDataFrames(metric, results_folder=results_folder, datasets: List[Tuple[str, int]] = datasets):
 

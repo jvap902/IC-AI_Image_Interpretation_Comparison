@@ -2,6 +2,7 @@ from src.fileManagement.csvUtils import *
 from src.fileManagement.jsonUtils import getJsonInfo
 from ..ckaFileRead import dfFromCkaJson
 from src.codifications import *
+from src import config
 
 def ckaHeatmap(json_path, save_path=None, show=True):
 
@@ -23,7 +24,7 @@ def verifyIntegrity(json_path):
     
     keys = set(data.keys())
     
-    cods = getCods()
+    cods = config.cods
     
     c = True
     
@@ -40,9 +41,10 @@ if __name__ == "__main__":
     
     data_folder = "dataStorage/ckaData"
     
-    datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
+    datasets = config.datasets
+    datasets = [datasets[2]] #apenas fgvc-aircraft no momento
     
-    for (dt, subset) in datasets[1:2]: #pois estou fazendo apenas o cifar10 por enquanto
+    for (dt, subset) in datasets: 
         dt_dir = dtNameSubset((dt, subset))
         
         json_path = f"{data_folder}/{dt_dir}/results.json"

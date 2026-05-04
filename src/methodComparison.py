@@ -1,16 +1,16 @@
+import numpy as np
+from scipy.stats import pearsonr
 from .cka import *
 from .rsa import *
 from .fileManagement.csvUtils import *
 from .fileManagement.jsonUtils import *
 from .fileManagement.defaultPaths import *
-import numpy as np
-from scipy.stats import pearsonr
+from src import config
 
-datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)] #apenas datasets utilizados no artigo    
 info_path = jsonInfoPath()
 
-def rsaCka(rsa_dir, cka_dir):
-    for (name, sub) in datasets[0:1]:
+def rsaCka(rsa_dir, cka_dir, datasets):
+    for (name, sub) in datasets:
         
         name_with_subset = f"{name.replace('/', '-')}({sub})"
         
@@ -32,5 +32,9 @@ if __name__ == "__main__":
     dir_paths = getJsonInfo(json_path=info_path, fields=["rsaData", "ckaData"])
     rsa_dir = dir_paths[0]
     cka_dir = dir_paths[1]
+
+    dt = config.datasets
+
+    dt = [dt[2]]
     
-    rsaCka(rsa_dir, cka_dir)
+    rsaCka(rsa_dir, cka_dir, dt)
