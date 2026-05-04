@@ -7,7 +7,7 @@ from .fileManagement.jsonUtils import *
 from .fileManagement.defaultPaths import *
 from src import config
 
-info_path = jsonInfoPath()
+info_path = config.json_info_path
 
 def rsaCka(rsa_dir, cka_dir, datasets):
     for (name, sub) in datasets:

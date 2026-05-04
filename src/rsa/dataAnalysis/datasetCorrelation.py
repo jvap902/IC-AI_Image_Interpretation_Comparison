@@ -7,10 +7,9 @@ from scipy.stats import pearsonr, spearmanr
 from src import config
 from src.codifications import *
 from src.fileManagement.csvUtils import *
-from src.fileManagement.defaultPaths import jsonInfoPath
 from src.fileManagement.jsonUtils import getJsonInfo
 
-json_info_path = jsonInfoPath()
+json_info_path = config.json_info_path
 results_folder = getJsonInfo(json_info_path)["rsaData"]
 datasets = config.datasets
 metrics = ['pearson', 'spearman']
@@ -282,7 +281,7 @@ def corrAccMSRR(mrss_csv=f"{output_folder}/mrss.csv"):
         print(f"Pearson correlation: {p}\nSpearman correlation: {s}\n")
 
 
-def datasetConsistency(metric):
+def datasetConsistency(metric, extension='png', show=False):
     df_dict = getDataFrames(metric)
 
     data = np.zeros((len(datasets), len(datasets)))
@@ -331,8 +330,8 @@ def datasetConsistency(metric):
     plt.title(f"Correlação de {metric} entre datasets")
     plt.tight_layout()
     ax.tick_params(axis='both', which='major', labelsize=14)
-    plt.savefig(f"{output_folder}/{metric}.eps", format='eps', dpi=100)
-    #plt.show()
+    plt.savefig(f"{output_folder}/{metric}.{extension}", format=extension, dpi=100)
+    if show: plt.show()
     
     return df
 
@@ -357,4 +356,5 @@ if __name__ == "__main__":
     #datasetConsistency(metric)
     #MRSS(extension='eps')
     #corrAccMSRR()
-    drs(f"{output_folder}/pklPaths.json", metric)
+    datasetConsistency('spearman', extension='eps')
+    #drs(f"{output_folder}/pklPaths.json", metric)

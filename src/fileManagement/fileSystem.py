@@ -55,7 +55,7 @@ def makeFileSystem(outputFile):
     
     paths.update(files_paths)
     
-    writeJson(json_path=jsonInfoPath(), dic=paths)
+    writeJson(json_path=config.json_info_path, dic=paths)
 
     
 def createFile(file_path, content, files_paths: Dict = None):

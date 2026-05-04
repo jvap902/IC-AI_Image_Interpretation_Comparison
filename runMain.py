@@ -143,7 +143,7 @@ if __name__ == "__main__":
     
     #datasets = [('timm/mini-imagenet', 0), ('imagenet-sketch', 1), ('cifar10', 0), ('cifar100', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
     datasets = config.datasets #do artigo: sketch, cifar10, aircraft, imagenet-1k
-    datasets = [datasets[2]]
+    datasets = [datasets[3]]
     
     method_name = 'cka'
     
@@ -155,8 +155,8 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = codToInstance(16, 'c')[0]
-    snd_idx = codToInstance(17, 'a')[0]+1
+    fst_idx = 0#codToInstance(16, 'c')[0]
+    snd_idx = fst_idx+1#codToInstance(17, 'a')[0]+1
     
     fst_model_interr = -1 #fst_idx
     snd_model_interr = -1 #snd_idx+1

@@ -26,9 +26,11 @@ if __name__ == "__main__":
     datasets = config.datasets
         
     save_folder=f'./dataStorage/processedResults/model-model'
-    csv_folder = getJsonInfo()["rsaData"]
+    csv_folder = getJsonInfo(config.json_info_path)["rsaData"]
 
     for (dataset, subset) in datasets:
+
+        correlation = 'spearman'
 
         extension = 'eps'
         
@@ -36,8 +38,8 @@ if __name__ == "__main__":
         
         print(f"\n--- {dt} ---")
         
-        print(f"{dataset} - pearson")
-        heatMap(f'{csv_folder}/{dt}Data.csv', 'pearson', specific_value=(['dataset'], [f'{dt}({subset})']), save_path=f'{save_folder}/pearson/{dt}.{extension}', show=False, codification=True, extension=extension)
+        print(f"{dataset} - {correlation}")
+        heatMap(f'{csv_folder}/{dt}Data.csv', correlation, specific_value=(['dataset'], [f'{dt}({subset})']), save_path=f'{save_folder}/{correlation}/{dt}.{extension}', show=False, codification=True, extension=extension)
         
         #print(f"{dataset} - spearman")
         #heatMap(f'{csv_folder}/{dt}Data.csv', 'spearman', specific_value=(['dataset'], [f'{dt}({subset})']), save_path=f'{save_folder}/spearman/{dt}.{extension}', show=False, codification=True, extension=extension)

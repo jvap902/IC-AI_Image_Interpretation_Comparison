@@ -8,7 +8,6 @@ import os
 from src.fileManagement.csvUtils import *
 from ...codifications import *
 from ...fileManagement.jsonUtils import getJsonInfo
-from ...fileManagement.defaultPaths import jsonInfoPath
 from src import config
 
 datasets = config.datasets
@@ -69,7 +68,7 @@ def pltDendrogram(dist_matrix, model_names, dataset, method='average', correlati
     #plt.title(dataset, fontsize=18)
     label_font_size = 18
     plt.ylabel("Models", fontsize=label_font_size)
-    plt.xlabel(f"Distance = (1 - Pearson {correlation})/2", fontsize=label_font_size)
+    plt.xlabel(f"Distance = (1 - {correlation.capitalize()} score)/2", fontsize=label_font_size)
     plt.xlim(0.0, 0.5)
     plt.xticks(np.arange(0.0, 0.5, 0.05))
     plt.tick_params('x', labelsize=16)
@@ -96,7 +95,7 @@ if __name__ == "__main__":
 
         dt = dataset.replace('/', '-')
 
-        csv_path = getJsonInfo(json_path=jsonInfoPath(), fields=["rsaData"])[0]
+        csv_path = getJsonInfo(json_path=config.json_info_path, fields=["rsaData"])[0]
         csv_path = csv_path+f"/{dt}Data.csv"
         
         correlation = 'pearson'

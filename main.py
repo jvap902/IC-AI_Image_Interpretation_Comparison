@@ -39,7 +39,7 @@ args = parser.parse_args()
 if __name__ == "__main__":
     
     fileSystem.makeFileSystem(args.output_file)
-    paths = jsonUtils.getJsonInfo(defaultPaths.jsonInfoPath())
+    paths = jsonUtils.getJsonInfo(config.json_info_path)
     
     output_dir = paths["output_dir"]
     
@@ -123,7 +123,7 @@ if __name__ == "__main__":
     
     fields = ["fst_embedding_path", "snd_embedding_path"]
     values = [fst_embedding_path, snd_embedding_path]
-    jsonUtils.updateJson(defaultPaths.jsonInfoPath(), fields, values)
+    jsonUtils.updateJson(config.json_info_path, fields, values)
 
     # --- Experiment execution ---
     match args.method:

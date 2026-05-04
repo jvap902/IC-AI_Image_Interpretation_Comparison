@@ -15,7 +15,5 @@
     "selectedIndices": "dataStorage/selectedIndices.csv",
     "validation_results": "dataStorage/validation_results.csv",
     "modelOutput": "dataStorage/model_output/modelOutput.csv",
-    "runData": "./dataStorage/rsaData/runData.csv",
-    "fst_embedding_path": "./dataStorage/model_output/embedding/efficientnet_b4_IMAGENET1K_V1_torchvision_fgvc-aircraft(0).pt",
-    "snd_embedding_path": "./dataStorage/model_output/embedding/efficientnet_b7_IMAGENET1K_V1_torchvision_fgvc-aircraft(0).pt"
+    "runData": "./dataStorage/rsaData/runData.csv"
 }

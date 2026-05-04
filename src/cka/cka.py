@@ -6,7 +6,6 @@ import os
 from src.codifications import *
 from src import config
 from ..fileManagement.fileSystem import createFile
-from ..fileManagement.defaultPaths import jsonInfoPath
 from ..fileManagement.jsonUtils import getJsonInfo, updateJson
 import numpy as np
 import pandas as pd
@@ -14,7 +13,7 @@ from itertools import groupby
 
 def cka(dt_info, fst_modelc, snd_modelc):
     
-    paths = getJsonInfo(json_path=jsonInfoPath(), fields=["ckaData", "cka_matrices_folder"])
+    paths = getJsonInfo(json_path=config.json_info_path, fields=["ckaData", "cka_matrices_folder"])
     cka_results_folder = paths[0]+f"/{dt_info.name_w_subset}"
     cka_matrices_folder = paths[1]+f"/{dt_info.name_w_subset}"
     

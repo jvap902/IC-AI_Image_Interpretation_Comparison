@@ -42,7 +42,9 @@ if __name__ == "__main__":
     data_folder = "dataStorage/ckaData"
     
     datasets = config.datasets
-    datasets = [datasets[2]] #apenas fgvc-aircraft no momento
+    #datasets = [datasets[2]] #apenas fgvc-aircraft no momento
+
+    extension = 'eps'
     
     for (dt, subset) in datasets: 
         dt_dir = dtNameSubset((dt, subset))
@@ -51,7 +53,7 @@ if __name__ == "__main__":
         
         if verifyIntegrity(f"{data_folder}/{dt_dir}/results.json"):
     
-            ckaHeatmap(json_path, save_path=f"dataStorage/processedResults/cka/{dt_dir}.png")
+            ckaHeatmap(json_path, save_path=f"dataStorage/processedResults/cka/{dt}.{extension}")
         
         else:
             raise

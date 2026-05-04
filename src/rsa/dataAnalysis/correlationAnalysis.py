@@ -5,11 +5,10 @@ from src import config
 from src.codifications import getModelTrainStr
 from src.fileManagement.csvUtils import *
 from src.fileManagement.jsonUtils import getJsonInfo
-from src.fileManagement.defaultPaths import jsonInfoPath
 
 datasets = config.datasets
 
-rsaData_dir = getJsonInfo(json_path=jsonInfoPath(), fields=["rsaData"])[0]
+rsaData_dir = getJsonInfo(json_path=config.json_info_path, fields=["rsaData"])[0]
 
 def getAverages(data):
     

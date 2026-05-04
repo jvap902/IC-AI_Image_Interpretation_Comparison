@@ -4,7 +4,7 @@ from ..fileManagement.jsonUtils import *
 from .dataCollection import gatherAdditionalData
 from ..fileManagement import csvUtils, defaultPaths
 
-def getRsaPaths(json_path=defaultPaths.jsonInfoPath()):
+def getRsaPaths(json_path=config.json_info_path):
     fields = ["dissimilarity_folder", "cosineDissimilarity", "fst_embedding_path", "snd_embedding_path"]
     
     return getJsonInfo(json_path, fields)
