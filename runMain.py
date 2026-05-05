@@ -156,7 +156,7 @@ if __name__ == "__main__":
             raise
         
     fst_idx = codToInstance(16, 'c')[0]
-    snd_idx = codToInstance(18, 'a')[0]+1
+    snd_idx = codToInstance(22, 'a')[0]+1
     
     fst_model_interr = -1 #fst_idx
     snd_model_interr = -1 #snd_idx+1
