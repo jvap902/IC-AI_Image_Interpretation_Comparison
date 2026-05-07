@@ -4378,5 +4378,110 @@
         "model2_layers": [
             "avgpool"
         ]
+    },
+    "11a 12b": {
+        "model1_name": "11a",
+        "model2_name": "12b",
+        "CKA": [
+            [
+                0.795665979385376
+            ]
+        ],
+        "model1_layers": [
+            "avgpool"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "11a 12c": {
+        "model1_name": "11a",
+        "model2_name": "12c",
+        "CKA": [
+            [
+                0.8902084231376648
+            ]
+        ],
+        "model1_layers": [
+            "avgpool"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "11a 13b": {
+        "model1_name": "11a",
+        "model2_name": "13b",
+        "CKA": [
+            [
+                0.8303702473640442
+            ]
+        ],
+        "model1_layers": [
+            "avgpool"
+        ],
+        "model2_layers": [
+            "avgpool"
+        ]
+    },
+    "11a 14a": {
+        "model1_name": "11a",
+        "model2_name": "14a",
+        "CKA": [
+            [
+                0.6342750191688538
+            ]
+        ],
+        "model1_layers": [
+            "avgpool"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+    "11a 14c": {
+        "model1_name": "11a",
+        "model2_name": "14c",
+        "CKA": [
+            [
+                0.6772454380989075
+            ]
+        ],
+        "model1_layers": [
+            "avgpool"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+    "11a 15a": {
+        "model1_name": "11a",
+        "model2_name": "15a",
+        "CKA": [
+            [
+                0.8018261790275574
+            ]
+        ],
+        "model1_layers": [
+            "avgpool"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
+    },
+    "11a 16c": {
+        "model1_name": "11a",
+        "model2_name": "16c",
+        "CKA": [
+            [
+                0.3965039551258087
+            ]
+        ],
+        "model1_layers": [
+            "avgpool"
+        ],
+        "model2_layers": [
+            "encoder.ln"
+        ]
     }
 }
