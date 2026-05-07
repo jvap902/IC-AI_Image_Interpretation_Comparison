@@ -42,7 +42,7 @@ if __name__ == "__main__":
     data_folder = "dataStorage/ckaData"
     
     datasets = config.datasets
-    #datasets = [datasets[2]] #apenas fgvc-aircraft no momento
+    datasets = [datasets[3]] #apenas fgvc-aircraft no momento
 
     extension = 'eps'
     
