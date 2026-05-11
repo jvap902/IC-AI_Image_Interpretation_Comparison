@@ -1,19 +1,21 @@
-from ...fileManagement.csvUtils import *
 from typing import List,Tuple
-from src.codifications import *
 from seaborn import heatmap, barplot, color_palette
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.stats import pearsonr, spearmanr
-from ...fileManagement.jsonUtils import getJsonInfo
 import json
+from scipy.stats import pearsonr, spearmanr
+from src import config
+from src.codifications import *
+from src.fileManagement.csvUtils import *
+from src.fileManagement.jsonUtils import getJsonInfo
 
-results_folder = getJsonInfo()["rsaData"]
-datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
+json_info_path = config.json_info_path
+results_folder = getJsonInfo(json_info_path)["rsaData"]
+datasets = config.datasets
 metrics = ['pearson', 'spearman']
-output_folder = "dataStorage/processedResults/datasetCorrelations"
+output_folder = f"{getJsonInfo(json_info_path)["processedResults"]}/datasetCorrelations"
 
-instances = getInstances()
+instances = config.instances
 
 def getDataFrames(metric, results_folder=results_folder, datasets: List[Tuple[str, int]] = datasets):
 
@@ -189,62 +191,7 @@ def MtoMDatasetCorrelation(metric):
     dtCorrelationHeatmaps(dic, metric)
     
     similar_bhv = dtCorrelationGrouping(dic, metric)
-        
-        
-def generalDatasetCorrelation(metric):
-    df_dict = getDataFrames(metric)
-
-    data = np.zeros((len(datasets), len(datasets)))
-
-    for i in range(len(datasets)):
-        dt1_name = dtNameSubset(datasets[i])
-        df1 = df_dict[dt1_name]
-        
-        for j in range(i):
-            dt2_name = dtNameSubset(datasets[j])
-            df2 = df_dict[dt2_name]
-            
-            dt1 = df1.to_numpy()[np.triu_indices(n=len(instances), k=1, m=len(instances))]
-            dt2 = df2.to_numpy()[np.triu_indices(n=len(instances), k=1, m=len(instances))]
-
-            if metric == 'pearson':
-                val, _ = pearsonr(dt1, dt2)
-            elif metric == 'spearman':
-                val, _ = spearmanr(dt1, dt2)
-            else:
-                raise
-            
-            data[i][j] = val
-            data[j][i] = val
-
-    _ = np.fill_diagonal(data, 1.0)
-
-
-    df = pd.DataFrame(data)
-
-    names = dtPaperName(datasets)
-
-    df.columns = names
-    df.index = names
-
-    #print(df)
     
-    pkl_path = f"{output_folder}/pkls/{metric}.pkl"
-
-    savePkl(df, pkl_path, "main", metric)
-    
-    plt.figure(figsize=(10, 8))
-    
-    ax = heatmap(df, vmin=-0.5, vmax=1.0)
-    
-    plt.title(f"Correlação de {metric} entre datasets")
-    plt.tight_layout()
-    ax.tick_params(axis='both', which='major', labelsize=14)
-    plt.savefig(f"{output_folder}/{metric}.eps", format='eps', dpi=100)
-    #plt.show()
-    
-    return df
-
 
 def modelAccAvg(model_val_df):
     
@@ -334,9 +281,80 @@ def corrAccMSRR(mrss_csv=f"{output_folder}/mrss.csv"):
         print(f"Pearson correlation: {p}\nSpearman correlation: {s}\n")
 
 
+def datasetConsistency(metric, extension='png', show=False):
+    df_dict = getDataFrames(metric)
+
+    data = np.zeros((len(datasets), len(datasets)))
+
+    for i in range(len(datasets)):
+        dt1_name = dtNameSubset(datasets[i])
+        df1 = df_dict[dt1_name]
+        
+        for j in range(i):
+            dt2_name = dtNameSubset(datasets[j])
+            df2 = df_dict[dt2_name]
+            
+            dt1 = df1.to_numpy()[np.triu_indices(n=len(instances), k=1, m=len(instances))]
+            dt2 = df2.to_numpy()[np.triu_indices(n=len(instances), k=1, m=len(instances))]
+
+            if metric == 'pearson':
+                val, _ = pearsonr(dt1, dt2)
+            elif metric == 'spearman':
+                val, _ = spearmanr(dt1, dt2)
+            else:
+                raise
+            
+            data[i][j] = val
+            data[j][i] = val
+
+    _ = np.fill_diagonal(data, 1.0)
+
+
+    df = pd.DataFrame(data)
+
+    names = dtPaperName(datasets)
+
+    df.columns = names
+    df.index = names
+
+    #print(df)
+    
+    pkl_path = f"{output_folder}/pkls/{metric}.pkl"
+
+    savePkl(df, pkl_path, "main", metric)
+    
+    plt.figure(figsize=(10, 8))
+    
+    ax = heatmap(df, vmin=-0.5, vmax=1.0)
+    
+    plt.title(f"Correlação de {metric} entre datasets")
+    plt.tight_layout()
+    ax.tick_params(axis='both', which='major', labelsize=14)
+    plt.savefig(f"{output_folder}/{metric}.{extension}", format=extension, dpi=100)
+    if show: plt.show()
+    
+    return df
+
+
+def drs(json_pkl_paths, metric, extension='eps', dpi=100):
+
+    df = loadPkl(metric=metric, json_path=json_pkl_paths)
+    
+    consistencies = df.to_numpy()[np.triu_indices_from(df.to_numpy(), k=1)]
+    
+    len_c = len(consistencies)
+    
+    drs_val = (2 * consistencies.sum()) / (len_c * (len_c-1))
+    
+    print(drs_val)
+    
+    return drs_val
+
 if __name__ == "__main__":
     metric=metrics[0]
     #MtoMDatasetCorrelation(metric)
-    #generalDatasetCorrelation(metric)
-    MRSS(extension='eps')
+    #datasetConsistency(metric)
+    #MRSS(extension='eps')
     #corrAccMSRR()
+    datasetConsistency('spearman', extension='eps')
+    #drs(f"{output_folder}/pklPaths.json", metric)

@@ -138,14 +138,12 @@ def revalidate(instances, datasets, start_params: startParams):
             run_main_with_subprocess(args)
 
 if __name__ == "__main__":
-    # Capture all command-line arguments passed to this script, 
-    # excluding the script name itself (sys.argv[0] is 'run_pipeline.py').
 
-    instances = getInstances()
+    instances = config.instances
     
-    datasets = [('timm/mini-imagenet', 0), ('imagenet-sketch', 1), ('cifar10', 0), ('cifar100', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
-    datasets = [datasets[1], datasets[2], datasets[4], datasets[5]]
-    datasets = [datasets[1]]
+    #datasets = [('timm/mini-imagenet', 0), ('imagenet-sketch', 1), ('cifar10', 0), ('cifar100', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
+    datasets = config.datasets #do artigo: sketch, cifar10, aircraft, imagenet-1k
+    datasets = [datasets[3]]
     
     method_name = 'cka'
     
@@ -157,10 +155,13 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = codToInstance(4, 'd')[0]
-    snd_idx = codToInstance(8, 'd')[0]
-        
-    start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (0, 5, 6)}
+    fst_idx = codToInstance(11, 'a')[0]
+    snd_idx = codToInstance(12, 'a')[0]+1
+    
+    fst_model_interr = codToInstance(13, 'b')[0]
+    snd_model_interr = codToInstance(14, 'c')[0]+1
+    
+    start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (0, fst_model_interr, snd_model_interr)}
     
     run(instances, datasets, method, start_params)
     #revalidate(instances, datasets, method, start_params)

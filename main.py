@@ -17,7 +17,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--size", type=int, required=False, help="Specify number of images to be used from the dataset")
 parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify the model to be used as first model")
 parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify the model to be used as second model")
-parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10, cifar100, imagenet-a, imagenet-sketch, fgvc-aircraft or a link for huggingface dataset)")
+parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10, cifar100, imagenet-a, imagenet-sketch, fgvc-aircraft, imagenet-c-$distortion$-$level$ or a link for huggingface dataset)")
 parser.add_argument("-e", "--epochs", type=int, required=False, help="Specify the number of epochs to train the head for validation")
 parser.add_argument("-nv", "--no_validation", action='store_false', help="Turns off model validation step")
 parser.add_argument("--chunked", action='store_true', help="Enables spearman calculation in chunks to save memory")
@@ -39,7 +39,7 @@ args = parser.parse_args()
 if __name__ == "__main__":
     
     fileSystem.makeFileSystem(args.output_file)
-    paths = jsonUtils.getJsonInfo(defaultPaths.jsonInfoPath())
+    paths = jsonUtils.getJsonInfo(config.json_info_path)
     
     output_dir = paths["output_dir"]
     
@@ -123,7 +123,7 @@ if __name__ == "__main__":
     
     fields = ["fst_embedding_path", "snd_embedding_path"]
     values = [fst_embedding_path, snd_embedding_path]
-    jsonUtils.updateJson(defaultPaths.jsonInfoPath(), fields, values)
+    jsonUtils.updateJson(config.json_info_path, fields, values)
 
     # --- Experiment execution ---
     match args.method:

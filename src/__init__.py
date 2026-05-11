@@ -17,5 +17,6 @@ from .cka import cka
 from .cka.dataAnalysis import *
 from . import memoryManagement
 from . import codifications
+from . import config
 
-__all__ = ["extractionTraining", "featureExtraction", "modelCreation", "csvUtils", "jsonUtils", "loadDataset", "similarityAnalysis", "similarityUtils", "datasetUtils", "memoryManagement", "dataCollection", "fileSystem", "modelClass", "classUtils", "rsa", "cka", "dataset_ipc", "rsaHeatmaps", "correlationAnalysis", "clusteringAnalysis", "codifications", "defaultPaths", "ckaHeatmaps"]
+__all__ = ["config", "extractionTraining", "featureExtraction", "modelCreation", "csvUtils", "jsonUtils", "loadDataset", "similarityAnalysis", "similarityUtils", "datasetUtils", "memoryManagement", "dataCollection", "fileSystem", "modelClass", "classUtils", "rsa", "cka", "dataset_ipc", "rsaHeatmaps", "correlationAnalysis", "clusteringAnalysis", "codifications", "defaultPaths", "ckaHeatmaps"]

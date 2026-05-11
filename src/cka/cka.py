@@ -3,9 +3,9 @@ import torch
 from tqdm import tqdm
 from warnings import warn
 import os
-from ..codifications import *
+from src.codifications import *
+from src import config
 from ..fileManagement.fileSystem import createFile
-from ..fileManagement.defaultPaths import jsonInfoPath
 from ..fileManagement.jsonUtils import getJsonInfo, updateJson
 import numpy as np
 import pandas as pd
@@ -13,7 +13,7 @@ from itertools import groupby
 
 def cka(dt_info, fst_modelc, snd_modelc):
     
-    paths = getJsonInfo(json_path=jsonInfoPath(), fields=["ckaData", "cka_matrices_folder"])
+    paths = getJsonInfo(json_path=config.json_info_path, fields=["ckaData", "cka_matrices_folder"])
     cka_results_folder = paths[0]+f"/{dt_info.name_w_subset}"
     cka_matrices_folder = paths[1]+f"/{dt_info.name_w_subset}"
     
@@ -38,9 +38,9 @@ def cka(dt_info, fst_modelc, snd_modelc):
     
     json_path = f"{cka_results_folder}/results.json"
     
-    updateJson([f"{cka.m1_name} {cka.m2_name}"], [dic], json_path=json_path)
+    updateJson(json_path=json_path, fields=[f"{cka.m1_name} {cka.m2_name}"], values=[dic])
 
-    return
+    del dic
 
 def getModelLayer(model_name):
     match model_name:
@@ -59,7 +59,7 @@ def getModelLayer(model_name):
 
 def jsonCkaToDataFrame(json_path):
     data = getJsonInfo(json_path=json_path)
-    instances = getInstances()
+    instances = config.instances
     
     matrix = np.zeros((len(instances), len(instances)))
     

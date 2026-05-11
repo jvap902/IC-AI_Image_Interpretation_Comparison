@@ -1,5 +1,3 @@
-relatório
-
 para ativar venv :
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 .\venv\Scripts\activate
@@ -10,8 +8,9 @@ ideia de otimização:
     Voltar com arquivos de dissimilaridade de cosseno, quando ativo faz validação do modelo e pula toda parte de extração.
 
 Tarefas:
-    CKA com cache de features -> CKA só com layers finais por enquanto
-    Introduzir ruído controlado nos datasets e observar efeito
+    Relatório
+    Testes com imagenet-c -> falta decididr quais distorções usar
+    Outras análises CKA
     Testar a hipótese do motivo de correlações baixas imagenet-1k -> fazer fine-tunning dos modelos para algum dataset (possivelmente CIFAR) e ver se as correlações baixam
 
 

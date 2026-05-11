@@ -8,7 +8,7 @@ import random
 from collections import defaultdict
 from ..fileManagement.csvUtils import findInCsv, writeCsvLine
 import json
-
+import torchvision
 
 # ImageNet-A download details
 IMAGENET_A_URL = "https://people.eecs.berkeley.edu/~hendrycks/imagenet-a.tar"
@@ -26,10 +26,13 @@ AIRCRAFT_FILENAME = "fgvc-aircraft-2013b.tar.gz"
 AIRCRAFT_EXTRACT_DIR = "fgvc-aircraft-2013b"
 
 #Imagenet-C
-def imagenetCDownloadInfo(subset):
-    imagenet_c_url = f"https://zenodo.org/records/2235448/files/{subset}.tar?download=1"
-    imagenet_c_filename = f"{subset}.tar"
-    imagenet_c_extract_dir = subset
+def imagenetCDownloadInfo(distortion):
+    
+    tp = imagenetCDistortionMap(distortion)
+    
+    imagenet_c_url = f"https://zenodo.org/records/2235448/files/{tp}.tar?download=1"
+    imagenet_c_filename = f"{tp}.tar"
+    imagenet_c_extract_dir = tp
     
     return imagenet_c_url, imagenet_c_filename, imagenet_c_extract_dir
 
@@ -41,7 +44,7 @@ def getDownloadInfo(dataset):
     elif dataset == 'fgvc-aircraft':
         return AIRCRAFT_URL, AIRCRAFT_FILENAME, AIRCRAFT_EXTRACT_DIR, 'tar'
     elif 'imagenet-c' in dataset:
-        url, filename, extract_dir = imagenetCDownloadInfo(dataset.split('-')[-1])
+        url, filename, extract_dir = imagenetCDownloadInfo(dataset.split('-')[-2])
         return url, filename, extract_dir, 'tar'
     else:
         raise ValueError("Unsupported dataset")
@@ -150,33 +153,15 @@ def loadToken(file_path):
         print(f"Error: The file '{file_path}' was not found.")
     except Exception as e:
         print(f"An error occurred: {e}")
-    
-def selectindices(dataset, imagesPerClass, num_classes):
-    # 1. Initialize storage for selected indices
-    selected_indices = []
-    count_per_class = {i: 0 for i in range(num_classes)}
 
-    # 2. Iterate through the dataset's indices
-    for i in range(len(dataset)):
-        # CIFAR10 stores targets as a list/array attribute or returns them with the data.
-        # We access the class label (target) for the current index 'i'.
-        label = dataset.targets[i] 
 
-        # 3. Check if we need more samples for this class
-        if count_per_class[label] < imagesPerClass:
-            selected_indices.append(i)
-            count_per_class[label] += 1
-        
-        # Optional: Stop early once all classes have x samples
-        if len(selected_indices) == imagesPerClass * num_classes: # x * 10 classes
-            break
-        
-        
-    return selected_indices
-
-def extract_labels(hf_dataset):
+def extract_labels(dataset):
     # Directly access the 'label' column of the HF dataset
-    return hf_dataset['label']
+    
+    if hasattr(dataset, 'targets'):
+        return dataset.targets
+    else:
+        return dataset['label']
 
 def getRandomImages(dt_info, dataset, dataset_classes : int):
     
@@ -185,15 +170,25 @@ def getRandomImages(dt_info, dataset, dataset_classes : int):
     num_classes = dt_info.num_classes
     images_per_class = dt_info.images_per_class
     
+    # 1. Access labels directly and instantaneously
+    # For torchvision ImageFolder, targets is the list of integer labels
+    if hasattr(dataset, 'targets'):
+        labels = dataset.targets
+    else:
+        # Fallback for HuggingFace or other formats
+        labels = dataset['label'] if 'label' in dataset.features else dataset['label']
+    
+    
     # 1. Pick num_classes classes
-    selected_classes = random.sample(range(dataset_classes), num_classes)
+    available_classes = list(set(labels))
+    selected_classes = set(random.sample(available_classes, num_classes))
 
     # 2. Collect indices per class
     class_indices = defaultdict(list)
     
     labels = extract_labels(dataset)
 
-    for idx, label in enumerate(labels):
+    for idx, label in enumerate(tqdm(labels, desc="Scanning dataset labels")):
         if label in selected_classes:
             class_indices[label].append(idx)
 
@@ -317,3 +312,49 @@ def getStdMapping():
     # class_index looks like {"0": ["n01443537", "goldfish"]}
     # We want {"n01443537": 0}
     return {v[0]: int(k) for k, v in class_index.items()}
+
+def imagenetCDistortionMap(dist):
+    distortions = {
+        "noise": {'gaussian_noise', 'shot_noise', 'impulse_noise'},
+        "blur": {'defocus_blur', 'glass_blur', 'motion_blur', 'zoom_blur'},
+        "weather": {'frost', 'snow', 'fog', 'brightness'},
+        "digital": {'constrast', 'elastic_transform', 'pixelate', 'jpeg_compression'},
+        "extra": {'speckle_noise', 'spatter', 'gaussian_blur', 'saturate'},
+        "types": {'noise', 'blur', 'weather', 'digital', 'extra'}
+    }
+    
+    if dist in distortions['types']:
+        return distortions[dist] #retorna distorções disponíveis para o tipo de entrada
+    
+    else:
+        for type, dists in distortions.items():
+            if dist in dists:
+                return type
+            
+    raise ValueError("Unavailable distortion")
+
+def pathConcat(dataset):
+    if 'imagenet-c' in dataset:
+        split_dt = dataset.split('-')
+        return f'/{split_dt[-2]}/{split_dt[-1]}' #[-2] = distorção, [-1] = intensidade
+    else:
+        return '' #se não precisa concatenar nada só retorna str vazia
+
+def getUrlDataset(data_dir, dataset, modelc):
+    url, file_name, extract_dir, compression_type = getDownloadInfo(dataset)
+    
+    # 1. Download and extract the data
+    # This calls the function from src/datasetUtils.py to handle the download
+    folder_path = downloadUrlDataset(root_dir=data_dir, url=url, file_name=file_name, extract_dir=extract_dir, compression_type=compression_type)
+    if folder_path is None:
+        raise FileNotFoundError(f"Failed to download or extract {dataset}.")
+
+    folder_path = folder_path+pathConcat(dataset)
+
+    # 2. Load data using ImageFolder (which expects class subdirectories)
+    full_dataset = torchvision.datasets.ImageFolder(root=folder_path, transform=modelc.data_transforms)
+    
+    if not full_dataset.classes:
+        raise ValueError(f"Could not find any classes (subdirectories) in {data_dir}. Check the directory structure.")
+    
+    return full_dataset
