@@ -128,9 +128,9 @@ if __name__ == "__main__":
     # --- Experiment execution ---
     match args.method:
         case "rsa":
-            rsa.rsa(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args)
+            rsa.rsaMethod(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args)
         case "cka":
-            cka.cka(dt_info, fst_modelc, snd_modelc)
+            cka.ckaMethod(dt_info, fst_modelc, snd_modelc)
         case "validation":
             print("validado")
         case _:

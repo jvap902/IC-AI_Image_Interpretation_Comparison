@@ -9,7 +9,7 @@ def getRsaPaths(json_path=config.json_info_path):
     
     return getJsonInfo(json_path, fields)
 
-def rsa(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args):
+def rsaMethod(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args):
     dissimilarity_folder, dissimilarity_csv_path, fst_embedding_path, snd_embedding_path = getRsaPaths()
 
     get_fst_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, fst_modelc)) == 0 or args.existing_dissimilarity == False
