@@ -55,7 +55,7 @@ def cka_args(run_data):
     return ["--dataset", dataset, "--specific_subset", str(subset), "-ndsc", "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
                                     "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, '-met', 'cka']
         
-def run(instances, datasets, method, start_params: startParams):
+def run(instances, datasets, method, start_params: startParams, interrupt):
     
     begin = start_params['fst_instance']
     snd_start = start_params['snd_instance']
@@ -70,7 +70,7 @@ def run(instances, datasets, method, start_params: startParams):
     for (dataset, subset) in datasets[initial_dt:]:
         dt_interr = True if (dataset, subset) == datasets[start_params["interrupt"][0]] else False
         
-        if m1_interr and m2_interr and dt_interr:
+        if interrupt and m1_interr and m2_interr and dt_interr:
             return
         
         dt_name = dataset.replace('/', '-')
@@ -88,7 +88,7 @@ def run(instances, datasets, method, start_params: startParams):
         for (dataset, subset) in datasets:
             dt_interr = True if (dataset, subset) == datasets[start_params["interrupt"][0]] else False
             
-            if m1_interr and m2_interr and dt_interr:
+            if interrupt and m1_interr and m2_interr and dt_interr:
                 return
             
             dt_name = dataset.replace('/', '-')
@@ -108,7 +108,7 @@ def run(instances, datasets, method, start_params: startParams):
             for (dataset, subset) in datasets:
                 dt_interr = True if (dataset, subset) == datasets[start_params["interrupt"][0]] else False
             
-                if m1_interr and m2_interr and dt_interr:
+                if interrupt and m1_interr and m2_interr and dt_interr:
                     return
                 
                 dt_name = dataset.replace('/', '-')
@@ -155,15 +155,15 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = codToInstance(11, 'a')[0]
-    snd_idx = codToInstance(12, 'a')[0]+1
+    fst_idx = 0#codToInstance(11, 'a')[0]
+    snd_idx = 1#codToInstance(12, 'a')[0]+1
     
-    fst_model_interr = codToInstance(13, 'b')[0]
-    snd_model_interr = codToInstance(14, 'c')[0]+1
+    fst_model_interr = 0#codToInstance(13, 'b')[0]
+    snd_model_interr = 2#codToInstance(14, 'c')[0]+1
     
     start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (0, fst_model_interr, snd_model_interr)}
     
-    run(instances, datasets, method, start_params)
+    run(instances, datasets, method, start_params, interrupt=True)
     #revalidate(instances, datasets, method, start_params)
 
 
