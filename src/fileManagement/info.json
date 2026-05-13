@@ -15,7 +15,7 @@
     "selectedIndices": "dataStorage/selectedIndices.csv",
     "validation_results": "dataStorage/validation_results.csv",
     "modelOutput": "dataStorage/model_output/modelOutput.csv",
-    "runData": "./dataStorage/rsaData/runData.csv",
-    "fst_embedding_path": "./dataStorage/model_output/embedding/facebook-dinov3-vitb16-pretrain-lvd1689m_DEFAULT_huggingface_ILSVRC-imagenet-1k(0).pt",
-    "snd_embedding_path": "./dataStorage/model_output/embedding/facebook-dinov3-vitl16-pretrain-lvd1689m_DEFAULT_huggingface_ILSVRC-imagenet-1k(0).pt"
+    "ILSVRC-imagenet-1kData": "./dataStorage/rsaData/ILSVRC-imagenet-1kData.csv",
+    "fst_embedding_path": "./dataStorage/model_output/embedding/efficientnet_b4_IMAGENET1K_V1_torchvision_ILSVRC-imagenet-1k(0).pt",
+    "snd_embedding_path": "./dataStorage/model_output/embedding/efficientnet_b7_IMAGENET1K_V1_torchvision_ILSVRC-imagenet-1k(0).pt"
 }

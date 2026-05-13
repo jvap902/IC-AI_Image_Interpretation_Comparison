@@ -39,7 +39,7 @@ if __name__ == "__main__":
         print(f"\n--- {dt} ---")
         
         print(f"{dataset} - {correlation}")
-        heatMap(f'{csv_folder}/{dt}Data.csv', correlation, specific_value=(['dataset'], [f'{dt}({subset})']), save_path=f'{save_folder}/{correlation}/{dt}.{extension}', show=False, codification=True, extension=extension)
+        heatMap(f'{csv_folder}/{dt}Data.csv', correlation, specific_value=(['dataset'], [f'{dt}({subset})']), save_path=f'{save_folder}/{correlation}/{dt}.{extension}', show=True, codification=True, extension=extension)
         
         #print(f"{dataset} - spearman")
         #heatMap(f'{csv_folder}/{dt}Data.csv', 'spearman', specific_value=(['dataset'], [f'{dt}({subset})']), save_path=f'{save_folder}/spearman/{dt}.{extension}', show=False, codification=True, extension=extension)

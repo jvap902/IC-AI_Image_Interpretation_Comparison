@@ -4,6 +4,7 @@ from src import *
 from time import sleep
 from typing import TypedDict, Tuple
 from src.codifications import *
+from utils.debug import *
 
 def run_main_with_subprocess(args):
     """
@@ -41,7 +42,6 @@ def rsa_args(run_data):
     
     print(f"    --- Running {dataset} RSA: {model1} ({weight1}) x {model2} ({weight2}) ---")
     
-    
     sleep(5.0)
     
     return ["--dataset", dataset, "--specific_subset", str(subset), "-ndsc", "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, '-met', 'rsa',
@@ -55,7 +55,7 @@ def cka_args(run_data):
     return ["--dataset", dataset, "--specific_subset", str(subset), "-ndsc", "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
                                     "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, '-met', 'cka']
         
-def run(instances, datasets, method, start_params: startParams, interrupt):
+def run(instances, datasets, method, start_params: startParams, interrupt=True):
     
     begin = start_params['fst_instance']
     snd_start = start_params['snd_instance']
@@ -143,9 +143,9 @@ if __name__ == "__main__":
     
     #datasets = [('timm/mini-imagenet', 0), ('imagenet-sketch', 1), ('cifar10', 0), ('cifar100', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
     datasets = config.datasets #do artigo: sketch, cifar10, aircraft, imagenet-1k
-    datasets = [datasets[3]]
+    #datasets = [datasets[0], datasets[3]]
     
-    method_name = 'cka'
+    method_name = 'rsa'
     
     match method_name:
         case 'rsa':
@@ -155,13 +155,13 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = 0#codToInstance(11, 'a')[0]
-    snd_idx = 1#codToInstance(12, 'a')[0]+1
+    fst_idx = 0
+    snd_idx = fst_idx+1#codToInstance(12, 'a')[0]+1
     
     fst_model_interr = 0#codToInstance(13, 'b')[0]
     snd_model_interr = 2#codToInstance(14, 'c')[0]+1
     
-    start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (0, fst_model_interr, snd_model_interr)}
+    start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (1, fst_model_interr, snd_model_interr)}
     
     run(instances, datasets, method, start_params, interrupt=True)
     #revalidate(instances, datasets, method, start_params)

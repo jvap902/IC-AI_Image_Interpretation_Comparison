@@ -131,8 +131,10 @@ def getCosineDissimilarity(ptPath, dissimilarity_csv, dissimilarity_folder, mode
     ans = isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv, modelc)
     
     if existing_dissimilarity and (len(ans) > 0):
+        print("Using previously calculated cosine dissimilarity matrix")
         return ans[0]['path']
     else:
+        print("Calculating new cosine dissimilarity matrix")
         dissimilarity_path = os.path.join(dissimilarity_folder, f"{m_name}_{m_weights}_{s_name}_{dt_info.name_w_subset}.npy")
         cosineDissimilarity(ptPath, dissimilarity_csv, dissimilarity_path, modelc, dt_info.name_w_subset)
         return dissimilarity_path
