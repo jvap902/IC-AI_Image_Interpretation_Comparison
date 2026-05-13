@@ -19,10 +19,8 @@ def dfFromCkaJson(json_path):
         
         i, j = codToInstance(n1, l1)[0], codToInstance(n2, l2)[0]
         
-        val = value["CKA"][0][0]
-        
-        data_matrix[i][j] = val
-        data_matrix[j][i] = val
+        data_matrix[i][j] = value
+        data_matrix[j][i] = value
         
         
     return pd.DataFrame(data_matrix, columns=config.cods, index=config.cods)

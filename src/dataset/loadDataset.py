@@ -293,10 +293,6 @@ def loadHuggingfaceDataset(dt_info, train_indices, val_indices, modelc):
     dataset_link = dt_info.name
     
     try:   
-        hf_token = datasetUtils.loadToken('token.txt')
-        
-        login(token=hf_token, add_to_git_credential=False)
-        
         if(Path(f'./data/{dt_info.name_w_subset}').is_dir()):
             
             print("Loading already selected and downloaded subset")
@@ -317,6 +313,9 @@ def loadHuggingfaceDataset(dt_info, train_indices, val_indices, modelc):
                 hf_validation = load_from_disk(f'./data/{dir_name}/validation')
                 
             else:
+                hf_token = datasetUtils.loadToken('token.txt')
+                
+                login(token=hf_token, add_to_git_credential=False)
                 
                 hf_train = load_dataset(dataset_link, split='train', streaming=False)
                 hf_validation = load_dataset(dataset_link, split='validation', streaming=False)

@@ -66,9 +66,7 @@ def createFile(file_path, content, files_paths: Dict = None):
         
         files_paths[key] = file_path
     
-    if os.path.isfile(file_path):
-        print("Arquivo já existente")
-    else:
+    if not os.path.isfile(file_path):
         print("Arquivo não existente, criando novo")
         with open(file_path, mode="a", newline='', encoding='utf-8') as f:
             f.write(content)

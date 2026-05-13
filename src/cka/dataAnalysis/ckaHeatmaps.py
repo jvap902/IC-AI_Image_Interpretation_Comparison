@@ -28,8 +28,8 @@ def verifyIntegrity(json_path):
     
     c = True
     
-    for i in range(27):
-        for j in range(i+1, 27):
+    for i in range(len(cods)):
+        for j in range(i+1, len(cods)):
             if(f"{cods[i]} {cods[j]}" not in keys):
                 c = False
                 print(f"ERRO - {cods[i]} {cods[j]} não encontrado")
@@ -42,11 +42,13 @@ if __name__ == "__main__":
     data_folder = "dataStorage/ckaData"
     
     datasets = config.datasets
-    datasets = [datasets[3]] #apenas fgvc-aircraft no momento
+    datasets = [datasets[1]]
 
-    extension = 'eps'
+    extension = 'png'
     
-    for (dt, subset) in datasets: 
+    for (dt, subset) in datasets:
+        dt = dt.replace('/', '-')
+        
         dt_dir = dtNameSubset((dt, subset))
         
         json_path = f"{data_folder}/{dt_dir}/results.json"

@@ -1,3 +1,3 @@
 from . import *
 
-__all__ = ["dataset_ipc", "rsaHeatmaps", "correlationAnalysis", "clusteringAnalysis"]
+__all__ = ["rsaHeatmaps", "correlationAnalysis", "clusteringAnalysis"]
