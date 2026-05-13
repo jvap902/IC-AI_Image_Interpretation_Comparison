@@ -42,11 +42,16 @@ if __name__ == "__main__":
     data_folder = "dataStorage/ckaData"
     
     datasets = config.datasets
-    datasets = [datasets[3]] #apenas fgvc-aircraft no momento
+    #datasets = [datasets[3]] #apenas fgvc-aircraft no momento
 
     extension = 'eps'
     
     for (dt, subset) in datasets: 
+        
+        print(f"Gerando heatmap para {dt}({subset})")
+        
+        dt = dt.replace('/', '-')
+        
         dt_dir = dtNameSubset((dt, subset))
         
         json_path = f"{data_folder}/{dt_dir}/results.json"
