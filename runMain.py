@@ -70,7 +70,7 @@ def run(instances, datasets, method, start_params: startParams, interrupt=True):
     for (dataset, subset) in datasets[initial_dt:]:
         dt_interr = True if (dataset, subset) == datasets[start_params["interrupt"][0]] else False
         
-        if m1_interr and m2_interr and dt_interr and interrupt:
+        if interrupt and m1_interr and m2_interr and dt_interr:
             return
         
         dt_name = dataset.replace('/', '-')
@@ -88,7 +88,7 @@ def run(instances, datasets, method, start_params: startParams, interrupt=True):
         for (dataset, subset) in datasets:
             dt_interr = True if (dataset, subset) == datasets[start_params["interrupt"][0]] else False
             
-            if m1_interr and m2_interr and dt_interr and interrupt:
+            if interrupt and m1_interr and m2_interr and dt_interr:
                 return
             
             dt_name = dataset.replace('/', '-')
@@ -108,7 +108,7 @@ def run(instances, datasets, method, start_params: startParams, interrupt=True):
             for (dataset, subset) in datasets:
                 dt_interr = True if (dataset, subset) == datasets[start_params["interrupt"][0]] else False
             
-                if m1_interr and m2_interr and dt_interr and interrupt:
+                if interrupt and m1_interr and m2_interr and dt_interr:
                     return
                 
                 dt_name = dataset.replace('/', '-')
@@ -158,12 +158,12 @@ if __name__ == "__main__":
     fst_idx = 0
     snd_idx = fst_idx+1#codToInstance(12, 'a')[0]+1
     
-    fst_model_interr = codToInstance(13, 'b')[0]
-    snd_model_interr = codToInstance(14, 'c')[0]+1
+    fst_model_interr = 0#codToInstance(13, 'b')[0]
+    snd_model_interr = 2#codToInstance(14, 'c')[0]+1
     
     start_params = {'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (1, fst_model_interr, snd_model_interr)}
     
-    run(instances, datasets, method, start_params, interrupt=False)
+    run(instances, datasets, method, start_params, interrupt=True)
     #revalidate(instances, datasets, method, start_params)
 
 
