@@ -8,6 +8,7 @@ from torchvision.models.feature_extraction import get_graph_node_names
 from torchvision.models import maxvit_t, resnet18, regnet_y_32gf, vit_b_16, efficientnet_b0, swin_t, convnext_tiny
 from transformers import AutoModel, AutoImageProcessor
 import clip
+from src.fileManagement.jsonUtils import getJsonInfo
 
 
 #model = regnet_y_32gf()
@@ -16,7 +17,6 @@ import clip
 #
 #print(model.named_children)
 #
-#device = "cuda" if torch.cuda.is_available() else "cpu"
 #model, preprocess = clip.load("ViT-B/32", device=device)#
 #print(model.named_children)
 
@@ -44,19 +44,18 @@ def notTuple(inst, dt):
 
 if __name__ == "__main__":
     
-    names = ["cifar10Data.csv", "fgvc-aircraftData.csv", "ILSVRC-imagenet-1kData.csv", "imagenet-sketchData.csv"]
+    lib = getJsonInfo("tempData/a.json")
+    mine = getJsonInfo("dataStorage/ckaData/ILSVRC-imagenet-1k(0)/results.json")
     
-    for n in names:
-        df1 = pd.read_csv(f"dataStorage/rsaData/{n}")
-        df2 = pd.read_csv(f"oldResults/{n}")
+    if len(lib) < 27:
+        print("erro1")
+    if len(mine) < 27:
+        print("erro2")
+    
+    for key in lib:
+        dif = abs(lib[key] - mine[key])
         
-        arr1 = df1["pearson"].to_numpy()
-        arr2 = df2["pearson"].to_numpy()
-        
-        dif = arr1-arr2
-        #print(f"{n} difference is {dif}\n")
-        
-        thresh = 0.0001
-        
-        if(dif > thresh).any():
-            print(f"Existe erro maior que {thresh}, o máximo é {dif.max()}")
+        if dif > 0.000001:
+            print(f"diferença maior, {key} -> {dif:.10f}")
+            
+    print("concluido")

@@ -1,11 +1,11 @@
 import torch
 import torch.nn as nn
+import clip
+import open_clip
 import torchvision.models as models
 from torchvision.models.feature_extraction import get_graph_node_names
 from torchvision.models import maxvit_t, resnet18, regnet_y_32gf, vit_b_16, efficientnet_b0, swin_t, convnext_tiny
 from transformers import AutoModel, AutoImageProcessor
-import clip
-import open_clip
 from src.model.modelCreation import get_default_openclip_pretrained
 
 device = "cuda" if torch.cuda.is_available() else "cpu"

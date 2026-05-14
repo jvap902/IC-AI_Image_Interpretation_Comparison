@@ -1,4 +1,6 @@
 import torch
+import clip
+import open_clip
 from ..fileManagement.csvUtils import *
 from ..extraction.featureExtraction import getFeatureTensors
 from ..fileManagement.defaultPaths import embeddingSavePath
@@ -6,12 +8,9 @@ from tqdm.auto import tqdm
 from ..model.modelClass import Model
 from ..dataset.datasetClass import DtInfo
 from ..dataset.datasetUtils import getClasses
-import clip
-import open_clip
+from ..config import device
 
 modelOutputCsv_path = './dataStorage/model_output/modelOutput.csv'
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
 
 def stdOutputExtractor(modelc : Model, inputs):
     match modelc.source:

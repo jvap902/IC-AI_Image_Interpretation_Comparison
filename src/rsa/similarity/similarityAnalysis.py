@@ -1,7 +1,8 @@
-import torch.nn.functional as F
+import os
+import math
 import torch
 import numpy as np
-import math
+import torch.nn.functional as F
 from scipy.stats import pearsonr, spearmanr
 
 from src.fileManagement import csvUtils
@@ -9,12 +10,10 @@ from . import similarityUtils
 from src import memoryManagement
 from ...model.modelClass import Model
 from ...dataset.datasetClass import DtInfo
-import os
+from ...config import device
 
 # Constants for memory calculation (assuming torch.float32)
 FLOAT_BYTES = 4 
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
 
 total_memory_gb = torch.cuda.get_device_properties(0).total_memory if torch.cuda.is_available() else 0
 

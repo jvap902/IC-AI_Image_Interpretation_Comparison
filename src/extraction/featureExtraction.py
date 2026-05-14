@@ -6,8 +6,7 @@ from torch.utils.data import DataLoader, TensorDataset
 import torch.nn as nn
 from typing import Tuple
 from ..model.modelClass import Model
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
+from ..config import device
 
 # --- Utility to get features/labels from a DataLoader ---
 def getFeatureTensors(loader, modelc: Model) -> Tuple[torch.Tensor, torch.Tensor]:

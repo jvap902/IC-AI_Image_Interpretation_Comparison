@@ -43,8 +43,7 @@ if __name__ == "__main__":
     
     output_dir = paths["output_dir"]
     
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"\nDevice set to: {device}")
+    print(f"\nDevice set to: {config.device}")
 
     # --- Model Creation ---
 

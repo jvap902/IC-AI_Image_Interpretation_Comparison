@@ -1,8 +1,7 @@
 import torch
 import torch.nn as nn
 from torchvision.models.feature_extraction import create_feature_extractor
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
+from ..config import device
 
 def clipExtractor(modelc, inputs):
     with torch.no_grad():

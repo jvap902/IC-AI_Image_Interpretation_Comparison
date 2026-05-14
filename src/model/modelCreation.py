@@ -7,8 +7,7 @@ from transformers import AutoModel, AutoImageProcessor
 from huggingface_hub import login
 from ..dataset import datasetUtils
 from .classUtils import stripModelHead
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
+from ..config import device
 
 def loadTimmModel(model_name):
     # Use num_classes=0 to get the feature vector *before* the classification head
