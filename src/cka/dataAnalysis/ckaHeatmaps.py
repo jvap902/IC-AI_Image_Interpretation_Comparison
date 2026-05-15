@@ -4,7 +4,7 @@ from ..ckaFileRead import dfFromCkaJson
 from src.codifications import *
 from src import config
 
-def ckaHeatmap(json_path, save_path=None, show=True):
+def ckaHeatmap(json_path, save_path=None, show=True, title=None):
 
     df = dfFromCkaJson(json_path)
     
@@ -13,6 +13,8 @@ def ckaHeatmap(json_path, save_path=None, show=True):
     ax = seaborn.heatmap(df, vmin=-0.5, vmax=1.0)
 
     ax.tick_params(axis='both', which='major', labelsize=14)
+
+    if title != None: plt.title(title)
     
     plt.tight_layout(pad=0.8)
     if save_path != None: plt.savefig(save_path, dpi=100)
@@ -42,7 +44,7 @@ if __name__ == "__main__":
     data_folder = "dataStorage/ckaData"
     
     datasets = config.datasets
-    datasets = [datasets[1]]
+    #datasets = [datasets[1]]
 
     extension = 'png'
     
@@ -55,7 +57,7 @@ if __name__ == "__main__":
         
         if verifyIntegrity(f"{data_folder}/{dt_dir}/results.json"):
     
-            ckaHeatmap(json_path, save_path=f"dataStorage/processedResults/cka/{dt}.{extension}")
+            ckaHeatmap(json_path, save_path=f"dataStorage/processedResults/cka/{dt}.{extension}", title=f"{dt}({subset})")
         
         else:
             raise

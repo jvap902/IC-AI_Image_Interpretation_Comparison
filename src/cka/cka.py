@@ -14,8 +14,8 @@ def ckaMethod(dt_info, fst_modelc, snd_modelc):
     
     m1_name, m2_name = getModelTrainStr(fst_modelc.source, fst_modelc.name, fst_modelc.weights), getModelTrainStr(snd_modelc.source, snd_modelc.name, snd_modelc.weights)
     
-    fst_emb = torch.load(fst_emb_path, weights_only=True)
-    snd_emb = torch.load(snd_emb_path, weights_only=True)
+    fst_emb = torch.load(fst_emb_path, weights_only=True, map_location=torch.device('cpu'))
+    snd_emb = torch.load(snd_emb_path, weights_only=True, map_location=torch.device('cpu'))
     
     cka_score = linearCKA(fst_emb, snd_emb).item()
     

@@ -50,7 +50,7 @@ def rsa_args(run_data):
 def cka_args(run_data):
     dataset, subset, src1, model1, weight1, src2, model2, weight2, dt_name = run_data
     
-    sleep(3.5)
+    sleep(5.0)
     
     print(f"    --- Running {dataset} CKA: {model1} ({weight1}) x {model2} ({weight2}) ---")
     
@@ -145,7 +145,7 @@ if __name__ == "__main__":
     
     #datasets = [('timm/mini-imagenet', 0), ('imagenet-sketch', 1), ('cifar10', 0), ('cifar100', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
     datasets = config.datasets #do artigo: sketch, cifar10, aircraft, imagenet-1k
-    datasets = [datasets[0], datasets[2]]
+    datasets = [datasets[0]]
     
     method_name = 'cka'
     
@@ -157,15 +157,15 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = codToInstance(4, 'd')[0]
-    snd_idx = codToInstance(13, 'b')[0]+1
+    fst_idx = codToInstance(1, 'e')[0]
+    snd_idx = codToInstance(13, 'b')[0]
     
     fst_model_interr = 0#codToInstance(13, 'b')[0]
-    snd_model_interr = 2#codToInstance(14, 'c')[0]+1
+    snd_model_interr = codToInstance(13, 'b')[0]+1
     
-    start_params = startParams({'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 1, 'interrupt': (0, fst_model_interr, snd_model_interr)})
+    start_params = startParams({'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (0, fst_model_interr, snd_model_interr)})
     
-    run(instances, datasets, method, start_params, interrupt=False)
+    run(instances, datasets, method, start_params, interrupt=True)
     #revalidate(instances, datasets, method, start_params)
 
 
