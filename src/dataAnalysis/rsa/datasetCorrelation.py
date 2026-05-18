@@ -17,20 +17,7 @@ output_folder = f"{getJsonInfo(json_info_path)["processedResults"]}/datasetCorre
 
 instances = config.instances
 
-def getDataFrames(metric, results_folder=results_folder, datasets: List[Tuple[str, int]] = datasets):
 
-    df_dict = {}
-
-    for dt in datasets:
-        dt_name_w_subset = dtNameSubset(dt)
-
-        csv_path = f"{results_folder}/{dt[0].replace('/', '-')}Data.csv"
-
-        data = findInCsv(csv_path, ['dataset'], [dt_name_w_subset])
-
-        df_dict[dt_name_w_subset] = dataFrameFromData(data, metric)
-
-    return df_dict
 
 
 def valueToColor(value):
@@ -161,9 +148,7 @@ def dtCorrelationGrouping(dic, metric):
     return similar_bhvs
 
 
-def MtoMDatasetCorrelation(metric):
-    df_dict = getDataFrames(metric)
-
+def MtoMDatasetCorrelation(metric, df_dict):
     dic = {}
     for e in instances:
         dic[e] = np.zeros((len(datasets), len(datasets)))
@@ -281,9 +266,7 @@ def corrAccMSRR(mrss_csv=f"{output_folder}/mrss.csv"):
         print(f"Pearson correlation: {p}\nSpearman correlation: {s}\n")
 
 
-def datasetConsistency(metric, extension='png', show=False):
-    df_dict = getDataFrames(metric)
-
+def datasetConsistency(metric, df_dict, extension='png', show=False):
     data = np.zeros((len(datasets), len(datasets)))
 
     for i in range(len(datasets)):

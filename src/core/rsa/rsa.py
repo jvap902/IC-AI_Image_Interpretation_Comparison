@@ -1,8 +1,10 @@
+from src.fileManagement import defaultPaths
+
 from ..extraction.featureExtraction import extractFeatures
 from .similarity import similarityAnalysis
-from ..fileManagement.jsonUtils import *
+from ...fileManagement.jsonUtils import *
 from .dataCollection import gatherAdditionalData
-from ..fileManagement import csvUtils, defaultPaths
+from ..fileManagement import csvUtils
 
 def getRsaPaths(json_path=config.json_info_path):
     fields = ["dissimilarity_folder", "cosineDissimilarity", "fst_embedding_path", "snd_embedding_path"]

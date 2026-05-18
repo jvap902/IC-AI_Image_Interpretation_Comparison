@@ -1,3 +1,6 @@
+import seaborn as sns
+import matplotlib as plt
+from typing import Tuple
 from src import config
 from src.fileManagement.csvUtils import *
 from src.fileManagement.jsonUtils import getJsonInfo
@@ -5,15 +8,15 @@ from src.fileManagement.jsonUtils import getJsonInfo
 def heatMap(csv_path, correlation_type, specific_value: None | Tuple[list[str], list[str]] = None, save_path=None, show=True, codification=False, extension='png', dpi=100):
     
     if specific_value == None:
-        data = paramDataFrameFromCsv(csv_path, correlation_type)
+        data = pd.read_csv(csv_path)
     else:
         data = findInCsv(csv_path, specific_value[0], specific_value[1])
-        data = dataFrameFromData(data, param=correlation_type, codification=codification)
+        data = dictToDataFrame(data, param=correlation_type, codification=codification)
     
     print(data.shape)
     plt.figure(figsize=(10, 8))
     
-    ax = seaborn.heatmap(data, vmin=-0.5, vmax=1.0)
+    ax = sns.heatmap(data, vmin=-0.5, vmax=1.0)
 
     ax.tick_params(axis='both', which='major', labelsize=14)
     

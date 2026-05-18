@@ -1,5 +1,5 @@
 import torch
-from ..fileManagement.csvUtils import *
+from ...fileManagement.csvUtils import *
 from ..extraction.featureExtraction import getFeatureTensors
 from ..fileManagement.defaultPaths import embeddingSavePath
 from tqdm.auto import tqdm

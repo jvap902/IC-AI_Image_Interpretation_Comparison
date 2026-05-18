@@ -1,11 +1,8 @@
 import numpy as np
+import pandas as pd
 from scipy.stats import pearsonr
-from .cka import *
-from .rsa import *
-from .fileManagement.csvUtils import *
-from .fileManagement.jsonUtils import *
-from .fileManagement.defaultPaths import *
 from src import config
+from src.fileManagement import csvUtils, ckaFileHandler, jsonUtils
 
 info_path = config.json_info_path
 
@@ -14,12 +11,12 @@ def rsaCka(rsa_dir, cka_dir, datasets):
         
         name_with_subset = f"{name.replace('/', '-')}({sub})"
         
-        df_rsa = findInCsv(f"{rsa_dir}/{name.replace('/', '-')}Data.csv", ['dataset'], [name_with_subset])
-        df_rsa = dataFrameFromData(df_rsa, param='pearson', codification=True)
+        df_rsa = pd.dataFrame(csvUtils.findInCsv(f"{rsa_dir}/{name.replace('/', '-')}Data.csv", ['dataset'], [name_with_subset]))
+        df_rsa = df_rsa[["pearson"]]
 
         rsa_array = df_rsa.to_numpy()[np.triu_indices(27, 1)]
         
-        df_cka = ckaFileRead.dfFromCkaJson(f"{cka_dir}/{name_with_subset}/results.json")
+        df_cka = ckaFileHandler.dfFromCkaJson(f"{cka_dir}/{name_with_subset}/results.json")
 
         cka_array = df_cka.to_numpy()[np.triu_indices(27, 1)]
     
@@ -29,7 +26,7 @@ def rsaCka(rsa_dir, cka_dir, datasets):
         print("Correlação: ", p)
 
 if __name__ == "__main__":
-    dir_paths = getJsonInfo(json_path=info_path, fields=["rsaData", "ckaData"])
+    dir_paths = jsonUtils.getJsonInfo(json_path=info_path, fields=["rsaData", "ckaData"])
     rsa_dir = dir_paths[0]
     cka_dir = dir_paths[1]
 

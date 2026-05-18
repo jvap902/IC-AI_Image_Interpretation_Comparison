@@ -5,8 +5,8 @@ from warnings import warn
 import os
 from src.codifications import *
 from src import config
-from ..fileManagement.fileSystem import createFile
-from ..fileManagement.jsonUtils import getJsonInfo, updateJson
+from ...fileManagement.fileSystem import createFile
+from ...fileManagement.jsonUtils import getJsonInfo, updateJson
 import numpy as np
 import pandas as pd
 from itertools import groupby

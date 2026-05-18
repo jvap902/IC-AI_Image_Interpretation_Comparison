@@ -6,7 +6,7 @@ import requests
 from torch.utils.data import Dataset, Subset
 import random
 from collections import defaultdict
-from ..fileManagement.csvUtils import findInCsv, writeCsvLine
+from ...fileManagement.csvUtils import findInCsv, writeCsvLine
 import json
 import torchvision
 

@@ -1,7 +1,6 @@
 #from ..src import *
 import numpy as np
-import torch
-import torch.nn as nn
+import pandas as pd
 
 from torchvision.models.feature_extraction import get_graph_node_names
 from torchvision.models import maxvit_t, resnet18, regnet_y_32gf, vit_b_16, efficientnet_b0, swin_t, convnext_tiny
@@ -29,11 +28,7 @@ import clip
 #print(model.named_children)
 
 if __name__ == "__main__":
-    from pathlib import Path
-
-    path = Path("data/digital/jpeg_compression/5")
+    df = pd.read_csv("dataStorage/rsaData/cifar10Data.csv")
     
-    for i, folder in enumerate(path.iterdir()):
-        file_count = sum(1 for x in folder.iterdir() if x.is_file())
-        print(folder.name, file_count)
+    print(df)
 

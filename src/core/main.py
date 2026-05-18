@@ -1,12 +1,10 @@
-import argparse
 import os
 import sys
 import torch
-from src import *
-from src.dataset.datasetClass import DtInfo
-from src.model.modelClass import Model
+import argparse
 import numpy as np
-import torch.nn as nn
+from src import *
+
 
 # If 'src' is one level up, add the parent directory to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
