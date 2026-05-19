@@ -1,7 +1,5 @@
 import os
-import json
 from typing import Dict
-from .defaultPaths import *
 from .jsonUtils import *
 
 def makeFileSystem(outputFile):
