@@ -20,10 +20,10 @@ def verifyIntegrity(data):
     
     return c
 
-def resultsDataFrame(json_path):
+def resultsDataFrame(json_path, verify=True):
     json_data = getJsonInfo(json_path)
     
-    if not verifyIntegrity(json_data):
+    if not verifyIntegrity(json_data) and verify:
         raise ValueError("Nem todos os dados CKA estão no json")
     
     data_matrix = np.zeros((len(config.instances), len(config.instances)))
@@ -41,3 +41,13 @@ def resultsDataFrame(json_path):
         data_matrix[j][i] = value
 
     return pd.DataFrame(data_matrix, columns=config.cods, index=config.cods)
+
+
+def getCkaData(dataset, subset):
+    dataset = dataset.replace('/', '-')
+
+    dir = getJsonInfo(config.json_info_path, ["ckaData"])[0]+f"{dataset}({subset})"
+
+    json_path = dir+"results.json"
+
+    return resultsDataFrame(json_path, verify=True)

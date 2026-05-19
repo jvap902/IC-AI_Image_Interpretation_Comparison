@@ -46,7 +46,7 @@ def pltDendrogram(Z, labels, title=None, ylabel=None, xlabel=None, dpi=100, show
     return
         
 
-def linkData(dist_matrix, method):
+def linkData(dist_matrix, method='average'):
     condensed_dist = squareform(dist_matrix)
     
     Z = linkage(condensed_dist, method=method)
@@ -58,6 +58,6 @@ def linkData(dist_matrix, method):
     
     print(type(coph))
     
-    dic = {'cophnet': coph.tolist(), 'pearson': pearson, 'spearman': spearman}
+    dic = {'cophnet': coph.tolist(), 'pearson': pearson, 'spearman': spearman, 'linkage': Z}
     
     return dic

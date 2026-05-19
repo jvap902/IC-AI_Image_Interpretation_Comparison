@@ -1,8 +1,11 @@
 import numpy as np
 import pandas as pd
+from src.fileManagement.jsonUtils import getJsonInfo
+from src.fileManagement.csvUtils import findInCsv
 from src.codifications import modelCod
+from src import config
 
-def dictDataFrame(data, param='pearson', diagonal=1.0, codification=False):
+def dictDataFrame(data, param='pearson', diagonal=1.0, codify=False):
     if not data:
         return np.array([])
 
@@ -34,10 +37,21 @@ def dictDataFrame(data, param='pearson', diagonal=1.0, codification=False):
         matrix[i][j] = val
         matrix[j][i] = val # Garante a simetria se o CSV tiver apenas um lado
 
-    if codification:
+    if codify:
         for idx, (s, m, w) in enumerate(models):
             models[idx] = modelCod(s, m, w)
 
     dataFrame = pd.DataFrame(matrix, columns=models, index=models)
 
     return dataFrame
+
+def getRsaData(dataset, subset, param='pearson', codify=True):
+    dataset = dataset.replace('/', '-')
+
+    dir = getJsonInfo(config.json_info_path, ["rsaData"])[0]
+    csv_path = dir+f"{dataset}Data.csv"
+
+    data = findInCsv(csv_path, ["dataset"], [f"{dataset}({subset})"])
+    df = dictDataFrame(data, param=param, codify=codify)
+
+    return df
