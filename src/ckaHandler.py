@@ -1,9 +1,9 @@
 
 import pandas as pd
 import numpy as np
-from fileManagement.jsonUtils import getJsonInfo
-from codifications import codToInstance
-import config
+from src.fileManagement.jsonUtils import getJsonInfo
+from src.codifications import codToInstance
+from . import config
 
 def verifyIntegrity(data):    
     keys = set(data.keys())
@@ -46,8 +46,8 @@ def resultsDataFrame(json_path, verify=True):
 def getCkaData(dataset, subset):
     dataset = dataset.replace('/', '-')
 
-    dir = getJsonInfo(config.json_info_path, ["ckaData"])[0]+f"{dataset}({subset})"
+    dir = getJsonInfo(config.json_info_path, ["ckaData"])[0]+f"/{dataset}({subset})"
 
-    json_path = dir+"results.json"
+    json_path = dir+"/results.json"
 
     return resultsDataFrame(json_path, verify=True)

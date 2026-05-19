@@ -11,5 +11,6 @@ def rsaCka(df_rsa, df_cka):
 
     p, _ = pearsonr(rsa_array, cka_array)
 
-    print(df_rsa.corrwith(df_cka)) # model-wise
-    print("Correlação: ", p)
+    model_wise = df_rsa.corrwith(df_cka)
+    
+    return model_wise, p

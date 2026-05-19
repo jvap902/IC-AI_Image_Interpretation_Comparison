@@ -1,4 +1,3 @@
-from . import cka, ckaFileRead
-from ...dataAnalysis import ckaHeatmaps
+from . import cka
 
-__all__ = ["cka", "ckaHeatmaps", "ckaFileRead"]
+__all__ = ["cka"]

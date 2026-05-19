@@ -49,7 +49,7 @@ def getRsaData(dataset, subset, param='pearson', codify=True):
     dataset = dataset.replace('/', '-')
 
     dir = getJsonInfo(config.json_info_path, ["rsaData"])[0]
-    csv_path = dir+f"{dataset}Data.csv"
+    csv_path = dir+f"/{dataset}Data.csv"
 
     data = findInCsv(csv_path, ["dataset"], [f"{dataset}({subset})"])
     df = dictDataFrame(data, param=param, codify=codify)
