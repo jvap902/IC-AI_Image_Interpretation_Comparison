@@ -1,21 +1,16 @@
 import numpy as np
-import matplotlib.pyplot as plt
+import pandas as pd
 from scipy.stats import pearsonr, spearmanr
 from src import config
 from src.codifications import *
-from src.fileManagement.csvUtils import *
-from src.fileManagement.jsonUtils import getJsonInfo
 
-json_info_path = config.json_info_path
 datasets = config.datasets
-metrics = ['pearson', 'spearman']
-output_folder = f"{getJsonInfo(json_info_path)["processedResults"]}/datasetCorrelations"
-
 instances = config.instances
+cods = config.cods
 
-def MtoMDatasetCorrelation(metric, df_dict):
+def modelWiseDRC(df_dict, metric):
     dic = {}
-    for e in instances:
+    for e in cods:
         dic[e] = np.zeros((len(datasets), len(datasets)))
     #data = np.zeros((len(datasets), len(datasets)))
 
@@ -27,16 +22,18 @@ def MtoMDatasetCorrelation(metric, df_dict):
             df1 = df_dict[dt1_name]
             df2 = df_dict[dt2_name]
 
-            correlations = df1.corrwith(df2, method=metric)
+            df_corr = df1.corrwith(df2, method=metric)
 
-            for idx, e in enumerate(instances):
-                val = correlations[instances[idx]]
+            for idx, e in enumerate(cods):
+                val = df_corr[cods[idx]]
 
                 dic[e][i][j] = val
                 dic[e][j][i] = val
 
     for e in instances:
         _ = np.fill_diagonal(dic[e], 1.0)
+        
+    return dic
     
 
 def MRSS(datasets_dfs: dict, metric='pearson'):

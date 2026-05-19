@@ -1,7 +1,7 @@
 import numpy as np
 import seaborn as sns
-import matplotlib as plt
-from scipy.cluster.hierarchy import dendrogram
+import matplotlib.pyplot as plt
+import scipy.cluster.hierarchy as scipy
 
 def heatmap(df, save_path=None, show=True):
     
@@ -19,7 +19,7 @@ def dendrogram(Z, labels, title=None, ylabel=None, xlabel=None, dpi=100, show=Tr
     
     plt.figure(figsize=(8, 10))
     plt.rcParams['lines.linewidth'] = 2.5
-    dendrogram(
+    scipy.dendrogram(
         Z,
         orientation='right',
         labels=labels,
