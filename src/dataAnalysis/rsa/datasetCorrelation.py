@@ -49,31 +49,6 @@ def dtNameToAcr(n):
         case _:
             raise
 
-
-def savePkl(df, pkl_path, field_name, metric='pearson', json_path=f"{output_folder}/pklPaths.json"):
-    
-    df.to_pickle(pkl_path)    
-    
-    with open(json_path, "r+") as f:
-        json_data = json.load(f)
-        
-    json_data[metric][field_name] = pkl_path
-    
-    with open(json_path, 'w') as f:
-        json.dump(json_data, f, indent=4)
-        
-
-def loadPkl(model_str="main", metric='pearson', json_path=f"{output_folder}/pklPaths.json"):
-    with open(json_path, 'r+') as f:
-        json_data = json.load(f)
-    
-    pkl_path = json_data[metric][model_str]
-    
-    df = pd.read_pickle(pkl_path)
-    
-    return df    
-
-
 def dtCorrelationHeatmaps(dic, metric):
     for e in instances:
         df = pd.DataFrame(dic[e])
@@ -88,7 +63,7 @@ def dtCorrelationHeatmaps(dic, metric):
             
         heatmap(df, vmin=-0.5, vmax=1.0)
         
-        model_str = getModelTrainStr(e[0], e[1], e[2])
+        model_str = modelCod(e[0], e[1], e[2])
         
         pkl_path = f"{output_folder}/pkls/{metric}-{model_str}.pkl"
 
@@ -196,7 +171,7 @@ def MRSSBarChart(df, bar_param, extension='png', dpi=100):
     drop_metric = [m for m in metrics if m != bar_param]
     drop_metric = drop_metric[0] #funciona pois consideramos apenas 2 métricas
     
-    df['Model'] = [getModelTrainStr(row["model_source"], row["model_name"], row["model_weights"]) for index, row in df.iterrows()]
+    df['Model'] = [modelCod(row["model_source"], row["model_name"], row["model_weights"]) for index, row in df.iterrows()]
     
     plt.figure(figsize=(10, 5))
     ax = barplot(df, x='Model', y=f'{bar_param}_avg', hue=f'{bar_param}_avg', legend=False, palette=color_palette("flare_r", as_cmap=True), saturation=1.0)
@@ -215,7 +190,7 @@ def MRSS(output_csv_path=f"{output_folder}/mrss.csv", validation_csv_path=f"data
     
     for model in instances:
     
-        model_str = getModelTrainStr(model[0], model[1], model[2])
+        model_str = modelCod(model[0], model[1], model[2])
         
         #new_data expects specific order ["model_source", "model_name", "model_weights", "pearson_avg", "pearson_median", "spearman_avg", "spearman_median", "acc_avg"]
         new_data = [model[0], model[1], model[2]] 
