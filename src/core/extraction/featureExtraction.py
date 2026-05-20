@@ -3,7 +3,7 @@ import torch.nn as nn
 from typing import Tuple
 from tqdm.auto import tqdm
 import torch.optim as optim
-from core.model import Model
+from src.core.model import Model
 from torch.utils.data import DataLoader, TensorDataset
 
 device = "cuda" if torch.cuda.is_available() else "cpu"

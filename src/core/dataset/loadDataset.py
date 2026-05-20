@@ -1,33 +1,32 @@
 import os
 import random
+import torch
 import torchvision
 from pathlib import Path
 from huggingface_hub import login
-from torch.utils.data import Subset
-from . import auxDatasetClasses, datasetUtils
-from datasets import load_dataset, load_from_disk
+from torch.utils.data import Subset, Dataset
+from datasets import load_dataset, load_from_disk, Dataset as HFDataset, Features, Image as HFImage, ClassLabel
+from kagglehub import dataset_load, KaggleDatasetAdapter
+from PIL import Image
 from src.fileManagement import csvUtils
+from . import datasetUtils
 
-def loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir, modelc):
+def loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir):
     
     dataset = dt_info.name
     
     print(f"\nLoading previously selected {dataset} indices\n")
     
     if((dataset == 'imagenet-a') or (dataset == 'imagenet-sketch') or ('imagenet-c' in dataset)):
-        train_dataset, val_dataset = loadUrlDownloadedDataset(data_dir, train_indices, val_indices, dataset, modelc)
-    elif dataset == 'fgvc-aircraft':
-        train_dataset, val_dataset = loadAircraftDataset(data_dir, train_indices, val_indices, dataset, modelc)
+        train_dataset, val_dataset = loadUrlDownloadedDataset(data_dir, train_indices, val_indices, dataset)
     elif dataset == 'cifar100':
         train_dataset, val_dataset = loadCifar100Dataset(data_dir, train_indices, val_indices, modelc)
     elif dataset == 'cifar10':
         train_dataset, val_dataset = loadCifar10Dataset(data_dir, train_indices, val_indices, modelc)
     else:
-        train_dataset, val_dataset = loadHuggingfaceDataset(dt_info, train_indices, val_indices, modelc)
+        train_dataset, val_dataset = loadHuggingfaceDataset(dt_info, train_indices, val_indices)
     
     datasetUtils.writeDatasetClasses(dt_info)
-    
-    dt_info.setClasses(train_dataset, val_dataset)
 
     return train_dataset, val_dataset
 
@@ -40,7 +39,7 @@ def createNewDataset(dt_info, output_dir, data_dir, modelc):
     if ((dataset == 'imagenet-a') or (dataset == 'imagenet-sketch') or ('imagenet-c' in dataset)):
         train_dataset, val_dataset = newUrlDownloadedDataset(dt_info, data_dir, output_dir, modelc)
     elif dataset == 'fgvc-aircraft':
-        train_dataset, val_dataset = newAircraftDataset(dt_info, data_dir, output_dir, modelc)
+        train_dataset, val_dataset = newKaggleHubDataset(dt_info, data_dir, output_dir, modelc)
     elif dataset == 'cifar100':
         train_dataset, val_dataset = newCifar100Dataset(dt_info, data_dir, output_dir, modelc)
     elif dataset == 'cifar10':
@@ -52,7 +51,7 @@ def createNewDataset(dt_info, output_dir, data_dir, modelc):
 
     return train_dataset, val_dataset
 
-def loadAircraftDataset(data_dir, train_indices, val_indices, dataset, modelc):
+def loadKaggleDataset(data_dir, train_indices, val_indices, dataset, dt_info): #TEMPORÁRIO, DEPOIS SERÁ CARREGADO COMO Datset do huggingface
     print(f"\n--- Loading {dataset} Subset ---")
     
     url, file_name, extract_dir, compression_type = datasetUtils.getDownloadInfo(dataset)
@@ -63,29 +62,95 @@ def loadAircraftDataset(data_dir, train_indices, val_indices, dataset, modelc):
     if dataset_dir is None:
         raise FileNotFoundError(f"Failed to download or extract {dataset}.")
     
-    train_dataset = auxDatasetClasses.AircraftDataset(dataset_dir, split='train', transform=modelc.data_transforms, variant='variant')
-    val_dataset = auxDatasetClasses.AircraftDataset(dataset_dir, split='val', transform=modelc.data_transforms, variant='variant')
+    train_dataset = AircraftDataset(dataset_dir, split='train', variant='variant')
+    val_dataset = AircraftDataset(dataset_dir, split='val', variant='variant')
+    
+    #data_transforms removida, salvar agora como Dataset
     
     train_subset = Subset(train_dataset, train_indices)
     val_subset = Subset(val_dataset, val_indices)
     
+    hf_features = Features({
+        "image": HFImage(),  # Tells HF to treat this as an image feature
+        "label": ClassLabel(num_classes=len(train_dataset.classes), names=train_dataset.classes)
+    })
+    
+    # 2. Hardened generator logic
+    def hf_generator(subset):
+        def gen():
+            for idx in range(len(subset)):
+                try:
+                    image, label = subset[idx]
+                    
+                    # Ensure image is in PIL format for Hugging Face
+                    if isinstance(image, torch.Tensor):
+                        image = torchvision.transforms.ToPILImage()(image)
+                    elif isinstance(image, str):
+                        image = Image.open(image).convert('RGB')
+                        
+                    yield {"image": image, "label": label}
+                except Exception as inner_error:
+                    # Print out what went wrong BEFORE Hugging Face silences it!
+                    print(f"\n[GENERATOR ERROR at index {idx}]: {inner_error}")
+                    raise inner_error
+        return gen
+
+    # 3. Supply the features schema to from_generator
+    hf_train = HFDataset.from_generator(hf_generator(train_subset), features=hf_features)
+    hf_validation = HFDataset.from_generator(hf_generator(val_subset), features=hf_features)
+    
+    dir_name = dt_info.name_w_subset
+        
+    hf_train.save_to_disk(f'./data/{dir_name}/train')
+    hf_validation.save_to_disk(f'./data/{dir_name}/validation')
+    
     print(f"{dataset} dataset loaded with pre-existing indices")
     
-    return train_subset, val_subset
+    return hf_train.with_format("torch"), hf_validation.with_format("torch")
     
-def newAircraftDataset(dt_info, data_dir, output_dir, modelc):
+def newKaggleDataset(dt_info, data_dir, output_dir, modelc):
     print(f"\n--- Creating {dt_info.name} Subset ---")
     
-    url, file_name, extract_dir, compression_type = datasetUtils.getDownloadInfo(dt_info.name)
+    url = datasetUtils.getKaggleInfo(dt_info.name)
     
-    # 1. Download and extract the data
-    # This calls the function from src/dataset_utils.py to handle the download
-    dataset_dir = datasetUtils.downloadUrlDataset(root_dir=data_dir, url=url, file_name=file_name, extract_dir=extract_dir, compression_type=compression_type)
-    if dataset_dir is None:
-        raise FileNotFoundError(f"Failed to download or extract {dt_info.name}.")
+    hf_train = dataset_load(KaggleDatasetAdapter.HUGGING_FACE, url, "train.csv")
+    hf_validation = dataset_load(KaggleDatasetAdapter.HUGGING_FACE, url, "val.csv")
     
-    train_dataset = auxDatasetClasses.AircraftDataset(dataset_dir, split='train', transform=modelc.data_transforms, variant='variant')
-    val_dataset = auxDatasetClasses.AircraftDataset(dataset_dir, split='val', transform=modelc.data_transforms, variant='variant')
+    print(f"Loaded Kaggle dataset of size: {len(hf_train) + len(hf_validation)}")
+    
+    print(f"\nCreating subset with {dt_info.images_per_class} images per class for {num_classes} classes.")
+        
+    train_indices = datasetUtils.imageSelector(dt_info, hf_train, hf_train.features['label'].num_classes, 'train', huggingface=True)
+    val_indices = datasetUtils.imageSelector(dt_info, hf_validation, hf_train.features['label'].num_classes, 'validation', huggingface=True)
+    
+    hf_train = hf_train.select(train_indices)
+    hf_validation = hf_validation.select(val_indices)
+    
+    #salva apenas subset
+    hf_train.save_to_disk(f'./data/{dt_info.name_w_subset}/train')
+    hf_validation.save_to_disk(f'./data/{dt_info.name_w_subset}/validation')  
+
+    print(f"Loaded {num_classes} classes * {dt_info.images_per_class} images per class")
+    
+    # 5. Wrap in PyTorch Dataset
+    train_dataset = hf_train.with_format("torch")
+    val_dataset = hf_validation.with_format("torch")
+        
+    print(len(val_dataset.classes))
+    
+    a = []
+    for e in val_dataset.classes:
+        if e != None:
+            a.append(e)
+        
+    print(f"Train: {len(train_dataset)} | Val: {len(val_dataset)}")
+    
+    dt_name = dataset_link.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
+    file_name = f"{dt_name}_subset_i{total_images}_c{num_classes}({subset_num}).pt"
+    
+    csvUtils.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
+
+    return train_dataset, val_dataset
     
     train_indices = datasetUtils.imageSelector(dt_info, train_dataset, len(train_dataset.classes), 'train')
     val_indices = datasetUtils.imageSelector(dt_info, val_dataset, len(val_dataset.classes), 'validation')
@@ -196,13 +261,13 @@ def newUrlDownloadedDataset(dt_info, data_dir, output_dir, modelc):
     
     return train_dataset, val_dataset
 
-def loadUrlDownloadedDataset(data_dir, train_indices, val_indices, dataset, modelc):
+def loadUrlDownloadedDataset(data_dir, train_indices, val_indices, dataset):
     print(f"\n--- Loading {dataset} Subset ---")
     
-    full_dataset = datasetUtils.getUrlDataset(data_dir, dataset, modelc)
+    full_dataset = datasetUtils.getUrlDataset(data_dir, dataset)
     
     train_dataset = Subset(full_dataset, train_indices)
-    val_dataset = Subset(full_dataset, list(val_indices))
+    val_dataset = Subset(full_dataset, val_indices)
     
     val_dataset.classes = full_dataset.classes
     train_dataset.classes = full_dataset.classes
@@ -264,8 +329,8 @@ def newHuggingfaceDataset(dt_info, output_dir, modelc):
     print(f"Loaded {num_classes} classes * {dt_info.images_per_class} images per class")
     
     # 5. Wrap in PyTorch Dataset
-    train_dataset = auxDatasetClasses.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=modelc.data_transforms)
-    val_dataset = auxDatasetClasses.HuggingFaceImageNetDataset(hf_dataset=hf_validation, transform=modelc.data_transforms)
+    train_dataset = hf_train.with_format("torch")
+    val_dataset = hf_validation.with_format("torch")
         
     print(len(val_dataset.classes))
     
@@ -289,7 +354,7 @@ def newHuggingfaceDataset(dt_info, output_dir, modelc):
 
     return train_dataset, val_dataset
 
-def loadHuggingfaceDataset(dt_info, train_indices, val_indices, modelc):
+def loadHuggingfaceDataset(dt_info, train_indices, val_indices):
     print("\n--- Loading Huggingface dataset with pre-selected indices ---")
     
     dataset_link = dt_info.name
@@ -331,10 +396,56 @@ def loadHuggingfaceDataset(dt_info, train_indices, val_indices, modelc):
          raise RuntimeError(f"Failed to load Hugging Face ImageNet subset: {e}")
 
     # 5. Wrap in PyTorch Dataset
-    
-    train_dataset = auxDatasetClasses.HuggingFaceImageNetDataset(hf_dataset=hf_train, transform=modelc.data_transforms)
-    val_dataset = auxDatasetClasses.HuggingFaceImageNetDataset(hf_dataset=hf_validation, transform=modelc.data_transforms)
+    train_dataset = hf_train.with_format("torch")
+    val_dataset = hf_validation.with_format("torch")
 
     print(f"\nLoaded dataset with previously selected indices")
 
     return train_dataset, val_dataset
+
+
+class AircraftDataset(Dataset):
+    """
+    Custom Dataset for FGVC-Aircraft. 
+    Expects data at: root/fgvc-aircraft-2013b/data/
+    """
+    def __init__(self, root, split='trainval', transform=None, variant='family'):
+        self.root = root
+        self.transform = transform
+        self.split = split
+        
+        # Aircraft has 3 levels of labels: 'manufacturer', 'family', 'variant'
+        # 'variant' is the most fine-grained (100 classes)
+        metadata_file = os.path.join(root, 'data', f'images_{variant}_{split}.txt')
+        
+        if not os.path.exists(metadata_file):
+            raise FileNotFoundError(f"Metadata file not found: {metadata_file}. Ensure dataset is extracted correctly.")
+
+        self.image_labels = []
+        self.image_names = []
+        
+        # Read the mapping file
+        with open(metadata_file, 'r') as f:
+            for line in f:
+                parts = line.strip().split(' ', 1)
+                self.image_names.append(parts[0])
+                self.image_labels.append(parts[1])
+
+        # Create class-to-index mapping
+        self.classes = sorted(list(set(self.image_labels)))
+        self.class_to_idx = {cls: i for i, cls in enumerate(self.classes)}
+        self.targets = [self.class_to_idx[lbl] for lbl in self.image_labels]
+        self.images_dir = os.path.join(root, 'data', 'images')
+
+    def __len__(self):
+        return len(self.image_names)
+
+    def __getitem__(self, idx):
+        img_name = self.image_names[idx] + ".jpg"
+        img_path = os.path.join(self.images_dir, img_name)
+        image = Image.open(img_path).convert('RGB')
+        label = self.targets[idx]
+
+        if self.transform:
+            image = self.transform(image)
+        return image, label

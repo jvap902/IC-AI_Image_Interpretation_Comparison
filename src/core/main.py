@@ -44,9 +44,10 @@ if __name__ == "__main__":
     fileSystem.makeFileSystem(args.output_file)
     paths = jsonUtils.getJsonInfo(config.json_info_path)
     
+    device = config.device
+    
     output_dir = paths["output_dir"]
     
-    device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"\nDevice set to: {device}")
 
     # --- Model Creation ---
@@ -83,6 +84,10 @@ if __name__ == "__main__":
     print(f"\nNumber of images total: {total_images}")
     
     dissimilarity_csv_path, dissimilarity_folder = paths["cosineDissimilarity"], paths["dissimilarity_folder"]
+
+    train_dataset, val_dataset = dt_info.getDatasets()
+    
+    raise
 
     fst_modelc.getDataset(dt_info, output_dir)
     snd_modelc.getDataset(dt_info, output_dir)

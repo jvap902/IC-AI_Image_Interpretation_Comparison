@@ -1,30 +1,29 @@
-import torch
-from ...fileManagement.csvUtils import *
-from ..extraction.featureExtraction import getFeatureTensors
-from ..fileManagement.defaultPaths import embeddingSavePath
-from tqdm.auto import tqdm
-from ..model.modelClass import Model
-from ..dataset.datasetClass import DtInfo
-from ..dataset.datasetUtils import getClasses
 import clip
+import torch
 import open_clip
+from tqdm.auto import tqdm
+from src.core.model import Model
+from src.core.dataset import DtInfo
+from src.fileManagement.fileSystem import embeddingSavePath
+from src.fileManagement.csvUtils import findInCsv, writeCsvLine
+from src.core.extraction.featureExtraction import getFeatureTensors
 
 modelOutputCsv_path = './dataStorage/model_output/modelOutput.csv'
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-def stdOutputExtractor(modelc : Model, inputs):
+def stdOutputExtractor(modelc : Model, dt_info : DtInfo, inputs):
     match modelc.source:
         case 'open_clip':
             tokenizer = open_clip.get_tokenizer(modelc.name)
-            text = tokenizer((getClasses(modelc.val_dataset))).to(device)
+            text = tokenizer(dt_info.val_classes).to(device)
             
             logits = modelc.model(inputs, text)
             
             return torch.tensor(logits[0])
         
         case 'clip':
-            text = clip.tokenize(getClasses(modelc.val_dataset)).to(device)
+            text = clip.tokenize(dt_info.val_classes).to(device)
             logits_img, logits_txt = modelc.model(inputs, text)
             
             logits_img = torch.tensor(logits_img)
@@ -58,16 +57,16 @@ def stdOutputExtractor(modelc : Model, inputs):
         case _:
             return modelc.model(inputs)
 
-def stdOutput(modelc : Model, inputs):
+def stdOutput(modelc : Model, dt_info : DtInfo, inputs):
     
-    data = stdOutputExtractor(modelc, inputs)
+    data = stdOutputExtractor(modelc, dt_info, inputs)
     
     if data.dim() > 2:
         data = torch.flatten(data, start_dim=1)
     
     return data.float()
 
-def getStdOutputTensors(modelc : Model, loader):   
+def getStdOutputTensors(modelc : Model, dt_info : DtInfo, loader):
     data_list = []
     labels_list = []
     
@@ -78,7 +77,7 @@ def getStdOutputTensors(modelc : Model, loader):
             inputs = inputs.to(device, non_blocking=True)
             if modelc.model:
                 modelc.model.eval()
-                data = stdOutput(modelc, inputs) # Extract features using the backbone
+                data = stdOutput(modelc, dt_info, inputs) # Extract features using the backbone
             else:
                 data = inputs.cpu() # Extract raw inputs
                             
@@ -93,7 +92,7 @@ def getStdOutputTensors(modelc : Model, loader):
 def getModelStdOutput(modelc : Model, dt_info):
     print(f"\nSaving std output for {modelc.name}")
     
-    stdOutput = getStdOutputTensors(modelc, modelc.val_loader)
+    stdOutput = getStdOutputTensors(modelc, dt_info, modelc.val_loader)
     
     torch.save(stdOutput, embeddingSavePath(modelc, dt_info, False))    
     

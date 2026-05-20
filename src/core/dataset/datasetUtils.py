@@ -36,6 +36,10 @@ def imagenetCDownloadInfo(distortion):
     
     return imagenet_c_url, imagenet_c_filename, imagenet_c_extract_dir
 
+def getKaggleInfo(dataset):
+    if dataset == "fgvc-aircraft":
+        return 'seryouxblaster764/fgvc-aircraft'
+
 def getDownloadInfo(dataset):
     if dataset == 'imagenet-a':
         return IMAGENET_A_URL, IMAGENET_A_FILENAME, IMAGENET_A_EXTRACT_DIR, 'tar'
@@ -215,7 +219,7 @@ def getRandomImagesFromClasses(dt_info, dataset, train_or_validation, huggingfac
     
     print("Getting specific classes")
     
-    available_class_wnids = dt_info.classes[train_or_validation]
+    available_class_wnids = dt_info.available_classes[train_or_validation]
     
     class_names = getClasses(dataset)
             
@@ -272,7 +276,7 @@ def getRandomImagesFromClasses(dt_info, dataset, train_or_validation, huggingfac
     return selected_indices
 
 def imageSelector(dt_info, dataset, dataset_classes : int, train_or_validation, huggingface=False):
-    if dt_info.classes[train_or_validation][0] == 'all':
+    if dt_info.available_classes[train_or_validation][0] == 'all':
         return getRandomImages(dt_info, dataset, dataset_classes)
     else:
         return getRandomImagesFromClasses(dt_info, dataset, train_or_validation, huggingface=huggingface)
@@ -291,7 +295,7 @@ def writeDatasetClasses(dt_info):
     classes_file = './dataStorage/datasetClasses.csv'
     ans = findInCsv(classes_file, ['dataset', 'subset', 'num_classes', 'num_images'], [dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images])
     if len(ans) == 0:
-        writeCsvLine(classes_file, [dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images, dt_info.classes['train'], dt_info.classes['validation']])
+        writeCsvLine(classes_file, [dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images, dt_info.available_classes['train'], dt_info.available_classes['validation']])
         
 def nameToWnid(dataset_name):
     if 'imagenet' in dataset_name.lower():
@@ -340,7 +344,7 @@ def pathConcat(dataset):
     else:
         return '' #se não precisa concatenar nada só retorna str vazia
 
-def getUrlDataset(data_dir, dataset, modelc):
+def getUrlDataset(data_dir, dataset):
     url, file_name, extract_dir, compression_type = getDownloadInfo(dataset)
     
     # 1. Download and extract the data
@@ -352,7 +356,7 @@ def getUrlDataset(data_dir, dataset, modelc):
     folder_path = folder_path+pathConcat(dataset)
 
     # 2. Load data using ImageFolder (which expects class subdirectories)
-    full_dataset = torchvision.datasets.ImageFolder(root=folder_path, transform=modelc.data_transforms)
+    full_dataset = torchvision.datasets.ImageFolder(root=folder_path)
     
     if not full_dataset.classes:
         raise ValueError(f"Could not find any classes (subdirectories) in {data_dir}. Check the directory structure.")
