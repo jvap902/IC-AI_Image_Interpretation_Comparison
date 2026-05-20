@@ -1,11 +1,10 @@
-import timm 
 import torch
-from tqdm.auto import tqdm
-import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
 import torch.nn as nn
 from typing import Tuple
-from ..model.modelClass import Model
+from tqdm.auto import tqdm
+import torch.optim as optim
+from core.model import Model
+from torch.utils.data import DataLoader, TensorDataset
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 

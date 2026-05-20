@@ -1,21 +1,32 @@
-from src.fileManagement import defaultPaths
-
 from ..extraction.featureExtraction import extractFeatures
 from .similarity import similarityAnalysis
-from ...fileManagement.jsonUtils import *
 from .dataCollection import gatherAdditionalData
-from ..fileManagement import csvUtils
+from src import config
+from src.fileManagement.jsonUtils import getJsonInfo
+from src.fileManagement.csvUtils import findInCsv, writeCsvLine
 
 def getRsaPaths(json_path=config.json_info_path):
-    fields = ["dissimilarity_folder", "cosineDissimilarity", "fst_embedding_path", "snd_embedding_path"]
+    fields = ["dissimilarity_folder", "cosineDissimilarity", "fst_embedding_path", "snd_embedding_path", "modelOutput"]
     
     return getJsonInfo(json_path, fields)
 
-def rsa(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args):
-    dissimilarity_folder, dissimilarity_csv_path, fst_embedding_path, snd_embedding_path = getRsaPaths()
+def existingEmbeddings(model_output_csv, modelc, dt_info):
+    params = ['model', 'model_source', 'model_weights', 'dataset(subset)']
+    values = [modelc.name, modelc.source, modelc.weights, dt_info.name_w_subset]
+    
+    if len(findInCsv(model_output_csv, params, values)) == 0:
+        return False
+    else:
+        return True
 
-    get_fst_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, fst_modelc)) == 0 or args.existing_dissimilarity == False
-    get_snd_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, snd_modelc)) == 0 or args.existing_dissimilarity == False
+def rsaMethod(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args):
+    dissimilarity_folder, dissimilarity_csv_path, fst_embedding_path, snd_embedding_path, model_output_csv = getRsaPaths()
+    
+    get_fst_embedding = existingEmbeddings(model_output_csv, fst_modelc, dt_info) == False or args.existing_dissimilarity == False
+    get_snd_embedding = existingEmbeddings(model_output_csv, snd_modelc, dt_info) == False or args.existing_dissimilarity == False
+
+    #get_fst_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, fst_modelc)) == 0 or args.existing_dissimilarity == False
+    #get_snd_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, snd_modelc)) == 0 or args.existing_dissimilarity == False
     
     extractFeatures(get_fst_embedding, get_snd_embedding, fst_embedding_path, snd_embedding_path, fst_modelc, snd_modelc)
 
@@ -36,7 +47,7 @@ def rsa(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args):
 
     runData = [str(total_images), str(num_classes), fst_modelc.source, fst_modelc.name, args.m1_weights, snd_modelc.source, snd_modelc.name, args.m2_weights, str(fst_modelc.acc), str(snd_modelc.acc), str(spearman), str(pearson), dt_info.name_w_subset]
 
-    csvUtils.writeCsvLine(args.output_file, runData)
+    writeCsvLine(args.output_file, runData)
     
     gatherAdditionalData(fst_modelc, dt_info, has_embedding=get_fst_embedding)
     gatherAdditionalData(snd_modelc, dt_info, has_embedding=get_snd_embedding)

@@ -1,5 +1,5 @@
-from ..extraction.extractionUtils import clipExtractor, generalExtractor, huggingfaceExtractor, dinoExtractor
 import torch.nn as nn
+from core.extraction.extractionUtils import clipExtractor, generalExtractor, huggingfaceExtractor, dinoExtractor
 
 def getExtractor(modelc):
     

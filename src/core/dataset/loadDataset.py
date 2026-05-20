@@ -1,12 +1,12 @@
-from pathlib import Path
-import torchvision
-from torch.utils.data import Subset, random_split
 import os
+import random
+import torchvision
+from pathlib import Path
+from huggingface_hub import login
+from torch.utils.data import Subset
 from . import auxDatasetClasses, datasetUtils
 from datasets import load_dataset, load_from_disk
-from huggingface_hub import login
-from ..fileManagement import csvUtils
-import random
+from src.fileManagement import csvUtils
 
 def loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir, modelc):
     
@@ -26,6 +26,8 @@ def loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir, modelc
         train_dataset, val_dataset = loadHuggingfaceDataset(dt_info, train_indices, val_indices, modelc)
     
     datasetUtils.writeDatasetClasses(dt_info)
+    
+    dt_info.setClasses(train_dataset, val_dataset)
 
     return train_dataset, val_dataset
 

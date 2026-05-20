@@ -1,10 +1,9 @@
-from .modelCreation import getModel
-from .classUtils import getExtractor, get_attention_layers, get_conv_layers, is_vit_patch_embedding, stripModelHead
 import os
-from src.dataset import loadDataset
-from src.dataset.datasetUtils import getClasses
-from src.fileManagement import csvUtils
 from torch.utils.data import DataLoader
+from src.fileManagement import csvUtils
+from core.dataset import loadDataset, DtInfo
+from .modelCreation import getModel
+from .classUtils import getExtractor, stripModelHead
 
 class Model:
     
@@ -22,7 +21,7 @@ class Model:
     def extract(self, inputs):
         return self.featureExtractor(self, inputs)
     
-    def getDataset(self, dt_info, output_dir="./dataStorage", data_dir="./data"):
+    def getDataset(self, dt_info: DtInfo, output_dir="./dataStorage", data_dir="./data"):
         
         dt_name = dt_info.name.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
         file_name = f"{dt_name}_subset_i{dt_info.num_images}_c{dt_info.num_classes}({dt_info.subset}).pt"
@@ -41,7 +40,7 @@ class Model:
             else:
                 self.train_dataset, self.val_dataset = loadDataset.createNewDataset(dt_info, output_dir, data_dir, self)
             
-            print(f"\nLoaded {len(getClasses(self.train_dataset))} train classes and {len(getClasses(self.val_dataset))} validation classes")
+            print(f"\nLoaded {len(dt_info.train_classes)} train classes and {len(dt_info.val_classes)} validation classes")
             print(f"Validation dataset has {len(self.val_dataset)} total images")
         
         else:

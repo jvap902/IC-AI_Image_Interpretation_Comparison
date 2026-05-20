@@ -1,12 +1,11 @@
-import torch
 import timm
-import torchvision.models as models
 import clip
+import torch
 import open_clip
-from transformers import AutoModel, AutoImageProcessor
 from huggingface_hub import login
-from ..dataset import datasetUtils
-from .classUtils import stripModelHead
+import torchvision.models as models
+from transformers import AutoModel, AutoImageProcessor
+from core.dataset import datasetUtils
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 

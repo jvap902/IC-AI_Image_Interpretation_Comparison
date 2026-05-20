@@ -1,5 +1,3 @@
-from . import modelCreation
-from . import classUtils
-from . import modelClass
+from .modelClass import Model
 
-__all__ = ["modelCreation", "classUtils", "modelClass"]
+__all__ = ["Model"]

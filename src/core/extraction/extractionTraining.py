@@ -1,8 +1,8 @@
-import torch.optim as optim
-import torch.nn as nn
 import time
-from tqdm.auto import tqdm
 import torch
+import torch.nn as nn
+from tqdm.auto import tqdm
+import torch.optim as optim
 
 def train_model(model, train_loader, val_loader, criterion, optimizer, device, num_epochs=10, freeze_backbone=True):
     """A simple function to train and validate a PyTorch model."""

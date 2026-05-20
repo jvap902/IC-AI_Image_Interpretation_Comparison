@@ -3,8 +3,13 @@ import sys
 import torch
 import argparse
 import numpy as np
-from src import *
-
+from src import config
+from .model import Model
+from .dataset import DtInfo
+from .cka.cka import ckaMethod
+from .rsa.rsa import rsaMethod
+from .extraction import featureExtraction
+from src.fileManagement import fileSystem, jsonUtils, csvUtils
 
 # If 'src' is one level up, add the parent directory to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -86,7 +91,7 @@ if __name__ == "__main__":
     fst_modelc.getLoaders(batch_size)
     snd_modelc.getLoaders(batch_size)
     
-    class_names = datasetUtils.getClasses(fst_modelc.train_dataset)
+    class_names = dt_info.train_classes
     num_classes = len(class_names)
 
     # --- Model validation ---
@@ -116,8 +121,8 @@ if __name__ == "__main__":
         print(f"\n{first_model_name} Validation Accuracy: {fst_modelc.acc:.4f}")
         print(f"\n{second_model_name} Validation Accuracy: {snd_modelc.acc:.4f}")
     
-    fst_embedding_path = defaultPaths.embeddingSavePath(fst_modelc, dt_info, True)
-    snd_embedding_path = defaultPaths.embeddingSavePath(snd_modelc, dt_info, True)
+    fst_embedding_path = fileSystem.embeddingSavePath(fst_modelc, dt_info, True)
+    snd_embedding_path = fileSystem.embeddingSavePath(snd_modelc, dt_info, True)
     
     fields = ["fst_embedding_path", "snd_embedding_path"]
     values = [fst_embedding_path, snd_embedding_path]
@@ -126,9 +131,9 @@ if __name__ == "__main__":
     # --- Experiment execution ---
     match args.method:
         case "rsa":
-            rsa.rsa(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args)
+            rsaMethod(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args)
         case "cka":
-            cka.cka(dt_info, fst_modelc, snd_modelc)
+            ckaMethod(dt_info, fst_modelc, snd_modelc)
         case "validation":
             print("validado")
         case _:

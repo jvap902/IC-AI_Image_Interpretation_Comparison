@@ -1,5 +1,6 @@
 from ...fileManagement.csvUtils import *
 from .loadDataset import *
+from .datasetUtils import getClasses
 
 class DtInfo:
     
@@ -66,3 +67,7 @@ class DtInfo:
         #writeCsvLine('./dataStorage/datasetClasses.csv', [self.name, self.subset, self.num_classes, self.num_images, train_classes, validation_classes])
         
         return train_classes, validation_classes
+    
+    def setClasses(self, train_dataset, val_dataset):
+        self.train_classes = getClasses(train_dataset)
+        self.val_classes = getClasses(val_dataset)

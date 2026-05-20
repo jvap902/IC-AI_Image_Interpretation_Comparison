@@ -1,14 +1,14 @@
 import os
+import json
+import random
 import tarfile
 import zipfile
-from tqdm.auto import tqdm
 import requests
-from torch.utils.data import Dataset, Subset
-import random
-from collections import defaultdict
-from ...fileManagement.csvUtils import findInCsv, writeCsvLine
-import json
 import torchvision
+from tqdm.auto import tqdm
+from torch.utils.data import Subset
+from collections import defaultdict
+from src.fileManagement.csvUtils import findInCsv, writeCsvLine
 
 # ImageNet-A download details
 IMAGENET_A_URL = "https://people.eecs.berkeley.edu/~hendrycks/imagenet-a.tar"
