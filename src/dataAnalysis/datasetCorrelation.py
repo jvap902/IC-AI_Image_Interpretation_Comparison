@@ -4,11 +4,10 @@ from scipy.stats import pearsonr, spearmanr
 from src import config
 from src.codifications import *
 
-datasets = config.datasets
 instances = config.instances
 cods = config.cods
 
-def modelWiseDRC(df_dict, metric):
+def modelWiseDRC(df_dict, metric, datasets):
     dic = {}
     for e in cods:
         dic[e] = np.zeros((len(datasets), len(datasets)))
@@ -36,7 +35,7 @@ def modelWiseDRC(df_dict, metric):
     return dic
     
 
-def MRSS(datasets_dfs: dict, metric='pearson'):
+def MRSS(datasets_dfs: dict, datasets=config.datasets, metric='pearson'):
     
     mrss_df = pd.DataFrame(columns=["Model", "MRSS"])
     
@@ -52,14 +51,14 @@ def MRSS(datasets_dfs: dict, metric='pearson'):
         new_data = {"Model": model_str}
         
         model_corr = []
-        model_arrays = np.zeros((len(config.datasets), len(config.instances)-1))
+        model_arrays = np.zeros((len(datasets), len(config.instances)-1))
         
         for idx, (key, df) in enumerate(datasets_dfs.items()):
             dt_df = df.drop(model_str, axis=1)
             model_arrays[idx] = dt_df.loc[model_str]
             
-        for i in range(len(config.datasets)):
-            for j in range(i+1, len(config.datasets)):
+        for i in range(len(datasets)):
+            for j in range(i+1, len(datasets)):
                 model_corr.append(correlation(model_arrays[i], model_arrays[j]))
         
         model_corr = np.array(model_corr)
@@ -70,7 +69,7 @@ def MRSS(datasets_dfs: dict, metric='pearson'):
     
     return mrss_df
 
-def DRC(df_dict, metric):
+def DRC(df_dict, datasets, metric='pearson'):
     data = np.zeros((len(datasets), len(datasets)))
 
     for i in range(len(datasets)):
