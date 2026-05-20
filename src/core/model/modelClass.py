@@ -39,14 +39,15 @@ class Model:
     
     def getLoaders(self, batch_size, train_dataset, val_dataset):
         
-        #train_preprocessed = 
-        #val_preprocessed = 
+        train_preprocessed = self.preprocessDataset(train_dataset)
+        val_preprocessed = self.preprocessDataset(val_dataset)
         
         self.train_loader = DataLoader(train_preprocessed, batch_size=batch_size, shuffle=False, num_workers=4)
         self.val_loader = DataLoader(val_preprocessed, batch_size=batch_size, shuffle=False, num_workers=4)
         
     def preprocessDataset(self, dataset):
-        raise NotImplemented
+        dataset.dataset.transforms = self.preprocess
+        return dataset
     
     def setAcc(self, acc):
         self.acc = acc

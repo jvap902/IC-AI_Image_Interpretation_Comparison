@@ -1,5 +1,6 @@
 import os
 import json
+import torch
 import random
 import tarfile
 import zipfile
@@ -362,3 +363,19 @@ def getUrlDataset(data_dir, dataset):
         raise ValueError(f"Could not find any classes (subdirectories) in {data_dir}. Check the directory structure.")
     
     return full_dataset
+
+class HuggingFaceDatasetWrapper(torch.utils.data.Dataset):
+    """Unpacks HuggingFace dict items into (image, label) tuples to match PyTorch Dataset interface."""
+
+    def __init__(self, hf_dataset, image_key="image", label_key="label"):
+        self.dataset = hf_dataset.with_format("torch")
+        self.image_key = image_key
+        self.label_key = label_key
+        self.classes = hf_dataset.features[label_key].names
+
+    def __len__(self):
+        return len(self.dataset)
+
+    def __getitem__(self, idx):
+        sample = self.dataset[idx]
+        return sample[self.image_key], sample[self.label_key]

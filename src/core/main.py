@@ -87,15 +87,10 @@ if __name__ == "__main__":
 
     train_dataset, val_dataset = dt_info.getDatasets()
     
-    raise
-
-    fst_modelc.getDataset(dt_info, output_dir)
-    snd_modelc.getDataset(dt_info, output_dir)
-    
     batch_size = 64
-    fst_modelc.getLoaders(batch_size)
-    snd_modelc.getLoaders(batch_size)
-    
+    fst_modelc.getLoaders(batch_size, train_dataset, val_dataset)
+    snd_modelc.getLoaders(batch_size, train_dataset, val_dataset)
+
     class_names = dt_info.train_classes
     num_classes = len(class_names)
 
