@@ -8,7 +8,7 @@ from .model import Model
 from .dataset import DtInfo
 from .cka.cka import ckaMethod
 from .rsa.rsa import rsaMethod
-from .extraction import featureExtraction
+from .classify import evaluator
 from src.fileManagement import fileSystem, jsonUtils, csvUtils
 
 # If 'src' is one level up, add the parent directory to the path
@@ -39,7 +39,7 @@ parser.add_argument("-met", "--method", type=str, required=False, default="rsa",
 
 args = parser.parse_args()
 
-if __name__ == "__main__":
+def main():
     
     fileSystem.makeFileSystem(args.output_file)
     paths = jsonUtils.getJsonInfo(config.json_info_path)
@@ -82,8 +82,6 @@ if __name__ == "__main__":
     epochs = args.epochs if args.epochs else 10
 
     print(f"\nNumber of images total: {total_images}")
-    
-    dissimilarity_csv_path, dissimilarity_folder = paths["cosineDissimilarity"], paths["dissimilarity_folder"]
 
     train_dataset, val_dataset = dt_info.getDatasets()
     
@@ -91,8 +89,23 @@ if __name__ == "__main__":
     fst_modelc.getLoaders(batch_size, train_dataset, val_dataset)
     snd_modelc.getLoaders(batch_size, train_dataset, val_dataset)
 
+    print(f"First loader: {type(fst_modelc.train_loader)}")
+    print(f"\nSecond loader: {type(snd_modelc.train_loader)}")
+    
     class_names = dt_info.train_classes
     num_classes = len(class_names)
+    
+    # --- Embedding Extraction ---
+    
+    fst_embedding_path, snd_embedding_path = fileSystem.modelOutputSavePath(fst_modelc, snd_modelc dt_info, embedding=True)
+    
+    if args.reextract: 
+        fst_embeddings, _ = evaluator.getFeatureTensors(fst_modelc, fst_modelc.val_loader)
+        snd_embeddings, _ = evaluator.getFeatureTensors(snd_modelc, snd_modelc.val_loader)
+        
+        torch.save(fst_embeddings, fst_embedding_path)
+    
+    raise
 
     # --- Model validation ---
     fst_modelc.setAcc(0.0)
@@ -120,13 +133,6 @@ if __name__ == "__main__":
 
         print(f"\n{first_model_name} Validation Accuracy: {fst_modelc.acc:.4f}")
         print(f"\n{second_model_name} Validation Accuracy: {snd_modelc.acc:.4f}")
-    
-    fst_embedding_path = fileSystem.embeddingSavePath(fst_modelc, dt_info, True)
-    snd_embedding_path = fileSystem.embeddingSavePath(snd_modelc, dt_info, True)
-    
-    fields = ["fst_embedding_path", "snd_embedding_path"]
-    values = [fst_embedding_path, snd_embedding_path]
-    jsonUtils.updateJson(config.json_info_path, fields, values)
 
     # --- Experiment execution ---
     match args.method:
@@ -138,3 +144,6 @@ if __name__ == "__main__":
             print("validado")
         case _:
             raise ValueError(f"Method {args.method} not recognized. The available methods are: {available_methods}")
+        
+if __name__ == "__main__":
+    main()

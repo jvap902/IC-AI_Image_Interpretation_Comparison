@@ -35,7 +35,7 @@ class Model:
                 raise ValueError(f"Not supported model source")
                     
     def getEmbeddings(self, inputs):
-        return self.embeddingExtractor(self, inputs)
+        return self.embeddingExtractor(self, inputs).float()
     
     def getLoaders(self, batch_size, train_dataset, val_dataset):
         
@@ -51,6 +51,9 @@ class Model:
     
     def setAcc(self, acc):
         self.acc = acc
+        
+    def setHead(self, head):
+        self.head = head
         
     def getEmbeddingExtractor(self):        
         if (self.source == 'clip' or self.source == 'open_clip'):

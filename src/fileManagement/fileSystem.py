@@ -73,7 +73,7 @@ def createFile(file_path, content, files_paths: Dict = None):
 
     return files_paths
 
-def embeddingSavePath(modelc, dt_info, embedding : bool):
+def modelOutputSavePath(fst_modelc, snd_modelc, dt_info, embedding : bool):
     m_name = modelc.name.replace('/', '-')
     if embedding:
         return f'./dataStorage/model_output/embedding/{m_name}_{modelc.weights}_{modelc.source}_{dt_info.name_w_subset}.pt'
