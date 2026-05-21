@@ -130,15 +130,15 @@ def main():
         snd_modelc.setAcc(snd_eval_dict["accuracy"])
         csvUtils.writeCsvLine(validation_csv, [snd_modelc.name, snd_modelc.source, snd_modelc.weights, dt_info.name_w_subset, snd_modelc.acc])
 
-    print(f"\n{first_model_name} Validation Accuracy: {fst_modelc.acc:.4f}")
-    print(f"\n{second_model_name} Validation Accuracy: {snd_modelc.acc:.4f}")
+    print(f"{first_model_name} Validation Accuracy: {fst_modelc.acc:.4f}\n")
+    print(f"{second_model_name} Validation Accuracy: {snd_modelc.acc:.4f}")
 
     # --- Experiment execution ---
     match args.method:
         case "rsa":
             rsaMethod(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args)
         case "cka":
-            ckaMethod(dt_info, fst_modelc, snd_modelc)
+            ckaMethod(dt_info, fst_modelc, fst_emb, snd_modelc, snd_emb)
         case "validation":
             print("validado")
         case _:

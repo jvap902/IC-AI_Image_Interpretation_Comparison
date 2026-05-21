@@ -50,7 +50,7 @@ class Model:
         return dataset
     
     def setAcc(self, acc : float):
-        self.acc = acc
+        self.acc = float(acc)
         
     def setHead(self, head):
         self.head = head
