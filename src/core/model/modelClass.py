@@ -46,7 +46,7 @@ class Model:
         self.val_loader = DataLoader(val_preprocessed, batch_size=batch_size, shuffle=False, num_workers=4)
         
     def preprocessDataset(self, dataset):
-        dataset.dataset.transforms = self.preprocess
+        dataset.dataset.transform = self.preprocess
         return dataset
     
     def setAcc(self, acc : float):

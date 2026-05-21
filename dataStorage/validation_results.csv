@@ -192,3 +192,6 @@ resnet18,torchvision,IMAGENET1K_V1,imagenet-c-jpeg_compression-5(0),0.029
 resnet50,torchvision,IMAGENET1K_V1,imagenet-c-jpeg_compression-5(0),0.0565
 resnet18,torchvision,IMAGENET1K_V1,imagenet-c-jpeg_compression-5(0),0.0485
 resnet50,torchvision,IMAGENET1K_V1,imagenet-c-jpeg_compression-5(0),0.0775
+resnet18,torchvision,IMAGENET1K_V1,cifar10(0),0.748
+resnet18,torchvision,IMAGENET1K_V1,cifar10(0),0.7525
+resnet50,torchvision,IMAGENET1K_V1,cifar10(0),0.8195

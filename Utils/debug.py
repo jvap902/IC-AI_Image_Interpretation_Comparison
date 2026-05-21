@@ -1,7 +1,8 @@
 #from ..src import *
+import torch
 import numpy as np
 import pandas as pd
-
+from pathlib import Path
 from torchvision.models.feature_extraction import get_graph_node_names
 from torchvision.models import maxvit_t, resnet18, regnet_y_32gf, vit_b_16, efficientnet_b0, swin_t, convnext_tiny
 from transformers import AutoModel, AutoImageProcessor
@@ -28,7 +29,11 @@ import clip
 #print(model.named_children)
 
 if __name__ == "__main__":
-    df = pd.read_csv("dataStorage/rsaData/cifar10Data.csv")
+    folder_path = Path('dataStorage/model_output/embedding')
     
-    print(df)
-
+    for file in folder_path.iterdir():
+        content = torch.load(file)
+        
+        if type(content) == tuple:
+            print(type(content))
+            file.unlink()

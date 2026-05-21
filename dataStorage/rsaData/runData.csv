@@ -586,3 +586,4 @@ total_images,num_classes,fst_model_source,first_model,fst_weights,snd_model_sour
 2000,1000,torchvision,resnet18,IMAGENET1K_V1,torchvision,resnet50,IMAGENET1K_V1,0.029,0.0565,0.7384860597686261,0.76076764,imagenet-c-jpeg_compression-5(0)
 2000,1000,torchvision,resnet18,IMAGENET1K_V1,torchvision,resnet50,IMAGENET1K_V1,0.1035,0.212,0.7805866642523236,0.8164591,imagenet-c-jpeg_compression-1(0)
 2000,1000,torchvision,resnet18,IMAGENET1K_V1,torchvision,resnet50,IMAGENET1K_V1,0.0485,0.0775,0.7393379897279629,0.76073897,imagenet-c-jpeg_compression-5(0)
+2000,10,torchvision,resnet18,IMAGENET1K_V1,torchvision,resnet50,IMAGENET1K_V1,0.7525,0.8195,0.7555021367328318,0.7735215,cifar10(0)

@@ -1,5 +1,4 @@
 import torch
-import torch.nn as nn
 from typing import Tuple
 from tqdm.auto import tqdm
 import torch.optim as optim
@@ -18,24 +17,22 @@ def getFeatureTensors(modelc: Model, loader) -> Tuple[torch.Tensor, torch.Tensor
     If model is provided, it extracts features; otherwise, it extracts raw inputs.
     """
     data_list = []
-    labels_list = []
     
     modelc.model.eval()
     with torch.no_grad():
-        for inputs, labels in tqdm(loader, desc="Extracting Data"):
+        for inputs, _ in tqdm(loader, desc="Extracting Data"):
             inputs = inputs.to(device)
             data = modelc.getEmbeddings(inputs)
                 
             data_list.append(data)
-            labels_list.append(labels.cpu())
             
-    return torch.cat(data_list), torch.cat(labels_list)
+    return torch.cat(data_list)
 
 def compute_metrics(pred):
     logits = torch.Tensor(pred.predictions)
     labels = pred.label_ids.astype(int)
     
-    preds = logits.argmax(dim=1).numpy
+    preds = logits.argmax(dim=1)
 
     f1_mi = f1_score(labels, preds, average='micro')
     f1_ma = f1_score(labels, preds, average='macro')
@@ -71,15 +68,15 @@ def evaluate(model, loader : DataLoader) -> dict:
             all_labels.append(y_batch.cpu())
 
     pred = SimpleNamespace(
-        predictions=torch.cat(all_logits).numpy(),
-        label_ids=torch.cat(all_labels).numpy()
+        predictions=torch.cat(all_logits).detach().cpu().numpy(),
+        label_ids=torch.cat(all_labels).detach().cpu().numpy()
     )
 
     return compute_metrics(pred)
     
-def evaluateHead(modelc, embeddings):
-    feature_tensor = TensorDataset(embeddings)
-    feature_loader = DataLoader(feature_tensor)
+def evaluateHead(modelc, embeddings : torch.Tensor, labels : torch.Tensor):
+    feature_tensor_dataset = TensorDataset(embeddings, labels)
+    feature_loader = DataLoader(feature_tensor_dataset)
 
     eval_dict = evaluate(modelc.head, feature_loader)
 

@@ -2,6 +2,7 @@ import os
 import sys
 import torch
 import argparse
+from pathlib import Path
 from src import config
 from .model import Model
 from .dataset import DtInfo
@@ -16,15 +17,15 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 available_methods = ["rsa", "cka"]
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-s", "--size", type=int, required=False, help="Specify number of images to be used from the dataset")
+parser.add_argument("-s", "--size", type=int, default=2000, required=False, help="Specify number of images to be used from the dataset")
 parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify the model to be used as first model")
 parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify the model to be used as second model")
-parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10, cifar100, imagenet-a, imagenet-sketch, fgvc-aircraft, imagenet-c-$distortion$-$level$ or a link for huggingface dataset)")
-parser.add_argument("-e", "--epochs", type=int, required=False, help="Specify the number of epochs to train the head for validation")
+parser.add_argument("-d", "--dataset", type=str, default="ILSVRC/imagenet-1k", required=False, help="Specify the dataset (cifar10, cifar100, imagenet-a, imagenet-sketch, fgvc-aircraft, imagenet-c-$distortion$-$level$ or a link for huggingface dataset)")
+parser.add_argument("-e", "--epochs", type=int, default=10, required=False, help="Specify the number of epochs to train the head for validation")
 parser.add_argument("-nv", "--no_validation", action='store_true', help="Turns off model validation step")
 parser.add_argument("--chunked", action='store_true', help="Enables spearman calculation in chunks to save memory")
-parser.add_argument("--n_classes", type=int, required=False, help="Specify number of classes in the dataset (only for non cifar datasets)")
-parser.add_argument("-ss", "--specific_subset", type=int, required=False, help="Specify a specific subset number to load from cache")
+parser.add_argument("--n_classes", type=int, default=100, required=False, help="Specify number of classes in the dataset (only for non cifar datasets)")
+parser.add_argument("-ss", "--specific_subset", default=0, type=int, required=False, help="Specify a specific subset number to load from cache")
 parser.add_argument("--m1_source", type=str, required=False, default="torchvision", help="Specify from where the first model to be loaded come from, default is pytorch")
 parser.add_argument("--m2_source", type=str, required=False, default="torchvision", help="Specify from where the second model to be loaded come from, default is pytorch")
 parser.add_argument("-m1_w", "--m1_weights", type=str, required=False, default="IMAGENET1K_V1", help="Specify weights for torchvision models")
@@ -45,8 +46,6 @@ def main():
     
     device = config.device
     
-    output_dir = paths["output_dir"]
-    
     print(f"\nDevice set to: {device}")
 
     # --- Model Creation ---
@@ -57,13 +56,10 @@ def main():
     snd_modelc = Model(second_model_name, args.m2_source, args.m2_weights)
     
     # --- Data Setup ---
-    dataset_name = args.dataset if args.dataset else "ILSVRC/imagenet-1k"
-    
-    total_images = args.size if args.size else 2000
-    
-    num_classes = args.n_classes if args.n_classes else 100
-    
-    specific_subset = args.specific_subset if args.specific_subset is not None else 0
+    dataset_name = args.dataset
+    total_images = args.size    
+    num_classes = args.n_classes    
+    specific_subset = args.specific_subset
     
     if dataset_name == 'cifar10':
         num_classes = 10
@@ -76,7 +72,7 @@ def main():
     
     dt_info = DtInfo(dataset_name, specific_subset, num_classes, total_images, args.same_classes, args.new_dt_specific_classes)
     
-    epochs = args.epochs if args.epochs else 10
+    epochs = args.epochs
 
     print(f"\nNumber of images total: {total_images}")
 
@@ -85,9 +81,6 @@ def main():
     batch_size = 64
     fst_modelc.getLoaders(batch_size, train_dataset, val_dataset)
     snd_modelc.getLoaders(batch_size, train_dataset, val_dataset)
-
-    print(f"First loader: {type(fst_modelc.train_loader)}")
-    print(f"\nSecond loader: {type(snd_modelc.train_loader)}")
     
     class_names = dt_info.train_classes
     num_classes = len(class_names)
@@ -96,18 +89,21 @@ def main():
     # --- Embedding Extraction ---
     fst_embedding_path, snd_embedding_path = fileSystem.modelOutputSavePath(fst_modelc, snd_modelc, dt_info, embedding=True)
     
-    if args.reextract: 
-        print("Extraindo embeddings\n")
-        fst_embeddings, _ = evaluator.getFeatureTensors(fst_modelc, fst_modelc.val_loader)
-        snd_embeddings, _ = evaluator.getFeatureTensors(snd_modelc, snd_modelc.val_loader)
-        
-        torch.save(fst_embeddings, fst_embedding_path)
-        torch.save(snd_embeddings, snd_embedding_path)
-    
+    if not Path(fst_embedding_path).is_file() or args.reextract:
+        print("Extracting first model embeddings\n")
+        fst_emb = evaluator.getFeatureTensors(fst_modelc, fst_modelc.val_loader)
+        torch.save(fst_emb, fst_embedding_path)
     else:
-        fst_embeddings = torch.load(fst_embedding_path, weights_only=True)
-        snd_embeddings = torch.load(snd_embedding_path, weights_only=True)
-
+        print("Loading first model saved embeddings")
+        fst_emb = torch.load(fst_embedding_path, weights_only=True)
+    
+    if not Path(snd_embedding_path).is_file() or args.reextract: 
+        print("Extracting second model embeddings\n")
+        snd_emb = evaluator.getFeatureTensors(snd_modelc, snd_modelc.val_loader)
+        torch.save(snd_emb, snd_embedding_path)
+    else:
+        print("Loading second model saved embeddings\n")
+        snd_emb = torch.load(snd_embedding_path, weights_only=True)
 
     # --- Model validation ---
     validation_csv = paths["validation_results"]
@@ -122,18 +118,20 @@ def main():
         fst_modelc.setAcc(fst_acc)
         snd_modelc.setAcc(snd_acc)
     else:
-        newHead.newTrainedHead(fst_modelc, dt_info.num_classes, epochs=10)
-        fst_eval_dict = evaluator.evaluateHead(fst_modelc, fst_embeddings)
+        val_labels_tensor = torch.Tensor([label for _, label in val_dataset])
+        
+        newHead.newTrainedHead(fst_modelc, dt_info.num_classes, epochs=epochs)
+        fst_eval_dict = evaluator.evaluateHead(fst_modelc, fst_emb, val_labels_tensor)
         fst_modelc.setAcc(fst_eval_dict["accuracy"])
         csvUtils.writeCsvLine(validation_csv, [fst_modelc.name, fst_modelc.source, fst_modelc.weights, dt_info.name_w_subset, fst_modelc.acc])
             
-        newHead.newTrainedHead(snd_modelc, dt_info.num_classes, epochs=10)
-        snd_eval_dict = evaluator.evaluateHead(snd_modelc, snd_embeddings)
+        newHead.newTrainedHead(snd_modelc, dt_info.num_classes, epochs=epochs)
+        snd_eval_dict = evaluator.evaluateHead(snd_modelc, snd_emb, val_labels_tensor)
         snd_modelc.setAcc(snd_eval_dict["accuracy"])
         csvUtils.writeCsvLine(validation_csv, [snd_modelc.name, snd_modelc.source, snd_modelc.weights, dt_info.name_w_subset, snd_modelc.acc])
 
-        print(f"\n{first_model_name} Validation Accuracy: {fst_modelc.acc:.4f}")
-        print(f"\n{second_model_name} Validation Accuracy: {snd_modelc.acc:.4f}")
+    print(f"\n{first_model_name} Validation Accuracy: {fst_modelc.acc:.4f}")
+    print(f"\n{second_model_name} Validation Accuracy: {snd_modelc.acc:.4f}")
 
     # --- Experiment execution ---
     match args.method:
