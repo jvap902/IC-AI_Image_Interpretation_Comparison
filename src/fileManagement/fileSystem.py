@@ -75,18 +75,21 @@ def createFile(file_path, content, files_paths: Dict = None):
 
 def modelOutputSavePath(fst_modelc, snd_modelc, dt_info, embedding : bool):
     
-    def savePath(modelc, dt_info, embedding : bool):
+    def savePath(modelc, embedding : bool):
         m_name = modelc.name.replace('/', '-')
         if embedding:
             return f'./dataStorage/model_output/embedding/{m_name}_{modelc.weights}_{modelc.source}_{dt_info.name_w_subset}.pt'
         else:
             return f'./dataStorage/model_output/std_output/{m_name}_{modelc.weights}_{modelc.source}_{dt_info.name_w_subset}.pt'
         
-    fst_
+    fst_embedding_path = savePath(fst_modelc, embedding=embedding)
+    snd_embedding_path = savePath(snd_modelc, embedding=embedding)
     
     fields = ["fst_embedding_path", "snd_embedding_path"]
     values = [fst_embedding_path, snd_embedding_path]
-    jsonUtils.updateJson(config.json_info_path, fields, values)
+    updateJson(config.json_info_path, fields, values)
+
+    return fst_embedding_path, snd_embedding_path
 
 if __name__ == '__main__':
     pass

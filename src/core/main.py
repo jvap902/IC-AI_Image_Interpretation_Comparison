@@ -2,13 +2,12 @@ import os
 import sys
 import torch
 import argparse
-import numpy as np
 from src import config
 from .model import Model
 from .dataset import DtInfo
 from .cka.cka import ckaMethod
 from .rsa.rsa import rsaMethod
-from .classify import evaluator
+from .classify import evaluator, newHead
 from src.fileManagement import fileSystem, jsonUtils, csvUtils
 
 # If 'src' is one level up, add the parent directory to the path
@@ -22,7 +21,7 @@ parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify t
 parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify the model to be used as second model")
 parser.add_argument("-d", "--dataset", type=str, required=False, help="Specify the dataset (cifar10, cifar100, imagenet-a, imagenet-sketch, fgvc-aircraft, imagenet-c-$distortion$-$level$ or a link for huggingface dataset)")
 parser.add_argument("-e", "--epochs", type=int, required=False, help="Specify the number of epochs to train the head for validation")
-parser.add_argument("-nv", "--no_validation", action='store_false', help="Turns off model validation step")
+parser.add_argument("-nv", "--no_validation", action='store_true', help="Turns off model validation step")
 parser.add_argument("--chunked", action='store_true', help="Enables spearman calculation in chunks to save memory")
 parser.add_argument("--n_classes", type=int, required=False, help="Specify number of classes in the dataset (only for non cifar datasets)")
 parser.add_argument("-ss", "--specific_subset", type=int, required=False, help="Specify a specific subset number to load from cache")
@@ -33,7 +32,7 @@ parser.add_argument("-m2_w", "--m2_weights", type=str, required=False, default="
 parser.add_argument("-ed", "--existing_dissimilarity", action='store_true', required=False, default=False, help="Use previously calculated cossine dissimilarity for run")
 parser.add_argument("-sc", "--same_classes", type=str, required=False, default=None, nargs='+', help="Specify [name, subset, num_classes, num_images] of a dataset for its classes to be used, only works for new subsets")
 parser.add_argument("-out", "--output_file", type=str, required=False, default="./dataStorage/rsaData/runData.csv", help="Specify path to file the run information will be written")
-parser.add_argument("--revalidate", action='store_true', required=False, default=False, help="Force validation step even with previously calculated accuracy")
+parser.add_argument("--reextract", action='store_true', required=False, default=False, help="Force embedding extraction even when there are saved embeddings")
 parser.add_argument("-ndsc", "--new_dt_specific_classes", action='store_true', required=False, default=False, help="Specify arbitrary classes in a classes.csv file, only works for new subsets")
 parser.add_argument("-met", "--method", type=str, required=False, default="rsa", help=f"Specify the method to be used, the available methods are: {available_methods}")
 
@@ -51,7 +50,6 @@ def main():
     print(f"\nDevice set to: {device}")
 
     # --- Model Creation ---
-
     first_model_name = args.model1 if args.model1 else 'resnet18'
     second_model_name = args.model2 if args.model2 else 'resnet50'
     
@@ -59,7 +57,6 @@ def main():
     snd_modelc = Model(second_model_name, args.m2_source, args.m2_weights)
     
     # --- Data Setup ---
-    
     dataset_name = args.dataset if args.dataset else "ILSVRC/imagenet-1k"
     
     total_images = args.size if args.size else 2000
@@ -95,41 +92,45 @@ def main():
     class_names = dt_info.train_classes
     num_classes = len(class_names)
     
+
     # --- Embedding Extraction ---
-    
-    fst_embedding_path, snd_embedding_path = fileSystem.modelOutputSavePath(fst_modelc, snd_modelc dt_info, embedding=True)
+    fst_embedding_path, snd_embedding_path = fileSystem.modelOutputSavePath(fst_modelc, snd_modelc, dt_info, embedding=True)
     
     if args.reextract: 
+        print("Extraindo embeddings\n")
         fst_embeddings, _ = evaluator.getFeatureTensors(fst_modelc, fst_modelc.val_loader)
         snd_embeddings, _ = evaluator.getFeatureTensors(snd_modelc, snd_modelc.val_loader)
         
         torch.save(fst_embeddings, fst_embedding_path)
+        torch.save(snd_embeddings, snd_embedding_path)
     
-    raise
+    else:
+        fst_embeddings = torch.load(fst_embedding_path, weights_only=True)
+        snd_embeddings = torch.load(snd_embedding_path, weights_only=True)
+
 
     # --- Model validation ---
-    fst_modelc.setAcc(0.0)
-    snd_modelc.setAcc(0.0)
-    
-    validation_csv = output_dir+"/validation_results.csv"
+    validation_csv = paths["validation_results"]
     
     fst_val = csvUtils.findInCsv(validation_csv, ["model","model_source","model_weights","dataset"], [fst_modelc.name, fst_modelc.source, fst_modelc.weights, dt_info.name_w_subset])
-    
     snd_val = csvUtils.findInCsv(validation_csv, ["model","model_source","model_weights","dataset"], [snd_modelc.name, snd_modelc.source, snd_modelc.weights, dt_info.name_w_subset])
     
-    if (args.no_validation):
-        
-        if len(fst_val) == 0 or args.revalidate:
-            fst_modelc.acc = featureExtraction.train_and_validate_head(fst_modelc, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
-            csvUtils.writeCsvLine(validation_csv, [fst_modelc.name, fst_modelc.source, fst_modelc.weights, dt_info.name_w_subset, fst_modelc.acc])
-        else:
-            fst_modelc.acc = np.float32(fst_val[0]['accuracy'])
+    fst_acc = 0 if len(fst_val) == 0 else fst_val[0]['accuracy']
+    snd_acc = 0 if len(snd_val) == 0 else snd_val[0]['accuracy']
+
+    if args.no_validation:
+        fst_modelc.setAcc(fst_acc)
+        snd_modelc.setAcc(snd_acc)
+    else:
+        newHead.newTrainedHead(fst_modelc, dt_info.num_classes, epochs=10)
+        fst_eval_dict = evaluator.evaluateHead(fst_modelc, fst_embeddings)
+        fst_modelc.setAcc(fst_eval_dict["accuracy"])
+        csvUtils.writeCsvLine(validation_csv, [fst_modelc.name, fst_modelc.source, fst_modelc.weights, dt_info.name_w_subset, fst_modelc.acc])
             
-        if len(snd_val) == 0 or args.revalidate:
-            snd_modelc.acc = featureExtraction.train_and_validate_head(snd_modelc, epochs=epochs, num_classes=num_classes) #precisa dar uma leve treinada na nova cabeça para conseguir uma boa medida de accuracy
-            csvUtils.writeCsvLine(validation_csv, [snd_modelc.name, snd_modelc.source, snd_modelc.weights, dt_info.name_w_subset, snd_modelc.acc])
-        else:
-            snd_modelc.acc = np.float32(snd_val[0]['accuracy'])
+        newHead.newTrainedHead(snd_modelc, dt_info.num_classes, epochs=10)
+        snd_eval_dict = evaluator.evaluateHead(snd_modelc, snd_embeddings)
+        snd_modelc.setAcc(snd_eval_dict["accuracy"])
+        csvUtils.writeCsvLine(validation_csv, [snd_modelc.name, snd_modelc.source, snd_modelc.weights, dt_info.name_w_subset, snd_modelc.acc])
 
         print(f"\n{first_model_name} Validation Accuracy: {fst_modelc.acc:.4f}")
         print(f"\n{second_model_name} Validation Accuracy: {snd_modelc.acc:.4f}")

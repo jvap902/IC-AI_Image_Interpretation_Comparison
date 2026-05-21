@@ -49,7 +49,7 @@ class Model:
         dataset.dataset.transforms = self.preprocess
         return dataset
     
-    def setAcc(self, acc):
+    def setAcc(self, acc : float):
         self.acc = acc
         
     def setHead(self, head):

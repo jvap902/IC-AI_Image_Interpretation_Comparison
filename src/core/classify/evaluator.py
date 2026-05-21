@@ -3,6 +3,7 @@ import torch.nn as nn
 from typing import Tuple
 from tqdm.auto import tqdm
 import torch.optim as optim
+from types import SimpleNamespace
 from sklearn.metrics import f1_score, accuracy_score
 from torch.utils.data import DataLoader, TensorDataset
 from src.config import device
@@ -34,8 +35,7 @@ def compute_metrics(pred):
     logits = torch.Tensor(pred.predictions)
     labels = pred.label_ids.astype(int)
     
-    probs = torch.sigmoid(logits).cpu().numpy()
-    preds = (probs >= 0.5).astype(int)
+    preds = logits.argmax(dim=1).numpy
 
     f1_mi = f1_score(labels, preds, average='micro')
     f1_ma = f1_score(labels, preds, average='macro')
@@ -46,7 +46,7 @@ def compute_metrics(pred):
         'f1-micro': f1_mi
     }
 
-def evaluate(modelc, val_features_loader : DataLoader) -> dict:
+def evaluate(model, loader : DataLoader) -> dict:
     """
     Evaluates a model's accuracy on a given DataLoader.
     
@@ -57,36 +57,30 @@ def evaluate(modelc, val_features_loader : DataLoader) -> dict:
     Returns:
         The accuracy (float) on the test set.
     """
+    model.eval()
     
-    modelc.head.eval()
+    all_logits = []
+    all_labels = []
+
     with torch.no_grad():
-        for X_batch, y_batch in tqdm(val_features_loader, desc="Evaluating Model"):
+        for X_batch, y_batch in tqdm(loader, desc="Evaluating Model"):
             X_batch, y_batch = X_batch.to(device), y_batch.to(device)
-            outputs = model(X_batch)
+            logits = model(X_batch)
             
-            #_, predicted = torch.max(outputs.data, 1)
-            predicted = outputs.argmax(dim=1)
-            correct += (predicted == y_batch).sum().item()
-            total += y_batch.size(0)
+            all_logits.append(logits.cpu())
+            all_labels.append(y_batch.cpu())
 
-    accuracy = correct / total
-    return accuracy
+    pred = SimpleNamespace(
+        predictions=torch.cat(all_logits).numpy(),
+        label_ids=torch.cat(all_labels).numpy()
+    )
 
-
-def extractFeatures(get_fst_embedding, get_snd_embedding, fst_embedding_path, snd_embedding_path, fst_modelc, snd_modelc):
-
-    with torch.no_grad():
-        
-        if get_fst_embedding:            
-            print(f"\n--- Extracting Features for {fst_modelc.name} ---")
-            # This function iterates over all batches in val_loader and returns ONE large tensor
-            first_features, _ = getFeatureTensors(fst_modelc.val_loader, fst_modelc)
-            torch.save(first_features, fst_embedding_path)
-            print(f"\nSaved first embedding tensor (Shape: {first_features.shape}) to: {fst_embedding_path}")
-        
-        if get_snd_embedding:
-            print(f"\n--- Extracting Features for {snd_modelc.name} ---")
-            second_features, _ = getFeatureTensors(snd_modelc.val_loader, snd_modelc)
-            torch.save(second_features, snd_embedding_path)
-            print(f"Saved second embedding tensor (Shape: {second_features.shape}) to: {snd_embedding_path}")
+    return compute_metrics(pred)
     
+def evaluateHead(modelc, embeddings):
+    feature_tensor = TensorDataset(embeddings)
+    feature_loader = DataLoader(feature_tensor)
+
+    eval_dict = evaluate(modelc.head, feature_loader)
+
+    return eval_dict

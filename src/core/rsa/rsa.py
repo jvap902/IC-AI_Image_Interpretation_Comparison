@@ -1,4 +1,3 @@
-from ..extraction.featureExtraction import extractFeatures
 from .similarity import similarityAnalysis
 from .dataCollection import gatherAdditionalData
 from src import config
@@ -28,7 +27,7 @@ def rsaMethod(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args):
     #get_fst_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, fst_modelc)) == 0 or args.existing_dissimilarity == False
     #get_snd_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, snd_modelc)) == 0 or args.existing_dissimilarity == False
     
-    extractFeatures(get_fst_embedding, get_snd_embedding, fst_embedding_path, snd_embedding_path, fst_modelc, snd_modelc)
+    #extractFeatures(get_fst_embedding, get_snd_embedding, fst_embedding_path, snd_embedding_path, fst_modelc, snd_modelc)
 
     # --- Montando matriz ---
 

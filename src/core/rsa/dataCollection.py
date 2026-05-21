@@ -4,9 +4,9 @@ import open_clip
 from tqdm.auto import tqdm
 from src.core.model import Model
 from src.core.dataset import DtInfo
-from src.fileManagement.fileSystem import embeddingSavePath
+from src.fileManagement.fileSystem import modelOutputSavePath
 from src.fileManagement.csvUtils import findInCsv, writeCsvLine
-from src.core.extraction.featureExtraction import getFeatureTensors
+from src.core.classify.evaluator import getFeatureTensors
 
 modelOutputCsv_path = './dataStorage/model_output/modelOutput.csv'
 
@@ -94,7 +94,7 @@ def getModelStdOutput(modelc : Model, dt_info):
     
     stdOutput = getStdOutputTensors(modelc, dt_info, modelc.val_loader)
     
-    torch.save(stdOutput, embeddingSavePath(modelc, dt_info, False))    
+    #torch.save(stdOutput, embeddingSavePath(modelc, dt_info, False))    
     
     del stdOutput
     
@@ -104,17 +104,17 @@ def getModelEmbeddings(modelc : Model, dt_info):
     
     data = getFeatureTensors(modelc.val_loader, modelc)
     
-    torch.save(data, embeddingSavePath(modelc, dt_info, True))
+    #torch.save(data, embeddingSavePath(modelc, dt_info, True))
     
     del data
     
-def writeModelOutputLine(modelc : Model, dt_info):
-    std_output_path = embeddingSavePath(modelc, dt_info, False)
-    embedding_path = embeddingSavePath(modelc, dt_info, True)
+#def writeModelOutputLine(modelc : Model, dt_info):
+    #std_output_path = embeddingSavePath(modelc, dt_info, False)
+    #embedding_path = embeddingSavePath(modelc, dt_info, True)
     
-    data = [modelc.name, modelc.weights, modelc.source, dt_info.name_w_subset, std_output_path, embedding_path]
+    #data = [modelc.name, modelc.weights, modelc.source, dt_info.name_w_subset, std_output_path, embedding_path]
     
-    writeCsvLine(modelOutputCsv_path, data)
+    #writeCsvLine(modelOutputCsv_path, data)
     
 def gatherAdditionalData(modelc : Model, dt_info : DtInfo, has_embedding=False):
     
@@ -130,4 +130,4 @@ def gatherAdditionalData(modelc : Model, dt_info : DtInfo, has_embedding=False):
         if not has_embedding:
             getModelEmbeddings(modelc, dt_info)
         
-        writeModelOutputLine(modelc, dt_info)
+        #writeModelOutputLine(modelc, dt_info)
