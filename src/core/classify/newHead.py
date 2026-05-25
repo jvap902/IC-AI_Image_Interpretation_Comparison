@@ -1,7 +1,7 @@
 from tqdm import tqdm
 from torch import nn, optim, Tensor
 from torch.utils.data import DataLoader, TensorDataset
-from src.config import device
+from src.config import device, batch_size
 from .evaluator import getFeatureTensors
 
 class LinearHead(nn.Module):
@@ -38,7 +38,7 @@ def newTrainedHead(modelc, num_classes, epochs=10):
     train_labels = Tensor([label for _, label in modelc.train_loader.dataset])
     
     train_features_dataset = TensorDataset(train_features, train_labels)
-    train_features_loader = DataLoader(train_features_dataset, batch_size=modelc.train_loader.batch_size, shuffle=True)
+    train_features_loader = DataLoader(train_features_dataset, batch_size=batch_size, shuffle=True)
     
     new_head = LinearHead(input_dim=train_features.size(1), num_classes=num_classes).to(device)
     

@@ -2,6 +2,8 @@ import torch
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
+batch_size = 64
+
 json_info_path = "src/fileManagement/info.json"
 
 cods = ["1e", "2e", "3d", "4d", "5d", "6d", "7d", "8d", "9a", "10a", "11a", "12a", "12b", "12c", "13b", "14a", "14c", "15a", "16c", "17a", "18a", "19a", "20a", "21a", "22a", "23a", "24a"]

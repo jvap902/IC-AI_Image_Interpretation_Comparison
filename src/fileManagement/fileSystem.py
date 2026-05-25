@@ -73,23 +73,17 @@ def createFile(file_path, content, files_paths: Dict = None):
 
     return files_paths
 
-def modelOutputSavePath(fst_modelc, snd_modelc, dt_info, embedding : bool):
-    
-    def savePath(modelc, embedding : bool):
-        m_name = modelc.name.replace('/', '-')
-        if embedding:
-            return f'./dataStorage/model_output/embedding/{m_name}_{modelc.weights}_{modelc.source}_{dt_info.name_w_subset}.pt'
-        else:
-            return f'./dataStorage/model_output/std_output/{m_name}_{modelc.weights}_{modelc.source}_{dt_info.name_w_subset}.pt'
-        
-    fst_embedding_path = savePath(fst_modelc, embedding=embedding)
-    snd_embedding_path = savePath(snd_modelc, embedding=embedding)
-    
-    fields = ["fst_embedding_path", "snd_embedding_path"]
-    values = [fst_embedding_path, snd_embedding_path]
-    updateJson(config.json_info_path, fields, values)
+def modelOutputSavePath(modelc, dt_info, embedding : bool):
+    m_name = modelc.name.replace('/', '-')
+    if embedding:
+        return f'./dataStorage/model_output/embedding/{m_name}_{modelc.weights}_{modelc.source}_{dt_info.name_w_subset}.pt'
+    else:
+        return f'./dataStorage/model_output/std_output/{m_name}_{modelc.weights}_{modelc.source}_{dt_info.name_w_subset}.pt'
 
-    return fst_embedding_path, snd_embedding_path
+def dissimilaritySavePath(modelc, dt_info):
+    dissimilarity_folder = getJsonInfo(config.json_info_path, ["dissimilarity_folder"])[0]
+    
+    return f"{dissimilarity_folder}/{modelc.name}_{modelc.weights}_{modelc.source}_{dt_info.name_w_subset}.npy"
 
 if __name__ == '__main__':
     pass

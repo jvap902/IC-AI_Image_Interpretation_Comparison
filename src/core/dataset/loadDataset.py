@@ -11,7 +11,7 @@ from . import datasetUtils
 
 def loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir):
     
-    dataset = dt_info.name
+    dataset = dt_info.name.lower()
     
     print(f"\nLoading previously selected {dataset} indices\n")
     
@@ -28,29 +28,29 @@ def loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir):
 
     return train_dataset, val_dataset
 
-def createNewDataset(dt_info, output_dir, data_dir, modelc):
+def createNewDataset(dt_info, output_dir, data_dir):
     
     dataset = dt_info.name
     
     print(f"\nCreating new set of indices for {dataset}\n")
     
     if ((dataset == 'imagenet-a') or (dataset == 'imagenet-sketch') or ('imagenet-c' in dataset)):
-        train_dataset, val_dataset = newUrlDownloadedDataset(dt_info, data_dir, output_dir, modelc)
+        train_dataset, val_dataset = newUrlDownloadedDataset(dt_info, data_dir, output_dir)
     elif dataset == 'fgvc-aircraft':
-        train_dataset, val_dataset = newKaggleDataset(dt_info, data_dir, output_dir, modelc)
+        train_dataset, val_dataset = newKaggleDataset(dt_info, data_dir, output_dir)
     elif dataset == 'cifar100':
-        train_dataset, val_dataset = newCifar100Dataset(dt_info, data_dir, output_dir, modelc)
+        train_dataset, val_dataset = newCifar100Dataset(dt_info, data_dir, output_dir)
     elif dataset == 'cifar10':
-        train_dataset, val_dataset = newCifar10Dataset(dt_info, data_dir, output_dir, modelc)
+        train_dataset, val_dataset = newCifar10Dataset(dt_info, data_dir, output_dir)
     else:
-        train_dataset, val_dataset = newHuggingfaceDataset(dt_info, output_dir, modelc)
+        train_dataset, val_dataset = newHuggingfaceDataset(dt_info, output_dir)
     
     datasetUtils.writeDatasetClasses(dt_info)
 
     return train_dataset, val_dataset
 
 
-def newKaggleDataset(dt_info, data_dir, output_dir, modelc): #falta validar
+def newKaggleDataset(dt_info, data_dir, output_dir): #falta validar
     print(f"\n--- Creating {dt_info.name} Subset ---")
     
     url = datasetUtils.getKaggleInfo(dt_info.name)
@@ -163,10 +163,10 @@ def newCifar100Dataset(dt_info, data_dir, output_dir):
 
     return subset_train_dataset, subset_val_dataset
 
-def newUrlDownloadedDataset(dt_info, data_dir, output_dir, modelc):
+def newUrlDownloadedDataset(dt_info, data_dir, output_dir):
     dataset, subset_num, num_classes, total_images = dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images
     
-    full_dataset = datasetUtils.getUrlDataset(data_dir, dataset, modelc)
+    full_dataset = datasetUtils.getUrlDataset(data_dir, dataset)
         
     val_indices = datasetUtils.imageSelector(dt_info, full_dataset, len(full_dataset.classes), 'validation')
     
@@ -206,7 +206,7 @@ def loadUrlDownloadedDataset(data_dir, train_indices, val_indices, dataset):
     
     return train_dataset, val_dataset
 
-def newHuggingfaceDataset(dt_info, output_dir, modelc):
+def newHuggingfaceDataset(dt_info, output_dir):
     print("\n--- Loading dataset via Hugging Face ---")
     
     dataset_link, subset_num, num_classes, total_images = dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images

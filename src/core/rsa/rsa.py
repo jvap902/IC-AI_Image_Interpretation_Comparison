@@ -1,52 +1,35 @@
-from .similarity import similarityAnalysis
-from .dataCollection import gatherAdditionalData
+import numpy as np
 from src import config
 from src.fileManagement.jsonUtils import getJsonInfo
 from src.fileManagement.csvUtils import findInCsv, writeCsvLine
+from . import similarity
+from .dataCollection import gatherAdditionalData
 
-def getRsaPaths(json_path=config.json_info_path):
-    fields = ["dissimilarity_folder", "cosineDissimilarity", "fst_embedding_path", "snd_embedding_path", "modelOutput"]
-    
-    return getJsonInfo(json_path, fields)
-
-def existingEmbeddings(model_output_csv, modelc, dt_info):
-    params = ['model', 'model_source', 'model_weights', 'dataset(subset)']
-    values = [modelc.name, modelc.source, modelc.weights, dt_info.name_w_subset]
-    
-    if len(findInCsv(model_output_csv, params, values)) == 0:
-        return False
-    else:
-        return True
-
-def rsaMethod(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args):
-    dissimilarity_folder, dissimilarity_csv_path, fst_embedding_path, snd_embedding_path, model_output_csv = getRsaPaths()
-    
-    get_fst_embedding = existingEmbeddings(model_output_csv, fst_modelc, dt_info) == False or args.existing_dissimilarity == False
-    get_snd_embedding = existingEmbeddings(model_output_csv, snd_modelc, dt_info) == False or args.existing_dissimilarity == False
-
-    #get_fst_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, fst_modelc)) == 0 or args.existing_dissimilarity == False
-    #get_snd_embedding = len(similarityAnalysis.isDissimilarityCalculated(dt_info.name_w_subset, dissimilarity_csv_path, snd_modelc)) == 0 or args.existing_dissimilarity == False
-    
-    #extractFeatures(get_fst_embedding, get_snd_embedding, fst_embedding_path, snd_embedding_path, fst_modelc, snd_modelc)
+def rsaMethod(dt_info, fst_modelc, fst_emb, snd_modelc, snd_emb, args):
+    dissimilarity_csv_path = getJsonInfo(config.json_info_path, ["cosineDissimilarity"])[0]
 
     # --- Montando matriz ---
+    if args.existing_dissimilarity:
+        fst_rdm_info = similarity.savedRdm(dt_info.name_w_subset, dissimilarity_csv_path, fst_modelc)
+        snd_rdm_info = similarity.savedRdm(dt_info.name_w_subset, dissimilarity_csv_path, snd_modelc)
+        fst_rdm = np.load(fst_rdm_info[0]['path']) if len(fst_rdm_info)>0 else similarity.rdm(fst_emb, fst_modelc, dt_info, dissimilarity_csv_path)
+        snd_rdm = np.load(snd_rdm_info[0]['path']) if len(snd_rdm_info)>0 else similarity.rdm(snd_emb, snd_modelc, dt_info, dissimilarity_csv_path)
+    else:
+        fst_rdm = similarity.rdm(fst_emb, fst_modelc, dt_info, dissimilarity_csv_path)
+        snd_rdm = similarity.rdm(snd_emb, snd_modelc, dt_info, dissimilarity_csv_path)
+        
 
-    fst_dissimilarity_path = similarityAnalysis.getCosineDissimilarity(fst_embedding_path, dissimilarity_csv=dissimilarity_csv_path, dissimilarity_folder=dissimilarity_folder, modelc=fst_modelc, dt_info=dt_info, existing_dissimilarity=args.existing_dissimilarity)
+    print("\nCalculating RSMs\n")
     
-    snd_dissimilarity_path = similarityAnalysis.getCosineDissimilarity(snd_embedding_path, dissimilarity_csv=dissimilarity_csv_path, dissimilarity_folder=dissimilarity_folder, modelc=snd_modelc, dt_info=dt_info, existing_dissimilarity=args.existing_dissimilarity)
-
-    print("\nCalculating Pearson's correlation\n")
-    pearson, p_value = similarityAnalysis.calculateCorrelations(fst_dissimilarity_path, snd_dissimilarity_path, correlation_type='pearson')
+    (pearson, p_p), (spearman, p_s) = similarity.rsm(fst_rdm, snd_rdm)
 
     print(f"Pearson's Rank Correlation Coefficient (ρ): {pearson:.4f}")
 
-    spearman, p_value = similarityAnalysis.calculateCorrelations(fst_dissimilarity_path, snd_dissimilarity_path, correlation_type='spearman', chunked=args.chunked)
-
     print(f"Spearman's Rank Correlation Coefficient (ρ): {spearman:.4f}")
 
-    runData = [str(total_images), str(num_classes), fst_modelc.source, fst_modelc.name, args.m1_weights, snd_modelc.source, snd_modelc.name, args.m2_weights, str(fst_modelc.acc), str(snd_modelc.acc), str(spearman), str(pearson), dt_info.name_w_subset]
+    runData = [str(dt_info.num_images), str(dt_info.num_classes), fst_modelc.source, fst_modelc.name, args.m1_weights, snd_modelc.source, snd_modelc.name, args.m2_weights, str(fst_modelc.acc), str(snd_modelc.acc), str(spearman), str(pearson), dt_info.name_w_subset]
 
     writeCsvLine(args.output_file, runData)
     
-    gatherAdditionalData(fst_modelc, dt_info, has_embedding=get_fst_embedding)
-    gatherAdditionalData(snd_modelc, dt_info, has_embedding=get_snd_embedding)
+    gatherAdditionalData(fst_modelc, dt_info)
+    gatherAdditionalData(snd_modelc, dt_info)

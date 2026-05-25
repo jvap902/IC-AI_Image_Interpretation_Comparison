@@ -44,9 +44,7 @@ def main():
     fileSystem.makeFileSystem(args.output_file)
     paths = jsonUtils.getJsonInfo(config.json_info_path)
     
-    device = config.device
-    
-    print(f"\nDevice set to: {device}")
+    print(f"\nDevice set to: {config.device}")
 
     # --- Model Creation ---
     first_model_name = args.model1 if args.model1 else 'resnet18'
@@ -78,7 +76,7 @@ def main():
 
     train_dataset, val_dataset = dt_info.getDatasets()
     
-    batch_size = 64
+    batch_size = config.batch_size
     fst_modelc.getLoaders(batch_size, train_dataset, val_dataset)
     snd_modelc.getLoaders(batch_size, train_dataset, val_dataset)
     
@@ -87,7 +85,12 @@ def main():
     
 
     # --- Embedding Extraction ---
-    fst_embedding_path, snd_embedding_path = fileSystem.modelOutputSavePath(fst_modelc, snd_modelc, dt_info, embedding=True)
+    fst_embedding_path = fileSystem.modelOutputSavePath(fst_modelc, dt_info, embedding=True)
+    snd_embedding_path = fileSystem.modelOutputSavePath(snd_modelc, dt_info, embedding=True)
+    
+    fields = [f"fst_embedding_path", "snd_embedding_path"]
+    values = [fst_embedding_path, snd_embedding_path]
+    jsonUtils.updateJson(config.json_info_path, fields, values)
     
     if not Path(fst_embedding_path).is_file() or args.reextract:
         print("Extracting first model embeddings\n")
@@ -136,7 +139,7 @@ def main():
     # --- Experiment execution ---
     match args.method:
         case "rsa":
-            rsaMethod(dt_info, fst_modelc, snd_modelc, total_images, num_classes, args)
+            rsaMethod(dt_info, fst_modelc, fst_emb, snd_modelc, snd_emb, args)
         case "cka":
             ckaMethod(dt_info, fst_modelc, fst_emb, snd_modelc, snd_emb)
         case "validation":
