@@ -1,3 +1,4 @@
+from pathlib import Path
 from .loadDataset import *
 from .datasetUtils import getClasses
 from src.fileManagement.csvUtils import findInCsv, getStringStrArray
@@ -44,7 +45,7 @@ class DtInfo:
             
             dt_name = base_dataset.name.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
             file_name = f"{dt_name}_subset_i{base_dataset.num_images}_c{base_dataset.num_classes}({base_dataset.subset}).pt"
-            indices_file = os.path.join(dataStorage_dir, 'selectedIndices.csv')
+            indices_file = dataStorage_dir+'selectedIndices.csv'
             
             indices = csvUtils.findInCsv(indices_file, ['file_name'], [file_name])
             
@@ -75,9 +76,9 @@ class DtInfo:
     def getDatasets(self, output_dir="./dataStorage", data_dir="./data"):
         dt_name = self.name.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
         file_name = f"{dt_name}_subset_i{self.num_images}_c{self.num_classes}({self.subset}).pt"
-        indices_file = os.path.join(output_dir, 'selectedIndices.csv')
+        indices_file = output_dir+'selectedIndices.csv'
         
-        if os.path.exists(indices_file):
+        if Path(indices_file).is_file():
             
             indices = csvUtils.findInCsv(indices_file, ['file_name'], [file_name])
                 

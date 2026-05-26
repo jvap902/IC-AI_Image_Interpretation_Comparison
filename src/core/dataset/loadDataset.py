@@ -1,4 +1,3 @@
-import os
 import random
 import torchvision
 from pathlib import Path
@@ -92,7 +91,7 @@ def newKaggleDataset(dt_info, data_dir, output_dir): #falta validar
     dt_name = dt_info.name.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
     file_name = f"{dt_name}_subset_i{dt_info.num_images}_c{num_classes}({dt_info.subset}).pt"
     
-    csvUtils.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
+    csvUtils.writeCsvLine(output_dir+"selectedIndices.csv", [file_name, train_indices, val_indices])
 
     return train_dataset, val_dataset
     
@@ -127,7 +126,7 @@ def newCifar10Dataset(dt_info, data_dir, output_dir):
     
     file_name = f"cifar10_subset_i{total_images}_c{num_classes}({subset_num}).pt"
     
-    csvUtils.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
+    csvUtils.writeCsvLine(output_dir+"selectedIndices.csv", [file_name, train_indices, val_indices])
 
     return subset_train_dataset, subset_val_dataset
     
@@ -159,7 +158,7 @@ def newCifar100Dataset(dt_info, data_dir, output_dir):
     
     file_name = f"cifar100_subset_i{total_images}_c{num_classes}({subset_num}).pt"
     
-    csvUtils.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
+    csvUtils.writeCsvLine(output_dir+"selectedIndices.csv", [file_name, train_indices, val_indices])
 
     return subset_train_dataset, subset_val_dataset
 
@@ -185,7 +184,7 @@ def newUrlDownloadedDataset(dt_info, data_dir, output_dir):
     
     file_name = f"{dataset}_subset_i{total_images}_c{num_classes}({subset_num}).pt"
     
-    csvUtils.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
+    csvUtils.writeCsvLine(output_dir+"selectedIndices.csv", [file_name, train_indices, val_indices])
     
     print(f"New {dataset} subset created")
     
@@ -268,7 +267,7 @@ def newHuggingfaceDataset(dt_info, output_dir):
     dt_name = dataset_link.replace('/', '-') #remove diretório na hora de buscar o arquivo, existe ao ser um link do HuggingFace
     file_name = f"{dt_name}_subset_i{total_images}_c{num_classes}({subset_num}).pt"
     
-    csvUtils.writeCsvLine(os.path.join(output_dir, "selectedIndices.csv"), [file_name, train_indices, val_indices])
+    csvUtils.writeCsvLine(output_dir+"selectedIndices.csv", [file_name, train_indices, val_indices])
 
     return train_dataset, val_dataset
 

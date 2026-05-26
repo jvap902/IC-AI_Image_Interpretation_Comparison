@@ -1,5 +1,3 @@
-import os
-import sys
 import torch
 import argparse
 from pathlib import Path
@@ -11,9 +9,6 @@ from .rsa.rsa import rsaMethod
 from .classify import evaluator, newHead
 from src.fileManagement import fileSystem, jsonUtils, csvUtils
 
-# If 'src' is one level up, add the parent directory to the path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 available_methods = ["rsa", "cka"]
 
 parser = argparse.ArgumentParser()
@@ -23,7 +18,6 @@ parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify t
 parser.add_argument("-d", "--dataset", type=str, default="ILSVRC/imagenet-1k", required=False, help="Specify the dataset (cifar10, cifar100, imagenet-a, imagenet-sketch, fgvc-aircraft, imagenet-c-$distortion$-$level$ or a link for huggingface dataset)")
 parser.add_argument("-e", "--epochs", type=int, default=10, required=False, help="Specify the number of epochs to train the head for validation")
 parser.add_argument("-nv", "--no_validation", action='store_true', help="Turns off model validation step")
-parser.add_argument("--chunked", action='store_true', help="Enables spearman calculation in chunks to save memory")
 parser.add_argument("--n_classes", type=int, default=100, required=False, help="Specify number of classes in the dataset (only for non cifar datasets)")
 parser.add_argument("-ss", "--specific_subset", default=0, type=int, required=False, help="Specify a specific subset number to load from cache")
 parser.add_argument("--m1_source", type=str, required=False, default="torchvision", help="Specify from where the first model to be loaded come from, default is pytorch")
