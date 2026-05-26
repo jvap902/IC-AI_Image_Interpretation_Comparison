@@ -81,7 +81,7 @@ def modelOutputSavePath(modelc, dt_info, embedding : bool):
 def dissimilaritySavePath(modelc, dt_info):
     dissimilarity_folder = getJsonInfo(config.json_info_path, ["dissimilarity_folder"])[0]
     
-    return f"{dissimilarity_folder}/{modelc.name}_{modelc.weights}_{modelc.source}_{dt_info.name_w_subset}.npy"
+    return f"{dissimilarity_folder}/{modelc.name.replace('/', '-')}_{modelc.weights}_{modelc.source}_{dt_info.name_w_subset}.npy"
 
 if __name__ == '__main__':
     pass

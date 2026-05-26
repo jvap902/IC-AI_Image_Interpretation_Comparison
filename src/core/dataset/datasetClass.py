@@ -1,3 +1,4 @@
+import torch
 from pathlib import Path
 from .loadDataset import *
 from .datasetUtils import getClasses
@@ -99,4 +100,4 @@ class DtInfo:
         else:
             raise FileNotFoundError("Arquivo com indices não encontrado")
         
-        return train_dataset, val_dataset
+        return train_dataset, val_dataset    

@@ -107,3 +107,7 @@ efficientnet_b7,torchvision,IMAGENET1K_V1,imagenet-sketch(1),cache/dissimilarity
 efficientnet_b7,torchvision,IMAGENET1K_V1,cifar10(0),cache/dissimilarity_arrays\efficientnet_b7_IMAGENET1K_V1_torchvision_cifar10(0).npy
 efficientnet_b7,torchvision,IMAGENET1K_V1,fgvc-aircraft(0),cache/dissimilarity_arrays\efficientnet_b7_IMAGENET1K_V1_torchvision_fgvc-aircraft(0).npy
 efficientnet_b7,torchvision,IMAGENET1K_V1,ILSVRC-imagenet-1k(0),cache/dissimilarity_arrays\efficientnet_b7_IMAGENET1K_V1_torchvision_ILSVRC-imagenet-1k(0).npy
+resnet18,torchvision,IMAGENET1K_V1,imagenet-c-gaussian_noise-1(0),cache/dissimilarity_arrays/resnet18_IMAGENET1K_V1_torchvision_imagenet-c-gaussian_noise-1(0).npy
+resnet50,torchvision,IMAGENET1K_V1,imagenet-c-gaussian_noise-1(0),cache/dissimilarity_arrays/resnet50_IMAGENET1K_V1_torchvision_imagenet-c-gaussian_noise-1(0).npy
+facebook/dinov3-vitb16-pretrain-lvd1689m,huggingface,DEFAULT,imagenet-c-gaussian_noise-1(0),cache/dissimilarity_arrays/facebook-dinov3-vitb16-pretrain-lvd1689m_DEFAULT_huggingface_imagenet-c-gaussian_noise-1(0).npy
+facebook/dinov3-vitl16-pretrain-lvd1689m,huggingface,DEFAULT,imagenet-c-gaussian_noise-1(0),cache/dissimilarity_arrays/facebook-dinov3-vitl16-pretrain-lvd1689m_DEFAULT_huggingface_imagenet-c-gaussian_noise-1(0).npy

@@ -162,27 +162,20 @@ def loadToken(file_path):
 
 def extract_labels(dataset):
     # Directly access the 'label' column of the HF dataset
-    
+    if isinstance(dataset, Subset):
+        return [dataset.dataset.targets[i] for i in dataset.indices]
     if hasattr(dataset, 'targets'):
         return dataset.targets
     else:
         return dataset['label']
 
-def getRandomImages(dt_info, dataset, dataset_classes : int):
+def getRandomImages(dt_info, dataset):
     
     print("Selecting indices\n")
     
     num_classes = dt_info.num_classes
     images_per_class = dt_info.images_per_class
-    
-    # 1. Access labels directly and instantaneously
-    # For torchvision ImageFolder, targets is the list of integer labels
-    if hasattr(dataset, 'targets'):
-        labels = dataset.targets
-    else:
-        # Fallback for HuggingFace or other formats
-        labels = dataset['label'] if 'label' in dataset.features else dataset['label']
-    
+    labels = extract_labels(dataset)
     
     # 1. Pick num_classes classes
     available_classes = list(set(labels))
@@ -191,8 +184,6 @@ def getRandomImages(dt_info, dataset, dataset_classes : int):
     # 2. Collect indices per class
     class_indices = defaultdict(list)
     
-    labels = extract_labels(dataset)
-
     for idx, label in enumerate(tqdm(labels, desc="Scanning dataset labels")):
         if label in selected_classes:
             class_indices[label].append(idx)
@@ -276,9 +267,9 @@ def getRandomImagesFromClasses(dt_info, dataset, train_or_validation, huggingfac
                 
     return selected_indices
 
-def imageSelector(dt_info, dataset, dataset_classes : int, train_or_validation, huggingface=False):
+def imageSelector(dt_info, dataset, train_or_validation, huggingface=False):
     if dt_info.available_classes[train_or_validation][0] == 'all':
-        return getRandomImages(dt_info, dataset, dataset_classes)
+        return getRandomImages(dt_info, dataset)
     else:
         return getRandomImagesFromClasses(dt_info, dataset, train_or_validation, huggingface=huggingface)
 
@@ -378,4 +369,4 @@ class HuggingFaceDatasetWrapper(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         sample = self.dataset[idx]
-        return sample[self.image_key], sample[self.label_key]
+        return sample[self.image_key].clone(), sample[self.label_key].clone()

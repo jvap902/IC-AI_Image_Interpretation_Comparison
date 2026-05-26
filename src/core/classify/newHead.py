@@ -1,3 +1,4 @@
+import torch
 from tqdm import tqdm
 from torch import nn, optim, Tensor
 from torch.utils.data import DataLoader, TensorDataset
@@ -37,10 +38,14 @@ def newTrainedHead(modelc, num_classes, epochs=10):
     train_features = getFeatureTensors(modelc, modelc.train_loader)
     train_labels = Tensor([label for _, label in modelc.train_loader.dataset])
     
+    unique_labels = sorted(train_labels.unique().tolist())
+    label_map = {orig: new for new, orig in enumerate(unique_labels)}
+    train_labels = torch.tensor([label_map[l.item()] for l in train_labels], dtype=torch.long)
+    
     train_features_dataset = TensorDataset(train_features, train_labels)
     train_features_loader = DataLoader(train_features_dataset, batch_size=batch_size, shuffle=True)
     
-    new_head = LinearHead(input_dim=train_features.size(1), num_classes=num_classes).to(device)
+    new_head = LinearHead(input_dim=train_features.flatten(1).size(1), num_classes=num_classes).to(device)
     
     new_head = trainHead(new_head, train_features_loader, epochs=epochs)
     

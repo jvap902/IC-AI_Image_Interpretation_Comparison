@@ -63,8 +63,8 @@ def newKaggleDataset(dt_info, data_dir, output_dir): #falta validar
     
     print(f"\nCreating subset with {dt_info.images_per_class} images per class for {num_classes} classes.")
         
-    train_indices = datasetUtils.imageSelector(dt_info, hf_train, hf_train.features['label'].num_classes, 'train', huggingface=True)
-    val_indices = datasetUtils.imageSelector(dt_info, hf_validation, hf_train.features['label'].num_classes, 'validation', huggingface=True)
+    train_indices = datasetUtils.imageSelector(dt_info, hf_train, 'train', huggingface=True)
+    val_indices = datasetUtils.imageSelector(dt_info, hf_validation, 'validation', huggingface=True)
     
     hf_train = hf_train.select(train_indices)
     hf_validation = hf_validation.select(val_indices)
@@ -116,8 +116,8 @@ def newCifar10Dataset(dt_info, data_dir, output_dir):
     train_dataset = torchvision.datasets.CIFAR10(root=data_dir, train=True, download=True)
     val_dataset = torchvision.datasets.CIFAR10(root=data_dir, train=False, download=True)
     
-    train_indices = datasetUtils.imageSelector(dt_info, train_dataset, len(train_dataset.classes), 'train')
-    val_indices = datasetUtils.imageSelector(dt_info, val_dataset, len(val_dataset.classes), 'validation')
+    train_indices = datasetUtils.imageSelector(dt_info, train_dataset, 'train')
+    val_indices = datasetUtils.imageSelector(dt_info, val_dataset, 'validation')
 
     subset_train_dataset = Subset(train_dataset, train_indices)
     subset_val_dataset = Subset(val_dataset, val_indices)
@@ -148,8 +148,8 @@ def newCifar100Dataset(dt_info, data_dir, output_dir):
     train_dataset = torchvision.datasets.CIFAR100(root=data_dir, train=True, download=True)
     val_dataset = torchvision.datasets.CIFAR100(root=data_dir, train=False, download=True)
 
-    train_indices = datasetUtils.imageSelector(dt_info, train_dataset, len(train_dataset.classes), 'train')
-    val_indices = datasetUtils.imageSelector(dt_info, val_dataset, len(val_dataset.classes), 'validation')
+    train_indices = datasetUtils.imageSelector(dt_info, train_dataset, 'train')
+    val_indices = datasetUtils.imageSelector(dt_info, val_dataset, 'validation')
 
     subset_train_dataset = Subset(train_dataset, train_indices)
     subset_val_dataset = Subset(val_dataset, val_indices)
@@ -167,14 +167,17 @@ def newUrlDownloadedDataset(dt_info, data_dir, output_dir):
     
     full_dataset = datasetUtils.getUrlDataset(data_dir, dataset)
         
-    val_indices = datasetUtils.imageSelector(dt_info, full_dataset, len(full_dataset.classes), 'validation')
+    val_indices = datasetUtils.imageSelector(dt_info, full_dataset, 'validation')
+    val_indices_set = set(val_indices)
     
     # o resto dos índices pode ser utilizado para treinar a cabeça de validação
 
-    possible_train_indices = list(range(len(full_dataset)))
-    possible_train_indices = [item for item in possible_train_indices if item not in set(val_indices)]
+    available_train_indices = [i for i in range(len(full_dataset)) if i not in val_indices_set]
+    train_subset_for_selection = Subset(full_dataset, available_train_indices)
     
-    train_indices = random.sample(possible_train_indices, k=2000)
+    train_indices_local = datasetUtils.imageSelector(dt_info, train_subset_for_selection, 'train')
+    # Map back to original dataset indices
+    train_indices = [available_train_indices[i] for i in train_indices_local]
 
     train_dataset = Subset(full_dataset, train_indices)
     val_dataset = Subset(full_dataset, list(val_indices))
@@ -241,8 +244,8 @@ def newHuggingfaceDataset(dt_info, output_dir):
     print(f"\nCreating subset with {dt_info.images_per_class} images per class for {num_classes} classes.")
     
         
-    train_indices = datasetUtils.imageSelector(dt_info, hf_train, hf_train.features['label'].num_classes, 'train', huggingface=True)
-    val_indices = datasetUtils.imageSelector(dt_info, hf_validation, hf_train.features['label'].num_classes, 'validation', huggingface=True)
+    train_indices = datasetUtils.imageSelector(dt_info, hf_train, 'train', huggingface=True)
+    val_indices = datasetUtils.imageSelector(dt_info, hf_validation, 'validation', huggingface=True)
     
     print(len(train_indices))
     print(len(val_indices))

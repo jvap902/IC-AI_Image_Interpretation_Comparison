@@ -6,13 +6,49 @@ from src.core.model import Model
 from src.core.dataset import DtInfo
 from src.fileManagement.fileSystem import modelOutputSavePath
 from src.fileManagement.csvUtils import findInCsv, writeCsvLine
-from src.core.classify.evaluator import getFeatureTensors
 
 modelOutputCsv_path = './dataStorage/model_output/modelOutput.csv'
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-def getStdOutputTensors(modelc : Model, loader):
+def logitExtractor(modelc : Model, dt_info, inputs):
+    match modelc.source:
+        case 'open_clip':
+            tokenizer = open_clip.get_tokenizer(modelc.name)
+            text = tokenizer(dt_info.validation_classes).to(device)
+            
+            logits = modelc.model(inputs, text)
+            
+            return torch.tensor(logits[0])
+        
+        case 'clip':
+            text = clip.tokenize(dt_info.validation_classes).to(device)
+            logits_img, logits_txt = modelc.model(inputs, text)
+            
+            return torch.tensor(logits_img)
+        
+        case 'huggingface':
+            if 'dinov3' in modelc.name:
+                pixel_values = inputs['pixel_values']
+        
+                pixel_values = torch.stack(pixel_values)
+                
+                if pixel_values.dim() == 5 and pixel_values.size(0) == 1:
+                    pixel_values = pixel_values.squeeze(0)
+                
+                pixel_values = pixel_values.to(device)
+
+                with torch.inference_mode():
+                    outputs = modelc.model(pixel_values=pixel_values)
+                
+                return outputs
+            else:
+                raise ValueError("Unsupported model")
+            
+        case _:
+            return modelc.model(inputs)
+
+def getStdOutputTensors(modelc : Model, loader, dt_info):
     data_list = []
     
     modelc.model.eval()
@@ -21,7 +57,7 @@ def getStdOutputTensors(modelc : Model, loader):
         for inputs, _ in tqdm(loader, desc="Extracting Data"):
             inputs = inputs.to(device, non_blocking=True)
             modelc.model.eval()
-            data = modelc.model(inputs)
+            data = logitExtractor(modelc, dt_info, inputs)
             
             if data.dim() > 2:
                 data = torch.flatten(data, start_dim=1)
@@ -49,7 +85,7 @@ def gatherAdditionalData(modelc : Model, dt_info : DtInfo):
     ans = findInCsv(modelOutputCsv_path, ['model','model_weights','model_source','dataset(subset)'], fst_data)
     
     if len(ans) == 0:
-        stdOutput = getStdOutputTensors(modelc, modelc.val_loader)
+        stdOutput = getStdOutputTensors(modelc, modelc.val_loader, dt_info)
         
         torch.save(stdOutput, modelOutputSavePath(modelc, dt_info, False)) 
         

@@ -127,8 +127,8 @@ def main():
         snd_modelc.setAcc(snd_eval_dict["accuracy"])
         csvUtils.writeCsvLine(validation_csv, [snd_modelc.name, snd_modelc.source, snd_modelc.weights, dt_info.name_w_subset, snd_modelc.acc])
 
-    print(f"{first_model_name} Validation Accuracy: {fst_modelc.acc:.4f}\n")
-    print(f"{second_model_name} Validation Accuracy: {snd_modelc.acc:.4f}")
+    print(f"\n{first_model_name} Validation Accuracy: {fst_modelc.acc:.4f}")
+    print(f"{second_model_name} Validation Accuracy: {snd_modelc.acc:.4f}\n")
 
     # --- Experiment execution ---
     match args.method:

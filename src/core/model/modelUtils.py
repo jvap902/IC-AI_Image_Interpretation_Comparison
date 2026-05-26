@@ -79,8 +79,20 @@ def getReturnNodes(model_name):
             
     return return_nodes
 
-def huggingfaceEmbeddingExtractor(modelc, inputs):
+def dinov3EmbeddingExtractor(modelc, inputs):
+    pixel_values = inputs['pixel_values']
+            
+    pixel_values = torch.stack(pixel_values)
+    
+    if pixel_values.dim() == 5 and pixel_values.size(0) == 1:
+        pixel_values = pixel_values.squeeze(0)
+    
+    pixel_values = pixel_values.to(device)
+    
     with torch.inference_mode():
-        outputs = modelc.model(**inputs)
-
-    return outputs.pooler_output
+        
+        outputs = modelc.model(pixel_values=pixel_values)
+    
+        data = outputs.pooler_output
+        
+    return data

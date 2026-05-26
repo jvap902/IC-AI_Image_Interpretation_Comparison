@@ -192,3 +192,15 @@ resnet18,torchvision,IMAGENET1K_V1,imagenet-c-jpeg_compression-5(0),0.029
 resnet50,torchvision,IMAGENET1K_V1,imagenet-c-jpeg_compression-5(0),0.0565
 resnet18,torchvision,IMAGENET1K_V1,imagenet-c-jpeg_compression-5(0),0.0485
 resnet50,torchvision,IMAGENET1K_V1,imagenet-c-jpeg_compression-5(0),0.0775
+resnet18,torchvision,IMAGENET1K_V1,cifar10(0),0.775
+resnet50,torchvision,IMAGENET1K_V1,cifar10(0),0.8095
+resnet18,torchvision,IMAGENET1K_V1,ILSVRC-imagenet-1k(0),0.0
+resnet50,torchvision,IMAGENET1K_V1,ILSVRC-imagenet-1k(0),0.0
+resnet18,torchvision,IMAGENET1K_V1,fgvc-aircraft(0),0.27
+resnet50,torchvision,IMAGENET1K_V1,fgvc-aircraft(0),0.2805
+resnet18,torchvision,IMAGENET1K_V1,imagenet-c-gaussian_noise-1(0),0.0005
+resnet50,torchvision,IMAGENET1K_V1,imagenet-c-gaussian_noise-1(0),0.0
+resnet18,torchvision,IMAGENET1K_V1,imagenet-c-gaussian_noise-1(0),0.0
+resnet50,torchvision,IMAGENET1K_V1,imagenet-c-gaussian_noise-1(0),0.0
+facebook/dinov3-vitb16-pretrain-lvd1689m,huggingface,DEFAULT,imagenet-c-gaussian_noise-1(0),0.0
+facebook/dinov3-vitl16-pretrain-lvd1689m,huggingface,DEFAULT,imagenet-c-gaussian_noise-1(0),0.0005

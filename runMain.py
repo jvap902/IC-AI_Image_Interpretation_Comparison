@@ -46,7 +46,7 @@ def rsa_args(run_data):
     sleep(5.0)
     
     return ["--dataset", dataset, "--specific_subset", str(subset), "-ndsc", "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, '-met', 'rsa',
-                                    "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "-out", f"./dataStorage/rsaData/{dt_name}Data.csv"]
+                                    "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "--no_validation", "-out", f"./dataStorage/rsaData/{dt_name}Data.csv"]
     
 def cka_args(run_data):
     dataset, subset, src1, model1, weight1, src2, model2, weight2, dt_name = run_data
@@ -146,9 +146,10 @@ if __name__ == "__main__":
     
     #datasets = [('timm/mini-imagenet', 0), ('imagenet-sketch', 1), ('cifar10', 0), ('cifar100', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
     datasets = config.datasets #do artigo: sketch, cifar10, aircraft, imagenet-1k
-    datasets = [datasets[0]]
+    #datasets = [datasets[1]]
+    datasets = [('imagenet-c-gaussian_noise-1', 0)]
     
-    method_name = 'cka'
+    method_name = 'rsa'
     
     match method_name:
         case 'rsa':
@@ -158,15 +159,15 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = codToInstance(12, 'a')[0]
-    snd_idx = codToInstance(23, 'a')[0]
+    fst_idx = 0#codToInstance(12, 'a')[0]
+    snd_idx = 1#codToInstance(23, 'a')[0]
     
     fst_model_interr = 0#codToInstance(13, 'b')[0]
     snd_model_interr = codToInstance(13, 'b')[0]+1
     
     start_params = startParams({'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (0, fst_model_interr, snd_model_interr)})
     
-    run(instances, datasets, method, start_params, interrupt=True)
+    run(instances, datasets, method, start_params, interrupt=False)
     #revalidate(instances, datasets, method, start_params)
 
 

@@ -12,7 +12,7 @@ def rdm(embedding, modelc, dt_info, csv_path):
     
     print(f"Calculating {modelc.name} RDM")
     
-    embedding_np = embedding.detach().cpu().numpy()
+    embedding_np = embedding.flatten(1).detach().cpu().numpy()
     rdm = 1 - cosine_similarity(embedding_np)
     
     dissimilarity_path = fileSystem.dissimilaritySavePath(modelc, dt_info)

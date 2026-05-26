@@ -46,8 +46,7 @@ class Model:
         self.val_loader = DataLoader(val_preprocessed, batch_size=batch_size, shuffle=False, num_workers=4)
         
     def preprocessDataset(self, dataset):
-        dataset.dataset.transform = self.preprocess
-        return dataset
+        return PreprocessedDataset(dataset, self.preprocess)
     
     def setAcc(self, acc : float):
         self.acc = float(acc)
@@ -58,7 +57,26 @@ class Model:
     def getEmbeddingExtractor(self):        
         if (self.source == 'clip' or self.source == 'open_clip'):
             return clipEmbeddingExtractor
-        elif (self.source == 'huggingface'):
-            return huggingfaceEmbeddingExtractor
+        elif ('dinov3' in self.name.lower()):
+            return dinov3EmbeddingExtractor
         else:
             return generalEmbeddingExtractor
+        
+class PreprocessedDataset(torch.utils.data.Dataset): #wrapper para que datasets de diferentes origens tenham o mesmo tipo/formato
+    def __init__(self, dataset, preprocess):
+        self.dataset = dataset
+        self.preprocess = preprocess
+
+    def __len__(self):
+        return len(self.dataset)
+
+    def __getitem__(self, idx):
+        image, label = self.dataset[idx]
+        if isinstance(image, torch.Tensor) and image.shape[0] == 1:
+            image = image.expand(3, -1, -1)
+        image = self.preprocess(image)
+        if isinstance(image, torch.Tensor):
+            image = image.clone()
+        if isinstance(label, torch.Tensor):
+            label = label.clone()
+        return image, label
