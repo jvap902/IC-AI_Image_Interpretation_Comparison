@@ -1,8 +1,9 @@
-import subprocess
 import sys
-from src import *
+import subprocess
 from time import sleep
+from pathlib import Path
 from typing import TypedDict, Tuple
+from src import *
 from src.codifications import *
 from utils.debug import *
 
@@ -13,7 +14,7 @@ def run_main_with_subprocess(args):
     """
     
     # Base command: [python interpreter, 'main.py']
-    command = [sys.executable, 'main.py'] + args
+    command = [sys.executable, '-m', "src.core.main"] + args
     
     try:
         # subprocess.run waits for the command to complete
@@ -157,8 +158,8 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = codToInstance(1, 'e')[0]
-    snd_idx = codToInstance(13, 'b')[0]
+    fst_idx = codToInstance(12, 'a')[0]
+    snd_idx = codToInstance(23, 'a')[0]
     
     fst_model_interr = 0#codToInstance(13, 'b')[0]
     snd_model_interr = codToInstance(13, 'b')[0]+1

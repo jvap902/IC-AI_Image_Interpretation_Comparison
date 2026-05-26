@@ -97,7 +97,7 @@ def dtNameSubset(dt: Tuple[str, int] | List[Tuple[str, int]]):
     # Otherwise, treat it as a list of tuples
     return [f"{d[0].replace('/', '-')}({d[1]})" for d in dt]
 
-def getModelTrainStr(src, model, train):
+def modelCod(src, model, train):
     model_number = getModelNumber()
     train_letter = getTrainLetter()
     
@@ -154,7 +154,7 @@ if __name__ == "__main__":
     instances = config.instances
 
     for inst in instances:
-        print(f"{getModelTrainStr(inst[0], inst[1], inst[2])} - {inst}")
+        print(f"{modelCod(inst[0], inst[1], inst[2])} - {inst}")
         
 #1e - ('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT')
 #2e - ('huggingface', 'facebook/dinov3-vitl16-pretrain-lvd1689m', 'DEFAULT')

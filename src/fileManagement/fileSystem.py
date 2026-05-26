@@ -1,7 +1,5 @@
 import os
-import json
 from typing import Dict
-from .defaultPaths import *
 from .jsonUtils import *
 
 def makeFileSystem(outputFile):
@@ -72,6 +70,18 @@ def createFile(file_path, content, files_paths: Dict = None):
             f.write(content)
 
     return files_paths
+
+def modelOutputSavePath(modelc, dt_info, embedding : bool):
+    m_name = modelc.name.replace('/', '-')
+    if embedding:
+        return f'./dataStorage/model_output/embedding/{m_name}_{modelc.weights}_{modelc.source}_{dt_info.name_w_subset}.pt'
+    else:
+        return f'./dataStorage/model_output/std_output/{m_name}_{modelc.weights}_{modelc.source}_{dt_info.name_w_subset}.pt'
+
+def dissimilaritySavePath(modelc, dt_info):
+    dissimilarity_folder = getJsonInfo(config.json_info_path, ["dissimilarity_folder"])[0]
+    
+    return f"{dissimilarity_folder}/{modelc.name}_{modelc.weights}_{modelc.source}_{dt_info.name_w_subset}.npy"
 
 if __name__ == '__main__':
     pass
