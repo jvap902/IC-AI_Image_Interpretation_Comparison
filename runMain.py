@@ -146,8 +146,7 @@ if __name__ == "__main__":
     
     #datasets = [('timm/mini-imagenet', 0), ('imagenet-sketch', 1), ('cifar10', 0), ('cifar100', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0)]
     datasets = config.datasets #do artigo: sketch, cifar10, aircraft, imagenet-1k
-    #datasets = [datasets[1]]
-    datasets = [('imagenet-c-gaussian_noise-1', 0)]
+    datasets = [datasets[-1]]
     
     method_name = 'rsa'
     
@@ -160,7 +159,7 @@ if __name__ == "__main__":
             raise
         
     fst_idx = 0#codToInstance(12, 'a')[0]
-    snd_idx = 1#codToInstance(23, 'a')[0]
+    snd_idx = 1#codToInstance(6, 'd')[0]
     
     fst_model_interr = 0#codToInstance(13, 'b')[0]
     snd_model_interr = codToInstance(13, 'b')[0]+1

@@ -15,17 +15,17 @@ def logitExtractor(modelc : Model, dt_info, inputs):
     match modelc.source:
         case 'open_clip':
             tokenizer = open_clip.get_tokenizer(modelc.name)
-            text = tokenizer(dt_info.validation_classes).to(device)
+            text = tokenizer(dt_info.val_classes).to(device)
             
             logits = modelc.model(inputs, text)
             
-            return torch.tensor(logits[0])
+            return torch.tensor(logits[0]).clone().detach()
         
         case 'clip':
-            text = clip.tokenize(dt_info.validation_classes).to(device)
+            text = clip.tokenize(dt_info.val_classes).to(device)
             logits_img, logits_txt = modelc.model(inputs, text)
             
-            return torch.tensor(logits_img)
+            return torch.tensor(logits_img).clone().detach()
         
         case 'huggingface':
             if 'dinov3' in modelc.name:
@@ -41,7 +41,7 @@ def logitExtractor(modelc : Model, dt_info, inputs):
                 with torch.inference_mode():
                     outputs = modelc.model(pixel_values=pixel_values)
                 
-                return outputs
+                return torch.tensor(outputs[-1]).clone().detach()
             else:
                 raise ValueError("Unsupported model")
             

@@ -41,7 +41,13 @@ def loadHuggingfaceModel(modelc):
 
 def loadOpenClipModel(modelc):
     
-    model, _, preprocess = open_clip.create_model_and_transforms(modelc.name, pretrained='laion2b_s34b_b79k') #talvez aqui fosse utilizado outro peso antes
+    weight_map = { #pesos utilizados anteriormente
+        'ViT-B-32-256': 'datacomp_s34b_b86k',
+        'ViT-B-16': 'openai',
+        'ViT-L-14': 'openai'
+    }
+    
+    model, _, preprocess = open_clip.create_model_and_transforms(modelc.name, pretrained=weight_map[modelc.name])
     model.to(device)
     
     return model, preprocess

@@ -1,5 +1,6 @@
 #from ..src import *
 import torch
+import open_clip
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -29,11 +30,20 @@ from src.fileManagement.jsonUtils import getJsonInfo
 #print(model.named_children)
 
 if __name__ == "__main__":
-    folder_path = Path('dataStorage/model_output/embedding')
     
-    for file in folder_path.iterdir():
-        content = torch.load(file)
+    priority = [
+            "laion2b_s34b",
+            "laion2b",
+            "datacomp",
+            "openai",
+        ]
+    for model in ['ViT-B-32-256', 'ViT-B-16', 'ViT-L-14']:
+    
+        candidates = [
+            p for m, p in open_clip.list_pretrained()
+            if m == model
+        ]
         
-        if type(content) == tuple:
-            print(type(content))
-            file.unlink()
+        for p in priority:
+            if p in candidates:
+                print(f"{model}: {p}")
