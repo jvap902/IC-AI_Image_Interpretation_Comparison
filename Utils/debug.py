@@ -31,19 +31,10 @@ from src.fileManagement.jsonUtils import getJsonInfo
 
 if __name__ == "__main__":
     
-    priority = [
-            "laion2b_s34b",
-            "laion2b",
-            "datacomp",
-            "openai",
-        ]
-    for model in ['ViT-B-32-256', 'ViT-B-16', 'ViT-L-14']:
-    
-        candidates = [
-            p for m, p in open_clip.list_pretrained()
-            if m == model
-        ]
-        
-        for p in priority:
-            if p in candidates:
-                print(f"{model}: {p}")
+    folder_path = Path('dataStorage/model_output/embedding')
+
+    for file in folder_path.iterdir():
+
+        if "imagenet-c-gaussian_noise-1(0)" in file.name:
+            print(file.name)
+            file.unlink()

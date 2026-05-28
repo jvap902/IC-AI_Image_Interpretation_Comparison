@@ -74,7 +74,7 @@ def main():
     fst_modelc.getLoaders(batch_size, train_dataset, val_dataset)
     snd_modelc.getLoaders(batch_size, train_dataset, val_dataset)
     
-    class_names = dt_info.train_classes
+    class_names = dt_info.val_classes    
     num_classes = len(class_names)
     
 

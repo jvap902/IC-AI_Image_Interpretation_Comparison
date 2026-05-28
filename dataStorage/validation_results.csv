@@ -204,3 +204,5 @@ resnet18,torchvision,IMAGENET1K_V1,imagenet-c-gaussian_noise-1(0),0.0
 resnet50,torchvision,IMAGENET1K_V1,imagenet-c-gaussian_noise-1(0),0.0
 facebook/dinov3-vitb16-pretrain-lvd1689m,huggingface,DEFAULT,imagenet-c-gaussian_noise-1(0),0.0
 facebook/dinov3-vitl16-pretrain-lvd1689m,huggingface,DEFAULT,imagenet-c-gaussian_noise-1(0),0.0005
+resnet18,torchvision,IMAGENET1K_V1,imagenet-c-gaussian_noise-1(0),0.0005
+resnet50,torchvision,IMAGENET1K_V1,imagenet-c-gaussian_noise-1(0),0.0

@@ -35,7 +35,7 @@ class DtInfo:
     def getSameClasses(self, same_classes, dataStorage_dir='./dataStorage'):
         from ..model.modelClass import Model
                 
-        base_dataset = DtInfo(same_classes[0], int(same_classes[1]), int(same_classes[2]), int(same_classes[3]), None)
+        base_dataset = DtInfo(same_classes[0], int(same_classes[1]), int(same_classes[2]), int(same_classes[3]), None, False)
         
         ans = findInCsv('./dataStorage/datasetClasses.csv', ['dataset', 'subset', 'num_classes', 'num_images'], [base_dataset.name, base_dataset.subset, base_dataset.num_classes, base_dataset.num_images])
         
