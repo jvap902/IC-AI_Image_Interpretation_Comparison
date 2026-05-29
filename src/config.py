@@ -8,7 +8,7 @@ json_info_path = "src/fileManagement/info.json"
 
 cods = ["1e", "2e", "3d", "4d", "5d", "6d", "7d", "8d", "9a", "10a", "11a", "12a", "12b", "12c", "13b", "14a", "14c", "15a", "16c", "17a", "18a", "19a", "20a", "21a", "22a", "23a", "24a"]
 
-datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0), ('imagenet-c-gaussian_noise-1', 0), ('imagenet-c-gaussian_noise-3', 0)]
+datasets = [('imagenet-sketch', 1), ('cifar10', 0), ('fgvc-aircraft', 0), ('ILSVRC/imagenet-1k', 0), ('imagenet-c-gaussian_noise-1', 0), ('imagenet-c-gaussian_noise-3', 0), ('imagenet-c-gaussian_noise-5', 0)]
 
 instances = [
         ('huggingface', 'facebook/dinov3-vitb16-pretrain-lvd1689m', 'DEFAULT'),
