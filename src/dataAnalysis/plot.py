@@ -3,7 +3,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import scipy.cluster.hierarchy as scipy
 
-def heatmap(df, save_path=None, show=True):
+def heatmap(df, title=None, save_path=None, show=True):
     
     plt.figure(figsize=(10, 8))
     
@@ -11,9 +11,11 @@ def heatmap(df, save_path=None, show=True):
 
     ax.tick_params(axis='both', which='major', labelsize=14)
     
+    if title: plt.title(title)
     plt.tight_layout(pad=0.8)
     if save_path != None: plt.savefig(save_path, dpi=100)
     if show: plt.show()
+    plt.close()
     
 def dendrogram(Z, labels, title=None, ylabel=None, xlabel=None, dpi=100, show=True, save_path = None):
     

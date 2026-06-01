@@ -145,7 +145,7 @@ if __name__ == "__main__":
     instances = config.instances
     
     datasets = config.datasets #do artigo: sketch, cifar10, aircraft, imagenet-1k
-    datasets = [datasets[6]] #gaussian_noise 5
+    datasets = [datasets[7]] #jpeg_compression 1
     
     method_name = 'rsa'
     
@@ -158,7 +158,7 @@ if __name__ == "__main__":
             raise
         
     fst_idx = 0#codToInstance(12, 'a')[0]
-    snd_idx = codToInstance(23, 'a')[0]
+    snd_idx = 1#codToInstance(23, 'a')[0]
     
     fst_model_interr = 0#codToInstance(13, 'b')[0]
     snd_model_interr = codToInstance(13, 'b')[0]+1

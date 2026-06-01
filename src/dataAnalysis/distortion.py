@@ -27,10 +27,10 @@ def rdm(embedding):
     return rdm
 
 def rsm(fst_rdm, snd_rdm):
-    idx = np.triu_indices(fst_rdm.shape[0], k=1)
-
-    fst_rdm_flat = fst_rdm[idx]
-    snd_rdm_flat = snd_rdm[idx]
+    
+    #algumas rdms foram salvas já no formato 1d, outras no 2d
+    fst_rdm_flat = fst_rdm if fst_rdm.ndim == 1 else fst_rdm[np.triu_indices(fst_rdm.shape[0], k=1)]
+    snd_rdm_flat = snd_rdm if snd_rdm.ndim == 1 else snd_rdm[np.triu_indices(snd_rdm.shape[0], k=1)]
     
     pearson_values = pearsonr(fst_rdm_flat, snd_rdm_flat)
     spearman_values = spearmanr(fst_rdm_flat, snd_rdm_flat)
@@ -39,7 +39,8 @@ def rsm(fst_rdm, snd_rdm):
 
 def main(distortion):
     
-    datasets = [dt for dt in config.datasets if distortion in dt[0].lower()]
+    datasets = [config.datasets[3]] #imagenet-1k
+    datasets.extend([dt for dt in config.datasets if distortion in dt[0].lower()])
 
     for model in config.instances:
 
@@ -50,7 +51,7 @@ def main(distortion):
         for dt in datasets:
             dt_name_w_subset = f"{dt[0].replace('/', '-')}({dt[1]})"
 
-            dissimilarity_csv_path = jsonUtils.getJsonInfo(config.json_info_path, ["dissimilarityCsv"])[0]
+            dissimilarity_csv_path = jsonUtils.getJsonInfo(config.json_info_path, ["cosineDissimilarity"])[0]
 
             emb_path = f'./dataStorage/model_output/embedding/{name.replace('/', '-')}_{weights}_{src}_{dt_name_w_subset}.pt'
             emb = torch.load(emb_path, weights_only=True)
@@ -71,16 +72,16 @@ def main(distortion):
                 csvUtils.writeCsvLine(f'dataStorage/distortionData/{distortion}.csv', runData)
         
 
-def modelDistortion(distortion, model, metric='pearson'):
+def modelDistortion(dataset_indices, distortion, model, metric='pearson'):
+
+    datasets = [config.datasets[i] for i in dataset_indices]
+    datasets = [f"{dt[0].replace('/', '-')}({dt[1]})" for dt in datasets]
 
     file_path = f'dataStorage/distortionData/{distortion}.csv'
 
     csv_data = csvUtils.findInCsv(file_path, params=["model_src", "model_name", "model_weights"], values=[model[0], model[1], model[2]])
 
-    datasets = [f'{dt[0]}({dt[1]})' for dt in config.datasets if distortion in dt[0].lower()]
-
     df = pd.DataFrame(columns=datasets, index=datasets)
-
     for row in csv_data:
 
         val = float(row[metric])

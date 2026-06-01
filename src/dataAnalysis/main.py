@@ -1,4 +1,5 @@
 import argparse
+import pandas as pd
 from src import config
 from src.ckaHandler import getCkaData
 from src.rsaHandler import getRsaData
@@ -76,6 +77,23 @@ if __name__ == "__main__":
             if args.graph: plot.heatmap(heat_df, save_path=args.save)
 
         case 'distortion':
-            heat_df = distortion.modelDistortion('gaussian_noise', config.instances[0])
-            print(f"\nDistortion comparison {config.instances[0][1]}: \n{heat_df}")
-            if args.graph: plot.heatmap(heat_df, save_path=args.save)
+            distortion_type = 'gaussian_noise'
+            
+            datasets_indices = [3, 4, 5, 6]
+            
+            name_map = {'ILSVRC-imagenet-1k(0)': 'base'} #esse é fixo
+            for i in datasets_indices:
+                dt = config.datasets[i]
+                dt_name_w_subset = f"{dt[0].replace('/', '-')}({dt[1]})"
+                name_map[dt_name_w_subset] = dt[0][-1]
+            
+            for model in config.instances:
+                df = distortion.modelDistortion(dataset_indices=datasets_indices, distortion=distortion_type, model=model)
+                name_map = {'ILSVRC-imagenet-1k(0)': 'base', 'imagenet-c-gaussian_noise-1(0)': '1', 'imagenet-c-gaussian_noise-3(0)': '3', 'imagenet-c-gaussian_noise-5(0)': '5'}
+                df = df.rename(index=name_map, columns=name_map)
+                
+                print(f"\nDistortion comparison {model[1]}: \n{df}")
+                if args.graph: plot.heatmap(df, 
+                                            title=f"{model[0]}, {model[1]}, {model[2]}", 
+                                            save_path=f'dataStorage/processedResults/distortion/{distortion_type}/{model[0]}-{model[1].replace('/', '-')}-{model[2]}.png', 
+                                            show=False)
