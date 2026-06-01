@@ -37,7 +37,7 @@ def modelWiseDRC(df_dict, metric, datasets):
 
 def MRSS(datasets_dfs: dict, datasets=config.datasets, metric='pearson'):
     
-    mrss_df = pd.DataFrame(columns=["Model", "MRSS"])
+    mrss_df = pd.DataFrame(columns=["model", "mrss"])
     
     if metric == 'pearson':
         correlation = pearsonr
@@ -48,7 +48,7 @@ def MRSS(datasets_dfs: dict, datasets=config.datasets, metric='pearson'):
     
         model_str = modelCod(model[0], model[1], model[2])
     
-        new_data = {"Model": model_str}
+        new_data = {"model": model_str}
         
         model_corr = []
         model_arrays = np.zeros((len(datasets), len(config.instances)-1))
@@ -63,7 +63,7 @@ def MRSS(datasets_dfs: dict, datasets=config.datasets, metric='pearson'):
         
         model_corr = np.array(model_corr)
         
-        new_data["MRSS"] = model_corr.mean()
+        new_data["mrss"] = model_corr.mean()
         
         mrss_df.loc[len(mrss_df)] = new_data
     

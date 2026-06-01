@@ -6,7 +6,7 @@ from . import similarity
 from .dataCollection import gatherAdditionalData
 
 def rsaMethod(dt_info, fst_modelc, fst_emb, snd_modelc, snd_emb, args):
-    dissimilarity_csv_path = getJsonInfo(config.json_info_path, ["cosineDissimilarity"])[0]
+    dissimilarity_csv_path = getJsonInfo(config.json_info_path, ["dissimilarityCsv"])[0]
 
     # --- Montando matriz ---
     if args.existing_dissimilarity:

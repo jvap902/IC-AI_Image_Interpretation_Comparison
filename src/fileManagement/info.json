@@ -9,7 +9,7 @@
     "rsaData": "dataStorage/rsaData",
     "ckaData": "dataStorage/ckaData",
     "processedResults": "dataStorage/processedResults",
-    "cosineDissimilarity": "cache/dissimilarity_arrays/cosineDissimilarity.csv",
+    "dissimilarityCsv": "cache/dissimilarity_arrays/cosineDissimilarity.csv",
     "classes": "classes.csv",
     "datasetClasses": "dataStorage/datasetClasses.csv",
     "selectedIndices": "dataStorage/selectedIndices.csv",

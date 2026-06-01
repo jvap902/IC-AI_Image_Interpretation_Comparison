@@ -3,14 +3,15 @@ from src import config
 from src.ckaHandler import getCkaData
 from src.rsaHandler import getRsaData
 from src.codifications import dtNameSubset
-from . import clustering, plot, methodComparison, datasetCorrelation
+from . import clustering, plot, methodComparison, datasetCorrelation, distortion
 
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-a", "--analysis", required=False, default='basic', type=str, help="Analysis to be made")
 parser.add_argument("-met", "--method", required=False, default='rsa', type=str, help="Method the data was extracted from (rsa or cka), if comparing both, this won't be used")
 parser.add_argument("-d", "--dataset", nargs='+', required=False, default=[-1], type=int, help="Dataset index or -1 for all datasets, only the first will be used for analysis which do not compare datasets")
-parser.add_argument("-heat", "--heatmap", required=False, default=False, action='store_true', help="Whether or not a heatmap will be generated at the end")
+parser.add_argument("-g", "--graph", required=False, default=False, action='store_true', help="Whether or not a graph will be generated at the end")
+parser.add_argument("-s", "--save", required=False, default=None, type=str, help="Save path for the generated graph (if its the case)")
 
 args = parser.parse_args()
 
@@ -51,11 +52,12 @@ if __name__ == "__main__":
         case 'basic':
             print(f"Basic: {data}")
             heat_df = data
+            if args.graph: plot.heatmap(heat_df, save_path=args.save)
         
         case 'clustering':
             dist_matrix = clustering.distMatrix(data)
             cluster_dict = clustering.linkData(dist_matrix, method='average')
-            plot.dendrogram(cluster_dict['linkage'], config.cods)
+            if args.graph: plot.dendrogram(cluster_dict['linkage'], config.cods)
 
         case 'method comparison':
             df_rsa = data["rsa"]
@@ -64,11 +66,16 @@ if __name__ == "__main__":
             print(f"Method comparison: \n{comparison}")
         
         case 'mrss':
-            print(f"\nMRSS: \n{datasetCorrelation.MRSS(data, datasets, metric='pearson')}")
+            df = datasetCorrelation.MRSS(data, datasets, metric='pearson')
+            print(f"\nMRSS: \n{df}")
+            if args.graph: plot.barChart(df, 'mrss', save_path=args.save)
         
         case 'drc':
             heat_df = datasetCorrelation.DRC(data, datasets, metric='pearson')
             print(f"\nDRC: \n{heat_df}")
-            
-    if args.heatmap:
-        plot.heatmap(heat_df)
+            if args.graph: plot.heatmap(heat_df, save_path=args.save)
+
+        case 'distortion':
+            heat_df = distortion.modelDistortion('gaussian_noise', config.instances[0])
+            print(f"\nDistortion comparison {config.instances[0][1]}: \n{heat_df}")
+            if args.graph: plot.heatmap(heat_df, save_path=args.save)

@@ -43,7 +43,7 @@ def dendrogram(Z, labels, title=None, ylabel=None, xlabel=None, dpi=100, show=Tr
 def barChart(df, bar_param, save_path=None, dpi=100, ylabel=None, xlabel=None, show=True):
     
     plt.figure(figsize=(10, 5))
-    ax = sns.barplot(df, x='Model', y=f'{bar_param}_avg', hue=f'{bar_param}_avg', legend=False, palette=sns.color_palette("flare_r", as_cmap=True), saturation=1.0)
+    ax = sns.barplot(df, x='model', y=bar_param, hue=bar_param, legend=False, palette=sns.color_palette("flare_r", as_cmap=True), saturation=1.0)
     plt.yticks(np.arange(0.0, 1.0, 0.1))
     if xlabel: ax.set(xlabel=xlabel)
     if ylabel: ax.set(ylabel=ylabel)
