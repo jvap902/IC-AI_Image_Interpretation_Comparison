@@ -4,6 +4,7 @@ import pandas as pd
 from scipy.stats import pearsonr, spearmanr
 from sklearn.metrics.pairwise import cosine_similarity
 from src import config
+from src.codifications import modelCod
 from src.fileManagement import csvUtils, jsonUtils
 
 def savedRdm(dt_name_w_subset, dissimilarity_csv, instance):
@@ -92,6 +93,30 @@ def modelDistortion(dataset_indices, distortion, model, metric='pearson'):
     np.fill_diagonal(df.values, 1.0)
 
     return df.astype(float)
+
+def distortionDataFrame(datasets_indices, distortion_type):
+    
+    name_map = {'ILSVRC-imagenet-1k(0)': 'base'} #esse é fixo
+
+    for i in datasets_indices:
+        dt = config.datasets[i]
+
+        if 'imagenet-1k' in dt[0]:
+            continue
+
+        dt_name_w_subset = f"{dt[0].replace('/', '-')}({dt[1]})"
+        name_map[dt_name_w_subset] = dt[0][-1]
+    
+    heat_df = pd.DataFrame(columns=["1", "3", "5"])
+    
+    for model in config.instances:
+        df = modelDistortion(dataset_indices=datasets_indices, distortion=distortion_type, model=model)
+        df = df.rename(index=name_map, columns=name_map)
+        print(f"\nDistortion comparison {model[1]}: \n{df}")
+        
+        heat_df.loc[modelCod(model[0], model[1], model[2])] = [df.at['base', '1'], df.at['base', '3'], df.at['base', '5']]
+
+    return heat_df
 
 if __name__ == "__main__":
     main(distortion='gaussian_noise')
