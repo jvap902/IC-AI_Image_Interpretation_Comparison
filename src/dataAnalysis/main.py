@@ -38,7 +38,7 @@ def getAnalysisData(analysis, method, dataset):
     dataset = dataset[0]
     
     if analysis == 'method comparison':
-        return {"rsa": getRsaData(dataset[0], dataset[1]), "cka": getCkaData(dataset[0], dataset[1])}
+        return {"rsa": getRsaData(dataset[0], dataset[1], param='pearson'), "cka": getCkaData(dataset[0], dataset[1])}
     
     return getRsaData(dataset[0], dataset[1]) if method == 'rsa' else getCkaData(dataset[0], dataset[1])
 
@@ -83,4 +83,4 @@ if __name__ == "__main__":
 
             print(heat_df)
                 
-            if args.graph: plot.heatmap(heat_df, save_path=args.save, show=True, annot=True)
+            if args.graph: plot.heatmap(heat_df, save_path=args.save, linewidths=0.3, show=True, annot=True)

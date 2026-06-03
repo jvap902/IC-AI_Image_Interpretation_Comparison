@@ -145,7 +145,9 @@ if __name__ == "__main__":
     instances = config.instances
     
     datasets = config.datasets #do artigo: sketch, cifar10, aircraft, imagenet-1k
-    datasets = [datasets[8]] #jpeg_compression 1
+    datasets = [datasets[9]] #jpeg_compression 5
+    
+    #datasets = [('imagenet-c-motion_blur-1', 0)]
     
     method_name = 'rsa'
     
@@ -157,11 +159,11 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = 1#codToInstance(12, 'a')[0]
-    snd_idx = codToInstance(16, 'c')[0]+1
+    fst_idx = codToInstance(14, 'a')[0]
+    snd_idx = codToInstance(20, 'a')[0]+1
     
-    fst_model_interr = 0#codToInstance(13, 'b')[0]
-    snd_model_interr = codToInstance(16, 'c')[0]+1
+    fst_model_interr = 1#codToInstance(13, 'b')[0]
+    snd_model_interr = codToInstance(17, 'a')[0]
     
     start_params = startParams({'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 0, 'interrupt': (0, fst_model_interr, snd_model_interr)})
     

@@ -1,11 +1,13 @@
 import torch
+from tqdm import tqdm
 import numpy as np
 import pandas as pd
 from scipy.stats import pearsonr, spearmanr
 from sklearn.metrics.pairwise import cosine_similarity
 from src import config
+from . plot import heatmap
 from src.codifications import modelCod
-from src.fileManagement import csvUtils, jsonUtils
+from src.fileManagement import csvUtils, jsonUtils, fileSystem
 
 def savedRdm(dt_name_w_subset, dissimilarity_csv, instance):
 
@@ -43,13 +45,14 @@ def main(distortion):
     datasets = [config.datasets[3]] #imagenet-1k
     datasets.extend([dt for dt in config.datasets if distortion in dt[0].lower()])
 
-    for model in config.instances:
+    for model in tqdm(config.instances):
 
         (src, name, weights) = model
 
         rdms = []
 
         for dt in datasets:
+                        
             dt_name_w_subset = f"{dt[0].replace('/', '-')}({dt[1]})"
 
             dissimilarity_csv_path = jsonUtils.getJsonInfo(config.json_info_path, ["cosineDissimilarity"])[0]
@@ -70,7 +73,9 @@ def main(distortion):
 
                 runData = [src, name, weights, dt_name_w_subset1, dt_name_w_subset2, pearson, spearman]
 
-                csvUtils.writeCsvLine(f'dataStorage/distortionData/{distortion}.csv', runData)
+                file_path = f'dataStorage/distortionData/{distortion}.csv'
+                fileSystem.createFile(file_path, "model_src,model_name,model_weights,dt(subset)1,dt(subset)2,pearson,spearman\n")
+                csvUtils.writeCsvLine(file_path, runData)
         
 
 def modelDistortion(dataset_indices, distortion, model, metric='pearson'):
@@ -94,7 +99,7 @@ def modelDistortion(dataset_indices, distortion, model, metric='pearson'):
 
     return df.astype(float)
 
-def distortionDataFrame(datasets_indices, distortion_type):
+def distortionDataFrame(datasets_indices, distortion_type, individual_heatmap=True):
     
     name_map = {'ILSVRC-imagenet-1k(0)': 'base'} #esse é fixo
 
@@ -114,9 +119,11 @@ def distortionDataFrame(datasets_indices, distortion_type):
         df = df.rename(index=name_map, columns=name_map)
         print(f"\nDistortion comparison {model[1]}: \n{df}")
         
+        if individual_heatmap: heatmap(df, title=f"{model[0]}, {model[1]}, {model[2]}", linewidths=0.3, save_path=f"dataStorage/processedResults/distortion/{distortion_type}/{modelCod(model[0], model[1], model[2])}.png", show=False, annot=True)
+        
         heat_df.loc[modelCod(model[0], model[1], model[2])] = [df.at['base', '1'], df.at['base', '3'], df.at['base', '5']]
 
     return heat_df
 
 if __name__ == "__main__":
-    main(distortion='gaussian_noise')
+    main(distortion='jpeg_compression')

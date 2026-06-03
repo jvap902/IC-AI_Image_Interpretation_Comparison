@@ -15,7 +15,7 @@
     "selectedIndices": "dataStorage/selectedIndices.csv",
     "validation_results": "dataStorage/validation_results.csv",
     "modelOutput": "dataStorage/model_output/modelOutput.csv",
-    "imagenet-c-jpeg_compression-3Data": "./dataStorage/rsaData/imagenet-c-jpeg_compression-3Data.csv",
-    "fst_embedding_path": "./dataStorage/model_output/embedding/efficientnet_b4_IMAGENET1K_V1_torchvision_imagenet-c-jpeg_compression-3(0).pt",
-    "snd_embedding_path": "./dataStorage/model_output/embedding/efficientnet_b7_IMAGENET1K_V1_torchvision_imagenet-c-jpeg_compression-3(0).pt"
+    "imagenet-c-jpeg_compression-5Data": "./dataStorage/rsaData/imagenet-c-jpeg_compression-5Data.csv",
+    "fst_embedding_path": "./dataStorage/model_output/embedding/efficientnet_b4_IMAGENET1K_V1_torchvision_imagenet-c-jpeg_compression-5(0).pt",
+    "snd_embedding_path": "./dataStorage/model_output/embedding/efficientnet_b7_IMAGENET1K_V1_torchvision_imagenet-c-jpeg_compression-5(0).pt"
 }
