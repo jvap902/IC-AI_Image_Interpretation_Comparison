@@ -1,6 +1,6 @@
 import argparse
 import pandas as pd
-from src import config
+from src import config, codifications
 from src.ckaHandler import getCkaData
 from src.rsaHandler import getRsaData
 from src.codifications import dtNameSubset
@@ -84,16 +84,18 @@ if __name__ == "__main__":
             name_map = {'ILSVRC-imagenet-1k(0)': 'base'} #esse é fixo
             for i in datasets_indices:
                 dt = config.datasets[i]
+                if 'imagenet-1k' in dt[0]:
+                    continue
                 dt_name_w_subset = f"{dt[0].replace('/', '-')}({dt[1]})"
                 name_map[dt_name_w_subset] = dt[0][-1]
             
+            heat_df = pd.DataFrame(columns=["1", "3", "5"])
+            
             for model in config.instances:
                 df = distortion.modelDistortion(dataset_indices=datasets_indices, distortion=distortion_type, model=model)
-                name_map = {'ILSVRC-imagenet-1k(0)': 'base', 'imagenet-c-gaussian_noise-1(0)': '1', 'imagenet-c-gaussian_noise-3(0)': '3', 'imagenet-c-gaussian_noise-5(0)': '5'}
                 df = df.rename(index=name_map, columns=name_map)
-                
                 print(f"\nDistortion comparison {model[1]}: \n{df}")
-                if args.graph: plot.heatmap(df, 
-                                            title=f"{model[0]}, {model[1]}, {model[2]}", 
-                                            save_path=f'dataStorage/processedResults/distortion/{distortion_type}/{model[0]}-{model[1].replace('/', '-')}-{model[2]}.png', 
-                                            show=False)
+                
+                heat_df.loc[codifications.modelCod(model[0], model[1], model[2])] = [df.at['base', '1'], df.at['base', '3'], df.at['base', '5']]
+                
+            if args.graph: plot.heatmap(heat_df, save_path=args.save, show=True, annot=True)
