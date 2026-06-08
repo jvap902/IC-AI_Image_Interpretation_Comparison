@@ -56,13 +56,13 @@ def getDownloadInfo(dataset):
 
 def downloadUrlDataset(root_dir, url, file_name, extract_dir, compression_type):
     """
-    Downloads and extracts the ImageNet-A dataset from the corrected Berkeley URL.
+    Downloads and extracts the dataset
 
     Args:
         root_dir (str): The base directory ('data/') where the dataset will be stored.
 
     Returns:
-        str: The path to the extracted ImageNet-A or imagenet-sketch directory, or None if failed.
+        str: The path to the extracted dataset, or None if failed.
     """
     # Ensure the root data directory exists
     os.makedirs(root_dir, exist_ok=True)

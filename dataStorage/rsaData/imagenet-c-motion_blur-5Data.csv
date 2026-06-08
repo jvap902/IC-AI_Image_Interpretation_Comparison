@@ -1,0 +1,12 @@
+total_images,num_classes,fst_model_source,first_model,fst_weights,snd_model_source,second_model,snd_weights,first_model_accuracy,second_model_accuracy,spearman,pearson,dataset
+2000,100,huggingface,facebook/dinov3-vitb16-pretrain-lvd1689m,DEFAULT,huggingface,facebook/dinov3-vitl16-pretrain-lvd1689m,DEFAULT,0.0,0.0,0.5941126955267989,0.66681004,imagenet-c-motion_blur-5(0)
+2000,100,huggingface,facebook/dinov3-vitb16-pretrain-lvd1689m,DEFAULT,clip,ViT-B/32,DEFAULT,0.0,0.0,0.32438661309787636,0.35005516,imagenet-c-motion_blur-5(0)
+2000,100,huggingface,facebook/dinov3-vitb16-pretrain-lvd1689m,DEFAULT,clip,ViT-B/16,DEFAULT,0.0,0.0,0.3199432804468916,0.34593078,imagenet-c-motion_blur-5(0)
+2000,100,huggingface,facebook/dinov3-vitb16-pretrain-lvd1689m,DEFAULT,clip,ViT-L/14,DEFAULT,0.0,0.0,0.25873179282386066,0.30048448,imagenet-c-motion_blur-5(0)
+2000,100,huggingface,facebook/dinov3-vitb16-pretrain-lvd1689m,DEFAULT,open_clip,ViT-B-32-256,DEFAULT,0.0,0.0,0.4973454780149496,0.5186297,imagenet-c-motion_blur-5(0)
+2000,100,huggingface,facebook/dinov3-vitb16-pretrain-lvd1689m,DEFAULT,open_clip,ViT-B-16,DEFAULT,0.0,0.0,0.2755164459581901,0.2919497,imagenet-c-motion_blur-5(0)
+2000,100,huggingface,facebook/dinov3-vitb16-pretrain-lvd1689m,DEFAULT,open_clip,ViT-L-14,DEFAULT,0.0,0.0,0.31051527772417015,0.33743903,imagenet-c-motion_blur-5(0)
+2000,100,huggingface,facebook/dinov3-vitb16-pretrain-lvd1689m,DEFAULT,torchvision,resnet18,IMAGENET1K_V1,0.0,0.0,0.25297173082175334,0.27645376,imagenet-c-motion_blur-5(0)
+2000,100,huggingface,facebook/dinov3-vitb16-pretrain-lvd1689m,DEFAULT,torchvision,resnet50,IMAGENET1K_V1,0.0,0.0,0.2799482413355922,0.30598435,imagenet-c-motion_blur-5(0)
+2000,100,huggingface,facebook/dinov3-vitb16-pretrain-lvd1689m,DEFAULT,torchvision,resnet152,IMAGENET1K_V1,0.0,0.0,0.3017947266925552,0.33271712,imagenet-c-motion_blur-5(0)
+2000,100,huggingface,facebook/dinov3-vitb16-pretrain-lvd1689m,DEFAULT,torchvision,regnet_y_16gf,IMAGENET1K_V1,0.0,0.0,0.3022941025320176,0.31409675,imagenet-c-motion_blur-5(0)
