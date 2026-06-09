@@ -126,4 +126,4 @@ def distortionDataFrame(datasets_indices, distortion_type, individual_heatmap=Tr
     return heat_df
 
 if __name__ == "__main__":
-    main(distortion='jpeg_compression')
+    main(distortion='motion_blur')

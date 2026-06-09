@@ -346,3 +346,7 @@ maxvit_t,torchvision,IMAGENET1K_V1,imagenet-c-motion_blur-5(0),cache/dissimilari
 convnext_tiny,torchvision,IMAGENET1K_V1,imagenet-c-motion_blur-5(0),cache/dissimilarity_arrays/convnext_tiny_IMAGENET1K_V1_torchvision_imagenet-c-motion_blur-5(0).npy
 convnext_base,torchvision,IMAGENET1K_V1,imagenet-c-motion_blur-5(0),cache/dissimilarity_arrays/convnext_base_IMAGENET1K_V1_torchvision_imagenet-c-motion_blur-5(0).npy
 swin_t,torchvision,IMAGENET1K_V1,imagenet-c-motion_blur-5(0),cache/dissimilarity_arrays/swin_t_IMAGENET1K_V1_torchvision_imagenet-c-motion_blur-5(0).npy
+swin_v2_t,torchvision,IMAGENET1K_V1,imagenet-c-motion_blur-5(0),cache/dissimilarity_arrays/swin_v2_t_IMAGENET1K_V1_torchvision_imagenet-c-motion_blur-5(0).npy
+efficientnet_b0,torchvision,IMAGENET1K_V1,imagenet-c-motion_blur-5(0),cache/dissimilarity_arrays/efficientnet_b0_IMAGENET1K_V1_torchvision_imagenet-c-motion_blur-5(0).npy
+efficientnet_b4,torchvision,IMAGENET1K_V1,imagenet-c-motion_blur-5(0),cache/dissimilarity_arrays/efficientnet_b4_IMAGENET1K_V1_torchvision_imagenet-c-motion_blur-5(0).npy
+efficientnet_b7,torchvision,IMAGENET1K_V1,imagenet-c-motion_blur-5(0),cache/dissimilarity_arrays/efficientnet_b7_IMAGENET1K_V1_torchvision_imagenet-c-motion_blur-5(0).npy
