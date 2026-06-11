@@ -84,3 +84,21 @@ if __name__ == "__main__":
             print(heat_df)
                 
             if args.graph: plot.heatmap(heat_df, save_path=args.save, linewidths=0.3, show=True, annot=True)
+            
+#datasets = [
+    # 0 - ('imagenet-sketch', 1), 
+    # 1 - ('cifar10', 0), 
+    # 2 - ('fgvc-aircraft', 0), 
+    # 3 - ('ILSVRC/imagenet-1k', 0), 
+    # 4 - ('imagenet-c-gaussian_noise-1', 0), 
+    # 5 - ('imagenet-c-gaussian_noise-3', 0), 
+    # 6 - ('imagenet-c-gaussian_noise-5', 0), 
+    # 7 - ('imagenet-c-jpeg_compression-1', 0), 
+    # 8 - ('imagenet-c-jpeg_compression-3', 0), 
+    # 9 - ('imagenet-c-jpeg_compression-5', 0), 
+    # 10 - ('imagenet-c-motion_blur-1', 0), 
+    # 11 - ('imagenet-c-motion_blur-3', 0), 
+    # 12 - ('imagenet-c-motion_blur-5', 0), 
+    # 13 - ('imagenet-c-fog-1', 0), 
+    # 14 - ('imagenet-c-fog-3', 0), 
+    # 15 - ('imagenet-c-fog-5', 0)]
