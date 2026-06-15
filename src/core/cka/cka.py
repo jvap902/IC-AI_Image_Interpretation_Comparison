@@ -2,6 +2,7 @@ import torch
 from src.codifications import modelCod
 from src import config
 from src.fileManagement.jsonUtils import getJsonInfo, updateJson
+from src.fileManagement.fileSystem import createFile
 
 def ckaMethod(dt_info, fst_modelc, fst_emb, snd_modelc, snd_emb):
     
@@ -13,6 +14,7 @@ def ckaMethod(dt_info, fst_modelc, fst_emb, snd_modelc, snd_emb):
     
     json_path = f"{cka_results_folder}/results.json"
     
+    createFile(json_path, "{}")
     updateJson(json_path=json_path, fields=[f"{m1_name} {m2_name}"], values=[cka_score])
 
 def linearCKA(X, Y):

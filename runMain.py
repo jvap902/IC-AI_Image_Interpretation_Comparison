@@ -56,7 +56,7 @@ def cka_args(run_data):
     print(f"    --- Running {dataset} CKA: {model1} ({weight1}) x {model2} ({weight2}) ---")
     
     return ["--dataset", dataset, "--specific_subset", str(subset), "-ndsc", "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, 
-                                    "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, '-met', 'cka']
+                                    "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, '-met', 'cka', "--no_validation"]
         
 def run(instances, datasets, method, start_params: startParams, interrupt=True):
     
@@ -144,12 +144,12 @@ if __name__ == "__main__":
 
     instances = config.instances
     
-    #datasets = config.datasets #do artigo: sketch, cifar10, aircraft, imagenet-1k
+    datasets = config.datasets #do artigo: sketch, cifar10, aircraft, imagenet-1k
     #datasets = [datasets[9]] #jpeg_compression 5
     
-    datasets = [('imagenet-c-fog-5', 0)]
+    datasets = datasets[10:13] #10-12 = motion_blur
     
-    method_name = 'rsa'
+    method_name = 'cka'
     
     match method_name:
         case 'rsa':
