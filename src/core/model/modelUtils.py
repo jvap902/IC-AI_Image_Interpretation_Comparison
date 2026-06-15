@@ -70,6 +70,9 @@ def generalEmbeddingExtractor(modelc, inputs):
     
     data = output['global_embedding']
     
+    if data.dim() > 2:
+        data = torch.flatten(data, start_dim=1)
+    
     return data
 
 def getReturnNodes(model_name):

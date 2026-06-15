@@ -1,5 +1,6 @@
 import os
 from typing import Dict
+from pathlib import Path
 from .jsonUtils import *
 
 def makeFileSystem(outputFile):
@@ -64,8 +65,9 @@ def createFile(file_path, content, files_paths: Dict = None):
         
         files_paths[key] = file_path
     
-    if not os.path.isfile(file_path):
+    if not Path(file_path).is_file():
         print(f"Arquivo não existente, criando novo {file_path}")
+        Path(file_path).parent.mkdir(parents=True, exist_ok=True)
         with open(file_path, mode="a", newline='', encoding='utf-8') as f:
             f.write(content)
 

@@ -9,7 +9,7 @@ from src.config import device
 from src.core.model import Model
 
 # --- Utility to get features/labels from a DataLoader ---
-def getFeatureTensors(modelc: Model, loader) -> Tuple[torch.Tensor, torch.Tensor]:
+def getFeatureTensors(modelc: Model, loader):
     """
     Utility function to extract all data (features or raw images) and labels 
     from a DataLoader into a single Tensor.
