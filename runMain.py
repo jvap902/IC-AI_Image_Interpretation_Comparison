@@ -160,12 +160,12 @@ if __name__ == "__main__":
             raise
         
     fst_idx = 0#codToInstance(16, 'c')[0]
-    snd_idx = codToInstance(14, 'c')[0]+1
+    snd_idx = codToInstance(15, 'a')[0]+1
     
     fst_model_interr = codToInstance(16, 'c')[0]
     snd_model_interr = codToInstance(17, 'a')[0]
     
-    start_params = startParams({'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 2, 'interrupt': (0, fst_model_interr, snd_model_interr)})
+    start_params = startParams({'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 4, 'interrupt': (0, fst_model_interr, snd_model_interr)})
     
     run(instances, datasets, method, start_params, interrupt=False)
     #revalidate(instances, datasets, method, start_params)
