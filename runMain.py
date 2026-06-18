@@ -147,7 +147,7 @@ if __name__ == "__main__":
     datasets = config.datasets #do artigo: sketch, cifar10, aircraft, imagenet-1k
     #datasets = [datasets[9]] #jpeg_compression 5
     
-    datasets = datasets[4:] #10-12 = motion_blur
+    datasets = datasets[4:]
     
     method_name = 'cka'
     
@@ -161,11 +161,12 @@ if __name__ == "__main__":
         
     fst_idx = 0#codToInstance(16, 'c')[0]
     snd_idx = codToInstance(15, 'a')[0]+1
+    ini_dt = datasets.index(('imagenet-c-fog-5', 0))
     
     fst_model_interr = codToInstance(16, 'c')[0]
     snd_model_interr = codToInstance(17, 'a')[0]
     
-    start_params = startParams({'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': 4, 'interrupt': (0, fst_model_interr, snd_model_interr)})
+    start_params = startParams({'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': ini_dt, 'interrupt': (0, fst_model_interr, snd_model_interr)})
     
     run(instances, datasets, method, start_params, interrupt=False)
     #revalidate(instances, datasets, method, start_params)
