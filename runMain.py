@@ -159,8 +159,8 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = 0#codToInstance(16, 'c')[0]
-    snd_idx = codToInstance(15, 'a')[0]+1
+    fst_idx = codToInstance(5, 'd')[0]
+    snd_idx = codToInstance(12, 'a')[0]+1
     ini_dt = datasets.index(('imagenet-c-fog-5', 0))
     
     fst_model_interr = codToInstance(16, 'c')[0]
