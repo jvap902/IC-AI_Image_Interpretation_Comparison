@@ -16,6 +16,6 @@
     "validation_results": "dataStorage/validation_results.csv",
     "modelOutput": "dataStorage/model_output/modelOutput.csv",
     "runData": "./dataStorage/rsaData/runData.csv",
-    "fst_embedding_path": "./dataStorage/model_output/embedding/resnet50_IMAGENET1K_V1_torchvision_imagenet-c-gaussian_noise-1(0).pt",
-    "snd_embedding_path": "./dataStorage/model_output/embedding/vit_b_16_IMAGENET1K_SWAG_E2E_V1_torchvision_imagenet-c-gaussian_noise-1(0).pt"
+    "fst_embedding_path": "./dataStorage/model_output/embedding/vit_l_16_IMAGENET1K_V1_torchvision_imagenet-c-fog-3(0).pt",
+    "snd_embedding_path": "./dataStorage/model_output/embedding/efficientnet_b4_IMAGENET1K_V1_torchvision_imagenet-c-fog-3(0).pt"
 }
