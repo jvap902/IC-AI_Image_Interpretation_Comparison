@@ -12,6 +12,7 @@ parser.add_argument("-met", "--method", required=False, default='rsa', type=str,
 parser.add_argument("-d", "--dataset", nargs='+', required=False, default=[-1], type=int, help="Dataset index or -1 for all datasets, only the first will be used for analysis which do not compare datasets")
 parser.add_argument("-g", "--graph", required=False, default=False, action='store_true', help="Whether or not a graph will be generated at the end")
 parser.add_argument("-s", "--save", required=False, default=None, type=str, help="Save path for the generated graph (if its the case)")
+parser.add_argument("--show", required=False, default=False, action='store_true', help="Show graph")
 
 args = parser.parse_args()
 
@@ -52,12 +53,12 @@ if __name__ == "__main__":
         case 'basic':
             print(f"Basic: {data}")
             heat_df = data
-            if args.graph: plot.heatmap(heat_df, save_path=args.save)
+            if args.graph: plot.heatmap(heat_df, save_path=args.save, show=args.show)
         
         case 'clustering':
             dist_matrix = clustering.distMatrix(data)
             cluster_dict = clustering.linkData(dist_matrix, method='average')
-            if args.graph: plot.dendrogram(cluster_dict['linkage'], config.cods)
+            if args.graph: plot.dendrogram(cluster_dict['linkage'], config.cods, show=args.show)
 
         case 'method comparison':
             df_rsa = data["rsa"]
@@ -68,12 +69,12 @@ if __name__ == "__main__":
         case 'mrss':
             df = datasetCorrelation.MRSS(data, datasets, metric='pearson')
             print(f"\nMRSS: \n{df}")
-            if args.graph: plot.barChart(df, 'mrss', save_path=args.save)
+            if args.graph: plot.barChart(df, 'mrss', save_path=args.save, show=args.show)
         
         case 'drc':
             heat_df = datasetCorrelation.DRC(data, datasets, metric='pearson')
             print(f"\nDRC: \n{heat_df}")
-            if args.graph: plot.heatmap(heat_df, save_path=args.save)
+            if args.graph: plot.heatmap(heat_df, save_path=args.save, show=args.show)
 
         case _: #análise de variação de modelo com distorções, no lugar de passar a análise se passa o tipo de distorção
             distortion_type = args.analysis
@@ -83,7 +84,7 @@ if __name__ == "__main__":
 
             print(heat_df)
                 
-            if args.graph: plot.heatmap(heat_df, save_path=args.save, linewidths=0.3, show=True, annot=True)
+            if args.graph: plot.heatmap(heat_df, save_path=args.save, linewidths=0.3, show=args.show, annot=True)
             
 #datasets = [
     # 0 - ('imagenet-sketch', 1), 
