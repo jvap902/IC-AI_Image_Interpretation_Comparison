@@ -1,15 +1,6 @@
-from torchvision.models import get_model, get_model_weights
-
-def loadTorchvisionModel(name, weights):
-    model = get_model(name, weights=weights)
-    
-    weights_enum = get_model_weights(name)
-    
-    weights_obj = getattr(weights_enum, weights)
-    
-    preprocess = weights_obj.transforms()
-    
-    return model, preprocess
+import torch
 
 if __name__ == "__main__":
-    loadTorchvisionModel("resnet18", "IMAGENET1K_V1")
+    print(torch.hub.list("facebookresearch/dino:main", force_reload=True))
+    #dino_vits = torch.hub.load('facebookresearch/dino:main', 'dino_vits16')
+    #print(dino_vits.named_children)

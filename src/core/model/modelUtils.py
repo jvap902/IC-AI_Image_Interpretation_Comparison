@@ -2,7 +2,7 @@ import clip
 import torch
 import open_clip
 from huggingface_hub import login
-from transformers import AutoModel, AutoImageProcessor
+from transformers import AutoModel, AutoImageProcessor, ViTImageProcessor, ViTModel
 from torchvision.models import get_model, get_model_weights
 from torchvision.models.feature_extraction import create_feature_extractor
 from src.config import device
@@ -88,7 +88,7 @@ def getReturnNodes(model_name):
             
     return return_nodes
 
-def dinov3EmbeddingExtractor(modelc, inputs):
+def dinoEmbeddingExtractor(modelc, inputs):
     pixel_values = inputs['pixel_values']
             
     pixel_values = torch.stack(pixel_values)

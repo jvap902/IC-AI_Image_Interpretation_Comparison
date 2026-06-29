@@ -431,3 +431,4 @@ swin_v2_t,torchvision,IMAGENET1K_V1,imagenet-c-fog-5(0),cache/dissimilarity_arra
 efficientnet_b0,torchvision,IMAGENET1K_V1,imagenet-c-fog-5(0),cache/dissimilarity_arrays/efficientnet_b0_IMAGENET1K_V1_torchvision_imagenet-c-fog-5(0).npy
 efficientnet_b4,torchvision,IMAGENET1K_V1,imagenet-c-fog-5(0),cache/dissimilarity_arrays/efficientnet_b4_IMAGENET1K_V1_torchvision_imagenet-c-fog-5(0).npy
 efficientnet_b7,torchvision,IMAGENET1K_V1,imagenet-c-fog-5(0),cache/dissimilarity_arrays/efficientnet_b7_IMAGENET1K_V1_torchvision_imagenet-c-fog-5(0).npy
+facebook/dino-vitb16,huggingface,DEFAULT,ILSVRC-imagenet-1k(0),cache/dissimilarity_arrays/facebook-dino-vitb16_DEFAULT_huggingface_ILSVRC-imagenet-1k(0).npy

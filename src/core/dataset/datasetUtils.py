@@ -9,6 +9,7 @@ import torchvision
 from tqdm.auto import tqdm
 from torch.utils.data import Subset
 from collections import defaultdict
+import torchvision.transforms.functional as F
 from src.fileManagement.csvUtils import findInCsv, writeCsvLine
 
 # ImageNet-A download details
@@ -359,7 +360,7 @@ class HuggingFaceDatasetWrapper(torch.utils.data.Dataset):
     """Unpacks HuggingFace dict items into (image, label) tuples to match PyTorch Dataset interface."""
 
     def __init__(self, hf_dataset, image_key="image", label_key="label"):
-        self.dataset = hf_dataset.with_format("torch")
+        self.dataset = hf_dataset
         self.image_key = image_key
         self.label_key = label_key
         self.classes = hf_dataset.features[label_key].names
@@ -369,4 +370,17 @@ class HuggingFaceDatasetWrapper(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         sample = self.dataset[idx]
-        return sample[self.image_key].clone(), sample[self.label_key].clone()
+        image = sample[self.image_key]
+        label = sample[self.label_key]
+
+        if isinstance(image, torch.Tensor):
+            image = image.clone()
+        else:
+            image = F.pil_to_tensor(image)  # keeps [0, 255] uint8, no rescaling
+        
+        if isinstance(label, torch.Tensor):
+            label = label.clone()
+        else:
+            label = torch.tensor(label)
+
+        return image, label
