@@ -38,13 +38,15 @@ if __name__ == "__main__":
     
     datasets_names = ['imagenet-c']
     
-    datasets = [idx for idx, dt_sb in enumerate(config.datasets) if any(name in dt_sb[0] for name in datasets_names)]
+    datasets = [idx for idx, dt_sb in enumerate(config.datasets)]# if any(name in dt_sb[0] for name in datasets_names)]
     met = 'cka'
     analysis = 'basic'
     save_dir = "dataStorage/processedResults/cka"
     
     for dt_idx in datasets:
-        args = ['-a', analysis, '-met', met, '-d', str(dt_idx), '-g', '-s', f'{save_dir}/{config.datasets[dt_idx][0]}({config.datasets[dt_idx][1]}).png']
+        save_path = f'{save_dir}/{config.datasets[dt_idx][0].replace('/', '-')}.png'
+        
+        args = ['-a', analysis, '-met', met, '-d', str(dt_idx), '-g', '-s', save_path]
     
         run_main_with_subprocess(args)
 
