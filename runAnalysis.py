@@ -44,7 +44,7 @@ if __name__ == "__main__":
     save_dir = "dataStorage/processedResults/cka"
     
     for dt_idx in datasets:
-        save_path = f'{save_dir}/{config.datasets[dt_idx][0].replace('/', '-')}.png'
+        save_path = f'{save_dir}/{config.datasets[dt_idx][0].replace('/', '-')}.eps'
         
         args = ['-a', analysis, '-met', met, '-d', str(dt_idx), '-g', '-s', save_path]
     
