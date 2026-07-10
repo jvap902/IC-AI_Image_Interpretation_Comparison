@@ -8,7 +8,7 @@ ideia de otimização:
     Voltar com arquivos de dissimilaridade de cosseno, quando ativo faz validação do modelo e pula toda parte de extração.
 
 Tarefas:
-    Relatório
+    Relatório --> talvez mudar a escala dos heatmaps do CKA para ser entre 0 e 1.
     Inclusão DINOv1 nos testes
 
 
