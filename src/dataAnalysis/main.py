@@ -65,7 +65,7 @@ if __name__ == "__main__":
         case 'method comparison':
             df_rsa = data["rsa"]
             df_cka = data["cka"]
-            comparison = methodComparison.rsaCka(df_rsa, df_cka)
+            comparison = methodComparison.rsaCka(df_rsa, df_cka, metric='pearson')
             print(f"Method comparison: \n{comparison}")
         
         case 'mrss':
@@ -86,7 +86,7 @@ if __name__ == "__main__":
 
             print(heat_df)
                 
-            if args.graph: plot.heatmap(heat_df, save_path=args.save, linewidths=0.3, show=args.show, annot=True)
+            if args.graph: plot.heatmap(heat_df, save_path=args.save, linewidths=0.3, show=args.show, annot=True, figsize=(8, 8))
             
 #datasets = [
     # 0 - ('imagenet-sketch', 1), 
