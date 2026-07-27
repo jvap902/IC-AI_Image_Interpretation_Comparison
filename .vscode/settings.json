@@ -1,3 +1,15 @@
 {
-    "explorer.autoReveal": false
+    "explorer.autoReveal": false,
+    "terminal.integrated.profiles.windows": {
+        "PowerShell (Auto Venv)": {
+        "source": "PowerShell",
+        "icon": "terminal-powershell",
+        "args": [
+            "-NoExit",
+            "-Command",
+            "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process; if (Test-Path .\\venv\\Scripts\\activate) { .\\venv\\Scripts\\activate }"
+        ]
+        }
+    },
+    "terminal.integrated.defaultProfile.windows": "PowerShell (Auto Venv)"
 }
