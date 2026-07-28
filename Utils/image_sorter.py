@@ -1,3 +1,4 @@
+from tqdm import tqdm
 from pathlib import Path
 
 def move_files(file_names, source_dir, dest_dir):
@@ -17,7 +18,7 @@ def sort_imagenet1k_images():
 
     original = Path("data/imagenet-1k/validation")
 
-    for corr_path in corrupted.iterdir():
+    for corr_path in tqdm(corrupted.iterdir(), desc="Sorting imagenet-1k images"):
         if corr_path.is_dir():
             print(f"Composing {corr_path.name}\n")
             

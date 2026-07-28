@@ -3,6 +3,7 @@ import tarfile
 import zipfile
 import requests
 import torchvision
+from tqdm import tqdm
 
 from utils.image_sorter import sort_imagenet1k_images
 
@@ -16,7 +17,7 @@ IMAGENET_A_EXTRACT_DIR = "imagenet-a"
 # Imagenet-sketch
 IMAGENET_SKETCH_URL = "https://www.kaggle.com/api/v1/datasets/download/wanghaohan/imagenetsketch"
 IMAGENET_SKETCH_FILENAME = "archive.zip"
-IMAGENET_SKETCH_EXTRACT_DIR = "imagenet-sketch"
+IMAGENET_SKETCH_EXTRACT_DIR = "sketch"
 
 #FGVC-Aircraft
 AIRCRAFT_URL = "https://www.robots.ox.ac.uk/~vgg/data/fgvc-aircraft/archives/fgvc-aircraft-2013b.tar.gz"
@@ -47,13 +48,15 @@ def getDownloadInfo(dataset):
             return IMAGENET_SKETCH_URL, IMAGENET_SKETCH_FILENAME, IMAGENET_SKETCH_EXTRACT_DIR, 'zip'
         case 'fgvc-aircraft':
             return AIRCRAFT_URL, AIRCRAFT_FILENAME, AIRCRAFT_EXTRACT_DIR, 'tar'
+        case 'imagenet-1k-2012':
+            return IMAGENET_1K_URL, IMAGENET_1K_FILENAME, IMAGENET_1K_EXTRACT_DIR, 'tar'
         case s if 'imagenet-c' in s:
             url, filename, extract_dir = imagenetCDownloadInfo(dataset.split('-')[-2])
             return url, filename, extract_dir, 'tar'
         case _:
             raise ValueError("Unsupported dataset")
 
-def downloadUrlDataset(root_dir, url, file_name, extract_dir, compression_type):
+def downloadUrlDataset(root_dir, url, file_name, extract_dir, compression_type) -> str:
     """
     Downloads and extracts the dataset
 
@@ -148,18 +151,17 @@ def extractTarFile(root, file_name, extract_path, tar_filepath):
         print(f"OS error during file cleanup: {e}")
         return extract_path # Return path even if cleanup failed
     
-def getUrlDataset(data_dir, dataset):
+def getUrlDataset(data_dir, dataset, exists: bool):
     url, file_name, extract_dir, compression_type = getDownloadInfo(dataset)
     
     # 1. Download and extract the data
-    # This calls the function from src/datasetUtils.py to handle the download
     folder_path = downloadUrlDataset(root_dir=data_dir, url=url, file_name=file_name, extract_dir=extract_dir, compression_type=compression_type)
     if folder_path is None:
         raise FileNotFoundError(f"Failed to download or extract {dataset}.")
 
-    folder_path = folder_path+pathConcat(dataset)
+    print(folder_path)
     
-    if dataset == 'imagenet-1k-2012':
+    if dataset == 'imagenet-1k-2012' and not exists:
         sort_imagenet1k_images()
 
     # 2. Load data using ImageFolder (which expects class subdirectories)

@@ -163,7 +163,7 @@ def newCifar100Dataset(dt_info, data_dir, output_dir):
 def newUrlDownloadedDataset(dt_info, data_dir, output_dir):
     dataset, subset_num, num_classes, total_images = dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images
     
-    full_dataset = downloadHandler.getUrlDataset(data_dir, dataset)
+    full_dataset = downloadHandler.getUrlDataset(data_dir, dataset, exists=False)
         
     val_indices = datasetUtils.imageSelector(dt_info, full_dataset, 'validation')
     val_indices_set = set(val_indices)
@@ -194,7 +194,7 @@ def newUrlDownloadedDataset(dt_info, data_dir, output_dir):
 def loadUrlDownloadedDataset(data_dir, train_indices, val_indices, dataset):
     print(f"\n--- Loading {dataset} Subset ---")
     
-    full_dataset = downloadHandler.getUrlDataset(data_dir, dataset)
+    full_dataset = downloadHandler.getUrlDataset(data_dir, dataset, exists=True)
     
     train_dataset = Subset(full_dataset, train_indices)
     val_dataset = Subset(full_dataset, val_indices)

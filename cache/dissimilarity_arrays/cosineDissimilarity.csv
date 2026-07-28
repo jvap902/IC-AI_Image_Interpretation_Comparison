@@ -447,3 +447,5 @@ facebook/dino-vitb16,huggingface,DEFAULT,imagenet-c-motion_blur-5(0),cache/dissi
 facebook/dino-vitb16,huggingface,DEFAULT,imagenet-c-fog-1(0),cache/dissimilarity_arrays/facebook-dino-vitb16_DEFAULT_huggingface_imagenet-c-fog-1(0).npy
 facebook/dino-vitb16,huggingface,DEFAULT,imagenet-c-fog-3(0),cache/dissimilarity_arrays/facebook-dino-vitb16_DEFAULT_huggingface_imagenet-c-fog-3(0).npy
 facebook/dino-vitb16,huggingface,DEFAULT,imagenet-c-fog-5(0),cache/dissimilarity_arrays/facebook-dino-vitb16_DEFAULT_huggingface_imagenet-c-fog-5(0).npy
+resnet18,torchvision,IMAGENET1K_V1,imagenet-1k-2012(0),cache/dissimilarity_arrays/resnet18_IMAGENET1K_V1_torchvision_imagenet-1k-2012(0).npy
+resnet50,torchvision,IMAGENET1K_V1,imagenet-1k-2012(0),cache/dissimilarity_arrays/resnet50_IMAGENET1K_V1_torchvision_imagenet-1k-2012(0).npy
