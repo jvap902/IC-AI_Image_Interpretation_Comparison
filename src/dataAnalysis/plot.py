@@ -3,11 +3,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import scipy.cluster.hierarchy as scipy
 
-def heatmap(df, title=None, save_path=None, show=True, annot=False, linewidths=0):
+def heatmap(df, title=None, save_path=None, show=True, annot=False, linewidths=0, vmin=-0.5, vmax=1.0, figsize=(10, 8)):
     
-    plt.figure(figsize=(10, 8))
+    plt.figure(figsize=figsize)
     
-    ax = sns.heatmap(df, vmin=-0.5, vmax=1.0, linewidths=linewidths, linecolor='white', annot=annot, fmt=".4f")
+    ax = sns.heatmap(df, vmin=vmin, vmax=vmax, linewidths=linewidths, linecolor='white', annot=annot, fmt=".4f")
 
     ax.tick_params(axis='both', which='major', labelsize=14)
     

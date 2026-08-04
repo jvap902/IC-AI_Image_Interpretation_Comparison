@@ -26,7 +26,9 @@ def resultsDataFrame(json_path, verify=True):
     if not verifyIntegrity(json_data) and verify:
         raise ValueError("Nem todos os dados CKA estão no json")
     
-    data_matrix = np.zeros((len(config.instances), len(config.instances)))
+    n = len(config.instances)
+    
+    data_matrix = np.zeros((n, n))
     np.fill_diagonal(data_matrix, 1)
     
     for key, value in json_data.items():

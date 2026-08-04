@@ -13,17 +13,17 @@ available_methods = ["rsa", "cka"]
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--size", type=int, default=2000, required=False, help="Specify number of images to be used from the dataset")
-parser.add_argument("-m1", "--model1", type=str, required=False, help="Specify the model to be used as first model")
-parser.add_argument("-m2", "--model2", type=str, required=False, help="Specify the model to be used as second model")
+parser.add_argument("-m1", "--model1", type=str, required=False, default='resnet18', help="Specify the model to be used as first model")
+parser.add_argument("-m1_s", "--m1_source", type=str, required=False, default="torchvision", help="Specify from where the first model to be loaded come from, default is pytorch")
+parser.add_argument("-m1_w", "--m1_weights", type=str, required=False, default="IMAGENET1K_V1", help="Specify weights for torchvision models")
+parser.add_argument("-m2", "--model2", type=str, required=False, default='resnet50', help="Specify the model to be used as second model")
+parser.add_argument("-m2_s", "--m2_source", type=str, required=False, default="torchvision", help="Specify from where the second model to be loaded come from, default is pytorch")
+parser.add_argument("-m2_w", "--m2_weights", type=str, required=False, default="IMAGENET1K_V1", help="Specify weights for torchvision models")
 parser.add_argument("-d", "--dataset", type=str, default="ILSVRC/imagenet-1k", required=False, help="Specify the dataset (cifar10, cifar100, imagenet-a, imagenet-sketch, fgvc-aircraft, imagenet-c-$distortion$-$level$ or a link for huggingface dataset)")
 parser.add_argument("-e", "--epochs", type=int, default=10, required=False, help="Specify the number of epochs to train the head for validation")
 parser.add_argument("-nv", "--no_validation", action='store_true', help="Turns off model validation step")
 parser.add_argument("--n_classes", type=int, default=100, required=False, help="Specify number of classes in the dataset (only for non cifar datasets)")
 parser.add_argument("-ss", "--specific_subset", default=0, type=int, required=False, help="Specify a specific subset number to load from cache")
-parser.add_argument("--m1_source", type=str, required=False, default="torchvision", help="Specify from where the first model to be loaded come from, default is pytorch")
-parser.add_argument("--m2_source", type=str, required=False, default="torchvision", help="Specify from where the second model to be loaded come from, default is pytorch")
-parser.add_argument("-m1_w", "--m1_weights", type=str, required=False, default="IMAGENET1K_V1", help="Specify weights for torchvision models")
-parser.add_argument("-m2_w", "--m2_weights", type=str, required=False, default="IMAGENET1K_V1", help="Specify weights for torchvision models")
 parser.add_argument("-ed", "--existing_dissimilarity", action='store_true', required=False, default=False, help="Use previously calculated cossine dissimilarity for run")
 parser.add_argument("-sc", "--same_classes", type=str, required=False, default=None, nargs='+', help="Specify [name, subset, num_classes, num_images] of a dataset for its classes to be used, only works for new subsets")
 parser.add_argument("-out", "--output_file", type=str, required=False, default="./dataStorage/rsaData/runData.csv", help="Specify path to file the run information will be written")
@@ -40,12 +40,9 @@ def main():
     
     print(f"\nDevice set to: {config.device}")
 
-    # --- Model Creation ---
-    first_model_name = args.model1 if args.model1 else 'resnet18'
-    second_model_name = args.model2 if args.model2 else 'resnet50'
-    
-    fst_modelc = Model(first_model_name, args.m1_source, args.m1_weights)
-    snd_modelc = Model(second_model_name, args.m2_source, args.m2_weights)
+    # --- Model Creation ---    
+    fst_modelc = Model(args.model1, args.m1_source, args.m1_weights)
+    snd_modelc = Model(args.model2, args.m2_source, args.m2_weights)
     
     # --- Data Setup ---
     dataset_name = args.dataset
@@ -127,8 +124,8 @@ def main():
         snd_modelc.setAcc(snd_eval_dict["accuracy"])
         csvUtils.writeCsvLine(validation_csv, [snd_modelc.name, snd_modelc.source, snd_modelc.weights, dt_info.name_w_subset, snd_modelc.acc])
 
-    print(f"\n{first_model_name} Validation Accuracy: {fst_modelc.acc:.4f}")
-    print(f"{second_model_name} Validation Accuracy: {snd_modelc.acc:.4f}\n")
+    print(f"\n{args.model1} Validation Accuracy: {fst_modelc.acc:.4f}")
+    print(f"{args.model2} Validation Accuracy: {snd_modelc.acc:.4f}\n")
 
     # --- Experiment execution ---
     match args.method:

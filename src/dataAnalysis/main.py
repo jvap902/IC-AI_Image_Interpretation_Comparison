@@ -49,11 +49,13 @@ if __name__ == "__main__":
     
     data = getAnalysisData(args.analysis, args.method, datasets)
     
+    vmin = -0.5 if args.method == 'rsa' else 0.0
+    
     match args.analysis:
         case 'basic':
             print(f"Basic: {data}")
             heat_df = data
-            if args.graph: plot.heatmap(heat_df, save_path=args.save, show=args.show)
+            if args.graph: plot.heatmap(heat_df, save_path=args.save, show=args.show, vmin=vmin)
         
         case 'clustering':
             dist_matrix = clustering.distMatrix(data)
@@ -63,7 +65,7 @@ if __name__ == "__main__":
         case 'method comparison':
             df_rsa = data["rsa"]
             df_cka = data["cka"]
-            comparison = methodComparison.rsaCka(df_rsa, df_cka)
+            comparison = methodComparison.rsaCka(df_rsa, df_cka, metric='pearson')
             print(f"Method comparison: \n{comparison}")
         
         case 'mrss':
@@ -74,7 +76,7 @@ if __name__ == "__main__":
         case 'drc':
             heat_df = datasetCorrelation.DRC(data, datasets, metric='pearson')
             print(f"\nDRC: \n{heat_df}")
-            if args.graph: plot.heatmap(heat_df, save_path=args.save, show=args.show)
+            if args.graph: plot.heatmap(heat_df, save_path=args.save, show=args.show, vmin=vmin)
 
         case _: #análise de variação de modelo com distorções, no lugar de passar a análise se passa o tipo de distorção
             distortion_type = args.analysis
@@ -84,7 +86,7 @@ if __name__ == "__main__":
 
             print(heat_df)
                 
-            if args.graph: plot.heatmap(heat_df, save_path=args.save, linewidths=0.3, show=args.show, annot=True)
+            if args.graph: plot.heatmap(heat_df, save_path=args.save, linewidths=0.3, show=args.show, annot=True, figsize=(8, 8))
             
 #datasets = [
     # 0 - ('imagenet-sketch', 1), 

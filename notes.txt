@@ -8,10 +8,8 @@ ideia de otimização:
     Voltar com arquivos de dissimilaridade de cosseno, quando ativo faz validação do modelo e pula toda parte de extração.
 
 Tarefas:
-    Relatório
-    Testes com imagenet-c -> falta decididr quais distorções usar
-    Outras análises CKA
-    Testar a hipótese do motivo de correlações baixas imagenet-1k -> fazer fine-tunning dos modelos para algum dataset (possivelmente CIFAR) e ver se as correlações baixam
+    Relatório --> talvez mudar a escala dos heatmaps do CKA para ser entre 0 e 1.
+    Inclusão DINOv1 nos testes
 
 
 

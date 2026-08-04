@@ -46,7 +46,7 @@ def rsa_args(run_data):
     sleep(5.0)
     
     return ["--dataset", dataset, "--specific_subset", str(subset), "-ndsc", "--m1_source", src1, "-m1", model1, "--m1_weights", weight1, '-met', 'rsa',
-                                    "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "-ed", "--no_validation", "-out", f"./dataStorage/rsaData/{dt_name}Data.csv"]
+                                    "--m2_source", src2, "-m2", model2, "--m2_weights", weight2, "--no_validation", "-out", f"./dataStorage/rsaData/{dt_name}Data.csv"]
     
 def cka_args(run_data):
     dataset, subset, src1, model1, weight1, src2, model2, weight2, dt_name = run_data
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     datasets = config.datasets #do artigo: sketch, cifar10, aircraft, imagenet-1k
     #datasets = [datasets[9]] #jpeg_compression 5
     
-    datasets = datasets[4:]
+    #datasets = datasets[4:]
     
     method_name = 'cka'
     
@@ -159,16 +159,16 @@ if __name__ == "__main__":
         case _:
             raise
         
-    fst_idx = codToInstance(15, 'a')[0]
-    snd_idx = codToInstance(22, 'a')[0]+1
-    ini_dt = datasets.index(('imagenet-c-fog-5', 0))
+    fst_idx = 0#codToInstance(15, 'a')[0]
+    snd_idx = codToInstance(16, 'c')[0]
+    ini_dt = datasets.index(('imagenet-c-gaussian_noise-3', 0))
     
-    fst_model_interr = codToInstance(16, 'c')[0]
-    snd_model_interr = codToInstance(17, 'a')[0]
+    fst_model_interr = 1#codToInstance(16, 'c')[0]
+    snd_model_interr = 2#codToInstance(17, 'a')[0]
     
     start_params = startParams({'fst_instance': fst_idx, 'snd_instance': snd_idx, 'dataset': ini_dt, 'interrupt': (0, fst_model_interr, snd_model_interr)})
     
-    run(instances, datasets, method, start_params, interrupt=False)
+    run(instances, datasets, method, start_params, interrupt=True)
     #revalidate(instances, datasets, method, start_params)
 
 
@@ -199,3 +199,4 @@ if __name__ == "__main__":
 #22a - ('torchvision', 'efficientnet_b0', 'IMAGENET1K_V1')
 #23a - ('torchvision', 'efficientnet_b4', 'IMAGENET1K_V1')
 #24a - ('torchvision', 'efficientnet_b7', 'IMAGENET1K_V1')
+#25f - ('huggingface', 'facebook/dino-vitb16', 'DEFAULT')

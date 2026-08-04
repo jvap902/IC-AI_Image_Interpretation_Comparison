@@ -32,19 +32,41 @@ def run_main_with_subprocess(args):
         sys.exit(1)
 
 
+def getSaveDir(met, analysis):
+    base_dir = "dataStorage/processedResults"    
+    
+    if met == 'rsa' or analysis == 'clustering':
+        metric = input('which metric? ')
+    
+    match analysis:
+        case 'basic': 
+            if met == 'rsa': 
+                return f'{base_dir}/{met}/{metric}'
+            else:
+                return f'{base_dir}/{met}'
+        case 'dendrogram': 
+            return f'{base_dir}/{metric}'
+        case 'mrss' | 'drc': 
+            return f'{base_dir}/datasetCorrelations'
+        case _: 
+            return f'{base_dir}/distortion'
+    
+
 if __name__ == "__main__":
 
     instances = config.instances
     
     datasets_names = ['imagenet-c']
     
-    datasets = [idx for idx, dt_sb in enumerate(config.datasets) if any(name in dt_sb[0] for name in datasets_names)]
+    datasets = [idx for idx, dt_sb in enumerate(config.datasets)]# if any(name in dt_sb[0] for name in datasets_names)]
     met = 'cka'
     analysis = 'basic'
-    save_dir = "dataStorage/processedResults/cka"
+    save_dir = getSaveDir(met, analysis)
     
     for dt_idx in datasets:
-        args = ['-a', analysis, '-met', met, '-d', str(dt_idx), '-g', '-s', f'{save_dir}/{config.datasets[dt_idx][0]}({config.datasets[dt_idx][1]}).png']
+        save_path = f'{save_dir}/{config.datasets[dt_idx][0].replace('/', '-')}.png'
+        
+        args = ['-a', analysis, '-met', met, '-d', str(dt_idx), '-g', '-s', save_path]
     
         run_main_with_subprocess(args)
 

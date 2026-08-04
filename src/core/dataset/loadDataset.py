@@ -6,7 +6,7 @@ from torch.utils.data import Subset
 from datasets import load_dataset, load_from_disk
 from kagglehub import dataset_load, KaggleDatasetAdapter
 from src.fileManagement import csvUtils
-from . import datasetUtils
+from . import datasetUtils, downloadHandler
 
 def loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir):
     
@@ -14,7 +14,7 @@ def loadIndicesFromDataset(dt_info, train_indices, val_indices, data_dir):
     
     print(f"\nLoading previously selected {dataset} indices\n")
     
-    if((dataset == 'imagenet-a') or (dataset == 'imagenet-sketch') or ('imagenet-c' in dataset)):
+    if any(dt in dataset for dt in downloadHandler.url_downloaded):
         train_dataset, val_dataset = loadUrlDownloadedDataset(data_dir, train_indices, val_indices, dataset)
     elif dataset == 'cifar100':
         train_dataset, val_dataset = loadCifar100Dataset(data_dir, train_indices, val_indices)
@@ -31,9 +31,7 @@ def createNewDataset(dt_info, output_dir, data_dir):
     
     dataset = dt_info.name
     
-    print(f"\nCreating new set of indices for {dataset}\n")
-    
-    if ((dataset == 'imagenet-a') or (dataset == 'imagenet-sketch') or ('imagenet-c' in dataset)):
+    if any(dt in dataset for dt in downloadHandler.url_downloaded):
         train_dataset, val_dataset = newUrlDownloadedDataset(dt_info, data_dir, output_dir)
     elif dataset == 'fgvc-aircraft':
         train_dataset, val_dataset = newKaggleDataset(dt_info, data_dir, output_dir)
@@ -49,7 +47,7 @@ def createNewDataset(dt_info, output_dir, data_dir):
     return train_dataset, val_dataset
 
 
-def newKaggleDataset(dt_info, data_dir, output_dir): #falta validar
+def newKaggleDataset(dt_info, data_dir, output_dir):
     print(f"\n--- Creating {dt_info.name} Subset ---")
     
     url = datasetUtils.getKaggleInfo(dt_info.name)
@@ -165,7 +163,7 @@ def newCifar100Dataset(dt_info, data_dir, output_dir):
 def newUrlDownloadedDataset(dt_info, data_dir, output_dir):
     dataset, subset_num, num_classes, total_images = dt_info.name, dt_info.subset, dt_info.num_classes, dt_info.num_images
     
-    full_dataset = datasetUtils.getUrlDataset(data_dir, dataset)
+    full_dataset = downloadHandler.getUrlDataset(data_dir, dataset, exists=False)
         
     val_indices = datasetUtils.imageSelector(dt_info, full_dataset, 'validation')
     val_indices_set = set(val_indices)
@@ -196,7 +194,7 @@ def newUrlDownloadedDataset(dt_info, data_dir, output_dir):
 def loadUrlDownloadedDataset(data_dir, train_indices, val_indices, dataset):
     print(f"\n--- Loading {dataset} Subset ---")
     
-    full_dataset = datasetUtils.getUrlDataset(data_dir, dataset)
+    full_dataset = downloadHandler.getUrlDataset(data_dir, dataset, exists=True)
     
     train_dataset = Subset(full_dataset, train_indices)
     val_dataset = Subset(full_dataset, val_indices)

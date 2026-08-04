@@ -3,6 +3,7 @@ from src import config
 
 def getModelNumber():
     model_number = {
+    'facebook/dino-vitb16': 0,
     'facebook/dinov3-vitb16-pretrain-lvd1689m': 1,
     'facebook/dinov3-vitl16-pretrain-lvd1689m': 2,
     'ViT-B/32': 3,
@@ -33,6 +34,7 @@ def getModelNumber():
 
 def getNumberModel(number=None):
     number_model = {
+    0: 'facebook/dino-vitb16',
     1: 'facebook/dinov3-vitb16-pretrain-lvd1689m',
     2: 'facebook/dinov3-vitl16-pretrain-lvd1689m',
     3: 'ViT-B/32',
@@ -70,7 +72,8 @@ def getTrainLetter():
         "IMAGENET1K_V2": 'b',
         "IMAGENET1K_SWAG_E2E_V1": 'c',
         "CLIP": 'd',
-        "DINOV3": 'e'
+        "DINOV3": 'e',
+        'DINOV1': 'f'
     }
     
     return train_letter
@@ -81,7 +84,8 @@ def getLetterTrain(letter=None):
         'b': "IMAGENET1K_V2",
         'c': "IMAGENET1K_SWAG_E2E_V1",
         'd': "CLIP",
-        'e': "DINOV3"
+        'e': "DINOV3",
+        'f': "DINOV1"
     }
 
     if letter == None:
@@ -103,8 +107,11 @@ def modelCod(src, model, train):
     
     if 'clip' in src.lower():
         t = train_letter['CLIP']
-    elif 'dinov3' in model:
-        t = train_letter['DINOV3']
+    elif 'dino' in model:
+        if 'dinov3' in model:
+            t = train_letter['DINOV3']
+        else:
+            t = train_letter['DINOV1']
     else:
         t = train_letter[train]
         
@@ -116,7 +123,7 @@ def codToInstance(number: int, letter: chr):
     model = getNumberModel(number)
     train = getLetterTrain(letter)
     
-    if 'dinov3' in model:
+    if 'dino' in model:
         inst = ('huggingface', model,  'DEFAULT')
         return (instances.index(inst), inst)
     

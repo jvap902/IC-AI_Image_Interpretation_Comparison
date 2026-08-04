@@ -591,3 +591,7 @@ total_images,num_classes,fst_model_source,first_model,fst_weights,snd_model_sour
 2000,100,torchvision,resnet18,IMAGENET1K_V1,torchvision,resnet50,IMAGENET1K_V1,0.27,0.2805,0.8112935778553073,0.8198666,fgvc-aircraft(0)
 2000,100,torchvision,resnet18,IMAGENET1K_V1,torchvision,resnet50,IMAGENET1K_V1,0.0,0.0,0.7230107768640895,0.7537485,imagenet-c-gaussian_noise-1(0)
 2000,100,torchvision,resnet18,IMAGENET1K_V1,torchvision,resnet50,IMAGENET1K_V1,0.0005,0.0,0.7230107768640895,0.7537485,imagenet-c-gaussian_noise-1(0)
+2000,100,huggingface,facebook/dino-vitb16,DEFAULT,torchvision,resnet50,IMAGENET1K_V1,0.0005,0.0,-0.06030873782814327,-0.015673144,ILSVRC-imagenet-1k(0)
+2000,100,huggingface,facebook/dino-vitb16,DEFAULT,torchvision,resnet50,IMAGENET1K_V1,0.0,0.0,0.4031334118369239,0.5609284,ILSVRC-imagenet-1k(0)
+2000,100,huggingface,facebook/dino-vitb16,DEFAULT,huggingface,facebook/dinov3-vitb16-pretrain-lvd1689m,DEFAULT,0.0035,0.8475,0.2023335563121689,0.395346,ILSVRC-imagenet-1k(0)
+2000,100,torchvision,resnet18,IMAGENET1K_V1,torchvision,resnet50,IMAGENET1K_V1,0.0005,0.0,0.7444896074870028,0.7950055,imagenet-1k-2012(0)

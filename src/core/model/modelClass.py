@@ -54,11 +54,11 @@ class Model:
     def setHead(self, head):
         self.head = head
         
-    def getEmbeddingExtractor(self):        
+    def getEmbeddingExtractor(self):
         if (self.source == 'clip' or self.source == 'open_clip'):
             return clipEmbeddingExtractor
-        elif ('dinov3' in self.name.lower()):
-            return dinov3EmbeddingExtractor
+        elif ('dino' in self.name.lower()):
+            return dinoEmbeddingExtractor
         else:
             return generalEmbeddingExtractor
         

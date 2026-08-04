@@ -28,7 +28,7 @@ def logitExtractor(modelc : Model, dt_info, inputs):
             return torch.tensor(logits_img).clone().detach()
         
         case 'huggingface':
-            if 'dinov3' in modelc.name:
+            if 'dino' in modelc.name:
                 pixel_values = inputs['pixel_values']
         
                 pixel_values = torch.stack(pixel_values)
